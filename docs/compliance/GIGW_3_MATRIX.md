@@ -23,4 +23,4 @@
 
 ## Evidence commands
 
-Baseline commands and counts are in [`../merge/TEST_EVIDENCE_MATRIX.md`](../merge/TEST_EVIDENCE_MATRIX.md). Automated accessibility coverage, exhaustive link checks, external audit, production topology, restore and DR evidence remain outstanding.
+Baseline commands and counts are in [`../merge/TEST_EVIDENCE_MATRIX.md`](../merge/TEST_EVIDENCE_MATRIX.md). The 2026-10-02 UI increment groups legacy demos under `/labs` and adds an initial `/staff` screen; 13 selected Playwright flows pass. These browser tests do not replace automated accessibility coverage, exhaustive link checks, external audit, production topology, restore or DR evidence, all of which remain outstanding.
