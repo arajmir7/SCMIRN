@@ -143,10 +143,57 @@ def test_mfa_replay_csrf_and_tenant_isolation():
     assert listed.status_code == 200
     assert listed.json["cases"] == []
     assert first_tenant != second_tenant
-
     next_challenge = _login(client)
     reused_code = client.post("/api/v1/staff/auth/mfa", json={"challenge": next_challenge, "code": _totp("JBSWY3DPEHPK3PXP", fixed)})
     assert reused_code.status_code == 401
+
+
+def test_case_officer_scope_is_limited_to_owned_or_assigned_cases():
+    app = _new_app()
+    tenant_id, actor_id = _seed_user(app)
+    with app.app_context():
+        other_user = StaffUser(
+            tenant_id=tenant_id,
+            email="colleague@example.gov",
+            display_name="Other Officer",
+            password_hash=hash_password(_TEST_PASSWORD),
+        )
+        db.session.add(other_user)
+        db.session.flush()
+        own_case = StaffCase(
+            tenant_id=tenant_id, case_ref="C-OWN", case_type="WATER",
+            title="Own case", status="OPEN", priority="NORMAL", created_by=actor_id,
+        )
+        assigned_case = StaffCase(
+            tenant_id=tenant_id, case_ref="C-ASSIGNED", case_type="ROADS",
+            title="Assigned case", status="OPEN", priority="NORMAL",
+            created_by=other_user.id, assigned_user_id=actor_id,
+        )
+        unrelated_case = StaffCase(
+            tenant_id=tenant_id, case_ref="C-OTHER", case_type="WASTE",
+            title="Unrelated case", status="OPEN", priority="NORMAL", created_by=other_user.id,
+            assigned_user_id=other_user.id,
+        )
+        db.session.add_all([own_case, assigned_case, unrelated_case])
+        db.session.commit()
+        unrelated_case_id = unrelated_case.id
+
+    client = app.test_client()
+    challenge = _login(client)
+    assert _complete_mfa(client, challenge).status_code == 200
+    listed = client.get("/api/v1/staff/cases")
+    assert listed.status_code == 200
+    listed_refs = {case["case_ref"] for case in listed.json["cases"]}
+    assert listed_refs == {"C-OWN", "C-ASSIGNED"}
+
+    hidden = client.get(f"/api/v1/staff/cases/{unrelated_case_id}")
+    assert hidden.status_code == 404
+    denied_mutation = client.post(
+        f"/api/v1/staff/cases/{unrelated_case_id}/status",
+        json={"status": "CLOSED"},
+        headers={"X-CSRF-Token": client.get_cookie(CSRF_COOKIE).value},
+    )
+    assert denied_mutation.status_code == 404
 
 
 def test_invalid_role_and_login_lockout():

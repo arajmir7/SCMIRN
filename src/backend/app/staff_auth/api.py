@@ -8,9 +8,10 @@ from datetime import timedelta
 from flask import Blueprint, current_app, g, jsonify, make_response, request
 from flask_limiter.util import get_remote_address
 from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
-from sqlalchemy import update
+from sqlalchemy import or_, update
 
 from app.extensions import db, limiter
+from app.staff_auth.authorization import PolicyAttributes, StaffPrincipal, authorize
 from app.staff_auth.models import (
     StaffCase, StaffCaseEvent, StaffMfaChallenge, StaffMfaFactor,
     StaffRoleGrant, StaffSession, StaffUser, Tenant,
@@ -61,6 +62,27 @@ def _json_body():
 
 def _as_utc(value):
     return normalize_db_time(value)
+
+
+def _policy_principal():
+    return StaffPrincipal(
+        user_id=g.staff_user.id,
+        tenant_id=g.staff_tenant_id,
+        roles=frozenset(g.staff_roles),
+        active=bool(g.staff_user.active),
+        mfa_verified=bool(g.staff_session.mfa_verified_at),
+    )
+
+
+def _case_policy_attributes(case=None):
+    return PolicyAttributes(
+        tenant_id=case.tenant_id if case is not None else g.staff_tenant_id,
+        purpose="CASE_OPERATIONS",
+        sensitivity="INTERNAL",
+        created_by_id=case.created_by if case is not None else g.staff_user.id,
+        owner_id=case.created_by if case is not None else g.staff_user.id,
+        assigned_user_id=case.assigned_user_id if case is not None else None,
+    )
 
 
 @bp.post("/auth/login")
@@ -308,13 +330,25 @@ def _case_json(case):
 @bp.get("/cases")
 @staff_required("TENANT_ADMIN", "CASE_OFFICER", "AUDITOR")
 def list_cases():
-    cases = StaffCase.query.filter_by(tenant_id=g.staff_tenant_id).order_by(StaffCase.created_at.desc()).limit(100).all()
-    return jsonify({"success": True, "cases": [_case_json(case) for case in cases]})
+    query = StaffCase.query.filter_by(tenant_id=g.staff_tenant_id)
+    if not g.staff_roles.intersection({"TENANT_ADMIN", "AUDITOR"}):
+        query = query.filter(or_(
+            StaffCase.created_by == g.staff_user.id,
+            StaffCase.assigned_user_id == g.staff_user.id,
+        ))
+    cases = query.order_by(StaffCase.created_at.desc()).limit(100).all()
+    visible = [
+        _case_json(case) for case in cases
+        if authorize(_policy_principal(), "case:list", _case_policy_attributes(case))
+    ]
+    return jsonify({"success": True, "cases": visible})
 
 
 @bp.post("/cases")
 @staff_required("TENANT_ADMIN", "CASE_OFFICER")
 def create_case():
+    if not authorize(_policy_principal(), "case:create", _case_policy_attributes()):
+        return jsonify({"success": False, "error": "Staff attributes do not authorize this action.", "code": "ATTRIBUTE_FORBIDDEN"}), 403
     data = _json_body()
     case_type = data.get("case_type")
     priority = data.get("priority", "NORMAL")
@@ -347,6 +381,8 @@ def get_case(case_id):
     case = StaffCase.query.filter_by(id=case_id, tenant_id=g.staff_tenant_id).with_for_update().first()
     if not case:
         return jsonify({"success": False, "error": "Case not found.", "code": "NOT_FOUND"}), 404
+    if not authorize(_policy_principal(), "case:read", _case_policy_attributes(case)):
+        return jsonify({"success": False, "error": "Case not found.", "code": "NOT_FOUND"}), 404
     events = StaffCaseEvent.query.filter_by(case_id=case.id, tenant_id=g.staff_tenant_id).order_by(StaffCaseEvent.created_at.asc()).all()
     return jsonify({"success": True, "case": _case_json(case), "events": [
         {"event_type": event.event_type, "from_status": event.from_status, "to_status": event.to_status, "created_at": _as_utc(event.created_at).isoformat()}
@@ -363,6 +399,8 @@ def change_case_status(case_id):
         return jsonify({"success": False, "error": "Case status is invalid.", "code": "INVALID_STATUS"}), 400
     case = StaffCase.query.filter_by(id=case_id, tenant_id=g.staff_tenant_id).first()
     if not case:
+        return jsonify({"success": False, "error": "Case not found.", "code": "NOT_FOUND"}), 404
+    if not authorize(_policy_principal(), "case:update_status", _case_policy_attributes(case)):
         return jsonify({"success": False, "error": "Case not found.", "code": "NOT_FOUND"}), 404
     if next_status == case.status:
         return jsonify({"success": True, "case": _case_json(case)}), 200
