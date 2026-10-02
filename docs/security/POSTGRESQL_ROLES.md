@@ -43,6 +43,10 @@ setting to match.
    policy and tenant ownership are separately reviewed.
 5. Start the application. It checks `current_user`, role flags/memberships,
    ownership, audit-table read access, and all nine forced staff RLS tables.
+6. Run audit verification as a separate operator command with
+   `SCMIRN_AUDITOR_DATABASE_URL` pointing to the read-only auditor role. Never
+   pass that credential to the web process; the CLI prints only the chain
+   verification summary.
 
 The provisioner is idempotent for roles, grants and the function. It refuses
 to grant access if public-schema objects already belong to another role; do

@@ -16,10 +16,10 @@
     "note": "All current local frontend checks passed in the 2026-10-02 release gate; no production deployment was performed."
   },
   "backend_tests": {
-    "status": "PASS",
-    "locked_python_3_11": "46 passed, 2 existing SQLAlchemy Query.get() deprecation warnings; 1.71 seconds",
+    "status": "PASS_PHASE3_DISPOSABLE_POSTGRESQL_16",
+    "locked_python_3_11": "67 passed, 2 existing SQLAlchemy Query.get() deprecation warnings; 6.51 seconds",
     "native_python_3_13_release_gate": "39 passed, 116 existing deprecation warnings",
-    "snapshot_scope": "Historical pre-Phase-2 suite snapshot; latest suite is recorded under phase2_blocker_closure.backend_tests."
+    "snapshot_scope": "Latest Phase 3 full backend suite with SCMIRN_POSTGRES_RLS_TEST_URL enabled; no production database used."
   },
   "feature_parity": {
     "status": "PASS",
@@ -28,10 +28,11 @@
     "unexplained": 0
   },
   "openapi_route_gate": {
-    "status": "PASS_LATEST_PHASE2_CONTRACT_CHECK",
+    "status": "PASS_PHASE3_CONTRACT_AND_SYNTHETIC_ROUTE_CHECK",
     "openapi_version": "3.1.0",
-    "documented_production_paths": 17,
-    "other_registered_api_operations_rejected_with_503": 91
+    "documented_production_paths": 15,
+    "other_registered_api_operations_rejected_with_503": 93,
+    "snapshot_scope": "Latest Phase 3 check; triage and jurisdiction APIs remain disabled pending subject/tenant isolation."
   },
   "dependency_locks": {
     "backend_runtime_sha256": "0df7ea755e0b7c9ce517a5475d5508972f3b940d30db7f19c69aacd40e994e57",
@@ -67,7 +68,7 @@
     "production_config_and_local_image_build": "PASS using temporary synthetic values and placeholder CA files",
     "overall_exit": "BLOCKED_BY_UNRESOLVED_PRODUCTION_CONTROLS; script returned exit 1 as designed",
     "verdict": "NOT PRODUCTION READY",
-    "snapshot_scope": "Historical pre-Phase-2 gate snapshot; its 46 backend tests and 8-path allowlist predate the staff identity/RLS changes. See phase2_blocker_closure for the latest backend and API evidence."
+    "snapshot_scope": "Historical Phase 2 release-gate run; current Phase 3 test, route, and role evidence is recorded under phase3."
   },
   "database_tests": {
     "status": "PASS_DISPOSABLE_POSTGRESQL_16_RLS_AND_API_INTEGRATION",
@@ -83,7 +84,23 @@
       "production database or deployment role configuration",
       "tenant isolation for legacy citizen/issue/document/chat/route/audit tables",
       "concurrent write invariants",
-      "backup/restore, disaster recovery or rollback"
+      "backup/restore, disaster recovery or rollback",
+      "production role configuration",
+      "tenant/jurisdiction isolation for quarantined legacy and infrastructure records"
+    ],
+    "migration_head": "20261002_04",
+    "mapped_table_count": 34,
+    "runtime_roles": [
+      "scmirn_app",
+      "scmirn_migrator",
+      "scmirn_worker",
+      "scmirn_auditor"
+    ],
+    "phase3_evidence": [
+      "All four roles provisioned repeatably against disposable PostgreSQL 16",
+      "App role denied DDL, audit-content reads, and quarantined legacy-table access",
+      "Auditor has read-only audit access; worker has no table grants",
+      "Forced tenant RLS and overprivileged-role startup rejection passed"
     ]
   },
   "browser_tests": {
@@ -127,7 +144,7 @@
     "status": "PARTIAL",
     "sast": "NOT_RUN",
     "sca": "PASS_DEPENDENCY_LOCK_SCOPE_ONLY; Python pip-audit reports 0 known issues (43 components); npm audit reports 0 known issues (152 components)",
-    "secret_scan": "Gitleaks 8.30.1 staged-source scan; no confirmed secrets; 1 manually reviewed false positive at infrastructure/kubernetes/enterprise-briefing-cronjob.yaml:30 (internal service port); no suppression.",
+    "secret_scan": "Gitleaks 8.30.1 Phase 3 staged delta: no findings; earlier whole-index scan had one reviewed, unsuppressed internal-service-port false positive.",
     "dast": "NOT_RUN",
     "container_scan": "NOT_RUN",
     "scan_date": "2026-10-02"
@@ -171,7 +188,7 @@
   },
   "known_findings": [
     "Production identity/federation, deployment authorization and tenant boundaries for legacy records remain incomplete.",
-    "Alembic covers all 34 ORM tables through 20261002_03; the full chain and new staff/case RLS passed against disposable PostgreSQL 16, not a production database.",
+    "Alembic head 20261002_04 covers all 34 ORM tables. Nine legacy tables remain explicitly quarantined without app/worker grants; staff RLS and role checks passed on disposable PostgreSQL 16, not a production database.",
     "Four official handoff candidates pass current source checks; none performs a filing or creates an official receipt.",
     "Retention purge is not scheduled or monitored in production Compose.",
     "Production backup/restore, disaster recovery and rollback rehearsal are absent.",
@@ -186,7 +203,7 @@
     "A named hosting operator must provide the approved identity/federation choice (if required), TLS ingress, secrets/KMS, PostgreSQL/Redis/object storage, backup/DR, monitoring, and incident ownership.",
     "Independent assessment or government certification, where required, must be performed by the designated assessor against an approved scope."
   ],
-  "maturity_level": "L3 \u2014 LOCAL PRODUCTION REHEARSAL VERIFIED",
+  "maturity_level": "L3 — LOCAL PRODUCTION REHEARSAL VERIFIED",
   "maturity_scope": "Earlier local Compose deployment slice plus current local build/test evidence; latest code was not deployed to the disposable services.",
   "verdict": "NOT PRODUCTION READY",
   "previous_local_image_build": {
@@ -283,5 +300,37 @@
   "commit_timestamp": "2026-10-02T12:24:49+05:30",
   "commit_message": "Baseline government transformation state",
   "origin": "https://github.com/arajmir7/SCMIRN.git",
-  "traceability_note": "The active DSA/SCMIRN source tree had no Git metadata; inspected adjacent SCMIRN copies had no committed history or usable remote. The target GitHub repository was empty. This initial root commit records the current source snapshot without inventing prior history."
+  "traceability_note": "The active DSA/SCMIRN source tree had no Git metadata; inspected adjacent SCMIRN copies had no committed history or usable remote. The target GitHub repository was empty. This initial root commit records the current source snapshot without inventing prior history.",
+  "phase3": {
+    "date": "2026-10-02",
+    "code_commit": "212da5466d66465ec60dedae903b20222b3f3e87",
+    "database": {
+      "migration_head": "20261002_04",
+      "orm_tables": 34,
+      "boundary_classes": {
+        "GLOBAL_REFERENCE": 5,
+        "TENANT_SCOPED": 3,
+        "SUBJECT_SCOPED": 0,
+        "SECURITY_SCOPED": 14,
+        "AUDIT_SCOPED": 3,
+        "LEGACY_UNCLASSIFIED": 9
+      },
+      "role_count": 4,
+      "test_environment": "Disposable PostgreSQL 16 only"
+    },
+    "backend_tests": "67 passed, 2 existing SQLAlchemy deprecation warnings; PostgreSQL integration enabled",
+    "openapi": "PASS; 15 allowlisted paths, 93 other operations rejected with HTTP 503",
+    "secret_scan": "PASS; Gitleaks 8.30.1 staged delta, no findings",
+    "release_verdict": "NOT PRODUCTION READY",
+    "remaining_internal_controls": [
+      "Legacy ownership-aware tenant/jurisdiction RLS and complete seven-role RBAC/ABAC review",
+      "MFA recovery, retention scheduler, private evidence object store and deletion lifecycle",
+      "Fresh candidate SAST/SCA/container/IaC scans, image SBOM, and signed provenance",
+      "Production observability, alert ownership, SLO, load, DR, backup/restore and accessibility evidence"
+    ],
+    "external_blockers": [
+      "Approved hosting/operator, identity, legal/privacy review, authorized agency integration, and independent assessment"
+    ],
+    "supporting_evidence": "Phase 3 source commit is recorded; the separate auditor URL and read-only verification procedure are documented in the evidence commit."
+  }
 }

@@ -17,9 +17,12 @@ The staged-source scan found no confirmed secrets. This conclusion applies only 
 
 ## Phase 3 staged change scan
 
-Before the Phase 3 implementation commit, Gitleaks `8.30.1` ran with
+Before Phase 3 implementation commit `212da5466d66465ec60dedae903b20222b3f3e87`, Gitleaks `8.30.1` ran with
 `gitleaks git --staged --redact=100 --no-banner --exit-code=0` against the
-29 staged changed/added files (about 69 KB). **No findings.** The earlier
+31 staged changed/added files (about 69.8 KB). **No findings.** The earlier
 whole-index false positive above is outside this staged delta and remains
 unsuppressed. This scan does not cover ignored local files, built images, or
 the eventual release artifact.
+
+The later release-evidence and auditor-URL documentation delta was scanned
+separately with the same staged Gitleaks command; it also returned no findings.
