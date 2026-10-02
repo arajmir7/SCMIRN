@@ -90,7 +90,7 @@ Build a modular monolith that accepts a citizen's problem in plain language, use
 - Public source-route endpoints are unauthenticated and rate-limited; privacy abuse, shared-cache behavior and multi-instance limit behavior need assessment.
 - Audit hashes and database triggers do not protect against a privileged database owner; there is no independent immutable anchor.
 - Existing local demo persistence and sample workflows must not be used with real citizen data.
-- Current changes are not yet committed; commit and remote-push evidence must be recorded before this execution increment is considered complete.
+- This workspace is version-controlled and synced to `origin/main`; preserve commit and push evidence for each subsequent release increment.
 
 ## NEXT ACTION
 
