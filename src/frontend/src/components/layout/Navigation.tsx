@@ -2,8 +2,9 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useCivicUi } from '@/app/UiContext';
 
 export function Navigation() {
-  const { openReport, openAssistant } = useCivicUi();
+  const { openAssistant } = useCivicUi();
   const location = useLocation();
+  const staffSurface = location.pathname === '/staff';
   const navigate = useNavigate();
 
   function goToSection(id: string) {
@@ -24,17 +25,17 @@ export function Navigation() {
           </Link>
 
           <div className="d-none d-md-flex align-items-center gap-4">
-            <button type="button" className="nav-link-custom" onClick={() => openAssistant()}>Civic Guide</button>
-            <button type="button" className="nav-link-custom" onClick={() => goToSection('rights')}>Route Check</button>
-            <Link to="/heatmap" className="nav-link-custom">Issue Map · Demo</Link>
-            <Link to="/tracker" className="nav-link-custom">SCMIRN Records · Demo</Link>
-            <Link to="/analytics" className="nav-link-custom">Analytics · Demo</Link>
-            <Link to="/documents" className="nav-link-custom">Draft Templates</Link>
+            {!staffSurface ? <button type="button" className="nav-link-custom" onClick={() => openAssistant()}>Civic Guide</button> : null}
+            {!staffSurface ? <button type="button" className="nav-link-custom" onClick={() => goToSection('rights')}>Route Check</button> : null}
+            <Link to="/labs" className="nav-link-custom">Labs · Demo</Link>
+            <Link to="/staff" className="nav-link-custom">Staff</Link>
           </div>
 
-          <button type="button" className="btn-primary-civic" onClick={openReport}>
-            <i className="fas fa-plus me-2" aria-hidden="true" />Create Demo Record
-          </button>
+          <Link to="/labs" className="btn-primary-civic text-decoration-none"><i className="fas fa-flask me-2" aria-hidden="true" />Open Labs</Link>
+        </div>
+        <div className="d-flex d-md-none gap-3 py-2 border-top mt-2">
+          <Link to="/labs" className="nav-link-custom">Labs · Demo</Link>
+          <Link to="/staff" className="nav-link-custom">Staff workspace</Link>
         </div>
       </div>
     </nav>

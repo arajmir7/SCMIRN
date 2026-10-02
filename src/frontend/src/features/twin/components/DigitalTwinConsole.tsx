@@ -52,7 +52,7 @@ export function DigitalTwinConsole() {
         </p>
         <div className="field">
           <label>Simulation request (JSON)</label>
-          <textarea className="textarea" value={payloadText} onChange={(e) => setPayloadText(e.target.value)} />
+          <textarea className="textarea resize-none" value={payloadText} onChange={(e) => setPayloadText(e.target.value)} />
         </div>
         <div className="inline-actions">
           <Button onClick={simulate} disabled={loading}>
@@ -67,4 +67,3 @@ export function DigitalTwinConsole() {
 }
 
 export default DigitalTwinConsole;
-

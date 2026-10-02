@@ -15,6 +15,9 @@ const TrackerPage = lazy(() => import('@/pages/TrackerPage'));
 const AnalyticsPage = lazy(() => import('@/pages/AnalyticsPage'));
 const DocumentsPage = lazy(() => import('@/pages/DocumentsPage'));
 const PlatformPage = lazy(() => import('@/pages/PlatformPage'));
+const LabsPage = lazy(() => import('@/pages/LabsPage'));
+const LabsLayout = lazy(() => import('@/pages/LabsPage').then((module) => ({ default: module.LabsLayout })));
+const StaffWorkspacePage = lazy(() => import('@/pages/StaffWorkspacePage'));
 
 function RouteScrollManager() {
   const location = useLocation();
@@ -30,6 +33,8 @@ function RouteScrollManager() {
 }
 
 function AppFrame() {
+  const location = useLocation();
+  const staffSurface = location.pathname === '/staff';
   const [assistantOpen, setAssistantOpen] = useState(false);
   const [assistantPrompt, setAssistantPrompt] = useState<string>();
   const [reportOpen, setReportOpen] = useState(false);
@@ -71,21 +76,31 @@ function AppFrame() {
         <Suspense fallback={<div className="container py-5 mt-5 text-muted" role="status">Loading SCMIRN workspace...</div>}>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/offices" element={<OfficesPage />} />
-            <Route path="/heatmap" element={<HeatmapPage />} />
-            <Route path="/tracker" element={<TrackerPage />} />
-            <Route path="/analytics" element={<AnalyticsPage />} />
-            <Route path="/documents" element={<DocumentsPage />} />
-            <Route path="/platform" element={<PlatformPage />} />
+            <Route path="/labs" element={<LabsLayout />}>
+              <Route index element={<LabsPage />} />
+              <Route path="offices" element={<OfficesPage />} />
+              <Route path="heatmap" element={<HeatmapPage />} />
+              <Route path="tracker" element={<TrackerPage />} />
+              <Route path="analytics" element={<AnalyticsPage />} />
+              <Route path="documents" element={<DocumentsPage />} />
+              <Route path="platform" element={<PlatformPage />} />
+            </Route>
+            <Route path="/offices" element={<Navigate to="/labs/offices" replace />} />
+            <Route path="/heatmap" element={<Navigate to="/labs/heatmap" replace />} />
+            <Route path="/tracker" element={<Navigate to="/labs/tracker" replace />} />
+            <Route path="/analytics" element={<Navigate to="/labs/analytics" replace />} />
+            <Route path="/documents" element={<Navigate to="/labs/documents" replace />} />
+            <Route path="/platform" element={<Navigate to="/labs/platform" replace />} />
+            <Route path="/staff" element={<StaffWorkspacePage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
       </main>
-      <Footer />
-      <AssistantPanel open={assistantOpen} initialPrompt={assistantPrompt} onClose={closeAssistant} />
-      <AssistantOrb onClick={() => assistantOpen ? closeAssistant() : openAssistant()} expanded={assistantOpen} />
-      <ReportIssueModal open={reportOpen} location={userLocation} onClose={closeReport} onSubmitted={refreshIssues} />
-      <DocumentGeneratorModal open={documentOpen} initialType={documentType} onClose={closeDocument} />
+      {!staffSurface ? <Footer /> : null}
+      {!staffSurface ? <AssistantPanel open={assistantOpen} initialPrompt={assistantPrompt} onClose={closeAssistant} /> : null}
+      {!staffSurface ? <AssistantOrb onClick={() => assistantOpen ? closeAssistant() : openAssistant()} expanded={assistantOpen} /> : null}
+      {!staffSurface ? <ReportIssueModal open={reportOpen} location={userLocation} onClose={closeReport} onSubmitted={refreshIssues} /> : null}
+      {!staffSurface ? <DocumentGeneratorModal open={documentOpen} initialType={documentType} onClose={closeDocument} /> : null}
     </UiContext.Provider>
   );
 }

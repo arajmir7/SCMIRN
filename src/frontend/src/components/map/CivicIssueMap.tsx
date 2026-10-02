@@ -197,7 +197,7 @@ export function CivicIssueMap({ title, description, issues, loading = false, err
           <button type="button" className={`btn btn-outline-danger ${filter === 'critical' ? 'active' : ''}`} aria-pressed={filter === 'critical'} onClick={() => setFilter('critical')}>Critical</button>
           <button type="button" className={`btn btn-outline-warning ${filter === 'high' ? 'active' : ''}`} aria-pressed={filter === 'high'} onClick={() => setFilter('high')}>{showRecentReports ? 'High Priority' : 'High'}</button>
         </div>
-        <form className="input-group map-search" onSubmit={(event) => { event.preventDefault(); void searchMapLocation(); }}>
+        <form className="input-group map-search" noValidate onSubmit={(event) => { event.preventDefault(); void searchMapLocation(); }}>
           <span className="input-group-text"><i className="fas fa-search" aria-hidden="true" /></span>
           <label className="visually-hidden" htmlFor="map-search-input">Search area, landmark, or issue</label>
           <input id="map-search-input" type="search" className="form-control" placeholder="Search area, landmark, or issue..." value={query} onChange={(event) => setQuery(event.target.value)} />

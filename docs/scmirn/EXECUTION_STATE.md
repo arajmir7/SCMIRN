@@ -6,7 +6,7 @@
 
 ## CURRENT REALITY
 
-- **Frontend:** React 18, TypeScript, Vite, React Router, Bootstrap and Leaflet under `src/frontend`. The home page now starts with a problem statement and consent handoff to the deterministic route checker. Legacy workspaces remain and are labelled demo/draft surfaces. Playwright has eight browser flows; no automated accessibility suite is configured.
+- **Frontend:** React 18, TypeScript, Vite, React Router, Bootstrap and Leaflet under `src/frontend`. The home page starts with a problem statement and consent handoff to the deterministic route checker. A `/staff` browser workspace now exposes the bounded metadata-only staff API flow; browser tests use synthetic responses and do not establish production authentication. Legacy office, heatmap, tracker, analytics, document and advanced workspaces are grouped under `/labs` with prototype disclosures; prior direct routes redirect there. The current Playwright suite has 13 browser flows. No route-wide automated accessibility suite is configured.
 - **Backend:** Flask application factory, SQLAlchemy, Flask-Migrate, JWT extension, Flask-Caching and Flask-Limiter under `src/backend`. The codebase mixes legacy issue/SRS endpoints with a newer `source_routing` module and partially layered domain/application packages.
 - **Persistence:** Development/testing may use SQLite and `db.create_all()`. Production config requires PostgreSQL and turns off automatic table creation. Alembic head `20261002_04` builds all 34 ORM tables; exact unversioned schemas and legacy-only schemas are preflighted and preserved, while unknown tables, partial staff schemas or detected drift fail before DDL. Six migration tests use isolated SQLite databases. The full chain, four-role grants, forced staff RLS, audit write/read split and startup checks passed a disposable PostgreSQL 16 test; no production database was used. Nine legacy tables remain quarantined without app/worker grants.
 - **Routing and registry:** `source_routing` has versioned source, authority, service and rule records; effective dates; deterministic phrase matching; consent; geography checks; idempotency; bounded derived facts; retention deadlines; and metadata-only audit events. The machine-readable catalog imports five `OFFICIAL_HANDOFF_ONLY` candidates from current official pages. Four pass provenance/hash/host checks; the cybercrime portal remains `DRAFT` because standard TLS verification reported an expired certificate. No route creates a government filing or receipt.
@@ -17,7 +17,7 @@
 - **Integrations:** No live or sandbox government connector is verified. Existing catalog documentation marks these unavailable/not implemented. There is no verified CPGRAMS, API Setu, ServicePlus, UMANG, DigiLocker, MeriPehchaan, BHASHINI, eSign, RTI, consumer, cybercrime, eCourts, legal-aid or municipal API connection.
 - **Queues, storage and observability:** Redis supports production cache/rate-limit/readiness configuration. No durable queue/workflow engine or production object store is configured. Request IDs and privacy-preserving exception logging exist; production metrics, tracing, SIEM delivery, actionable alert routing and measured SLOs do not.
 - **Security and operations:** Production config validation enforces TLS, CA paths, secrets and HTTPS CORS origins. Docker base images and Python dependencies are pinned; local release-tag reuse is rejected. Fresh dependency-lock SCA found no known Python/frontend findings and generated two CycloneDX dependency SBOMs. SAST, secret, DAST, container/OS image scans, image SBOM, signed provenance, backup/restore, DR, and rollback rehearsal remain absent.
-- **Build and tests:** Current backend suite: 67 passed with the opt-in PostgreSQL RLS integration enabled, in a temporary Python 3.11 environment installed from the hash-locked development lockfile, with two existing SQLAlchemy `Query.get()` deprecation warnings. PostgreSQL tests cover all four provisioned roles, denied app DDL and audit reads, auditor read-only access, and RLS. The frontend was not changed in this work. Earlier frontend typecheck/build and eight Playwright flows remain the latest frontend evidence. Feature parity: 9/9. OpenAPI route gate: 15 allowlisted paths documented; 93 other registered API operations returned 503. The release gate exits 1 by design while production controls remain open.
+- **Build and tests:** Current backend suite: 81 passed with the opt-in PostgreSQL RLS integration enabled, in a temporary Python 3.11 environment installed from the hash-locked development lockfile, with two existing SQLAlchemy `Query.get()` deprecation warnings. PostgreSQL tests cover all four provisioned roles, denied app DDL and audit reads, auditor read-only access, and RLS. Current frontend verification: typecheck passed, Vite production build passed, and all 13 Playwright flows passed (7.9 seconds). The strict frontend-design-premium audit reported zero findings. These are local checks; browser API responses are mocked. Feature parity: 9/9. OpenAPI route gate: 15 allowlisted paths documented; 93 other registered API operations returned 503. The release gate exits 1 by design while production controls remain open.
 - **Repository metadata and sensitive artifacts:** This workspace now has a Git baseline and source-tree traceability record. Existing development database, upload and log files were not opened during this assessment. Real `.env` files were not read.
 
 ## TARGET
@@ -29,13 +29,13 @@ Build a modular monolith that accepts a citizen's problem in plain language, use
 1. The route engine still needs reviewed urgency and jurisdiction policies, stable explanation codes, multilingual/adversarial coverage, and an evidence-backed replayable test corpus. Local synthetic state/district matching now fails closed.
 2. The registry has a deterministic checked-in catalog and page hashes, but lacks authenticated review/publication, reviewer separation, independent legal review, and scheduled re-verification. The cybercrime portal cannot be activated until its TLS/source review succeeds.
 3. Staff password+TOTP identity, tenant roles and API/database tenant checks exist, with local PostgreSQL 16 evidence; deployment runtime-role behavior and legacy-record tenant scope remain unverified, and citizen identity/SSO are not implemented.
-4. A small metadata-only case/status event API exists, but there is no staff UI, assignment/appeal/service-level work queue, evidence vault, or official status federation.
+4. A bounded metadata-only case/status API and initial `/staff` browser workspace exist. There is no assignment/appeal/service-level work queue, evidence vault, citizen linkage, or official status federation; staff production access remains disabled by default.
 5. Evidence requirements are registry metadata only; there is no consent/purpose-bound vault or safe upload pipeline.
 6. Connectors are unverified; no authorized API contracts, credentials, sandboxes, receipt validation or operational ownership are present.
 7. Multilingual processing, language-preserving records, accessible assisted-service/CSC flows and low-bandwidth offline behavior are not established.
 8. No production queue, object storage, telemetry/alerting, backup/restore proof, DR targets, performance evidence, or production deployment operator exists.
 9. Security, accessibility, AI grounding and privacy retention controls lack route-wide independent evaluation.
-10. Legacy/demo workspaces remain visible. They are labelled/gated, but their information architecture still needs a problem-first, capability-honest pass.
+10. Legacy/demo workspaces now route through `/labs` and carry prototype disclosures. The information architecture is clearer, but route-wide accessibility, localization, and capability validation remain open.
 
 ## DECISIONS
 
@@ -65,10 +65,10 @@ Build a modular monolith that accepts a citizen's problem in plain language, use
 
 ## VERIFIED
 
-- Backend: 67 tests passed in the hash-locked Python 3.11 environment with the opt-in PostgreSQL integration enabled; the two warnings are existing SQLAlchemy `Query.get()` deprecations. Six isolated SQLite migration tests cover zero-to-head, exact full schema, legacy-only schema, drift rejection, and status conversion/constraints. PostgreSQL 16 integration covers migration head `20261002_04`, four database roles, staff RLS, audit privilege separation and overprivileged-role rejection.
+- Backend: 81 tests passed in the hash-locked Python 3.11 environment with the opt-in PostgreSQL integration enabled; the two warnings are existing SQLAlchemy `Query.get()` deprecations. Six isolated SQLite migration tests cover zero-to-head, exact full schema, legacy-only schema, drift rejection, and status conversion/constraints. PostgreSQL 16 integration covers migration head `20261002_04`, four database roles, staff RLS, audit privilege separation and overprivileged-role rejection.
 - Official page retrieval: nine sources passed standard TLS and returned a content hash; the cybercrime portal did not pass TLS validation and remains `DRAFT`. Four active handoff candidates are exposed; no endpoint submits forms or creates official references.
 - Dependency scans: `pip-audit` reported no known vulnerabilities for the hash-locked Python dependencies; `npm audit` reported zero findings for the frontend lockfile. Python and frontend CycloneDX dependency SBOMs were generated. This does not cover source code, secrets, images/OS packages, or signed build provenance.
-- Frontend: TypeScript typecheck, Vite production build, and all 8 Playwright tests passed (browser suite reported 6.6 seconds).
+- Frontend: the prior 8-flow result is a historical snapshot. Current `npm run typecheck` and `npm run build` passed; `npm run test:e2e` passed all 13 tests in 7.9 seconds. The strict premium UI audit returned 0 findings. Browser staff-service responses were mocked; no production connection was used.
 - Source feature parity: 9 features integrated, 0 unexplained.
 - OpenAPI 3.1 contract and synthetic production-route gate passed: 15 allowlisted paths; 93 other registered API operations returned 503.
 - The 2026-10-02 release gate passed all seven executable checks, including production configuration/Compose validation and local backend/frontend image builds using temporary synthetic secrets and placeholder CA files. It did not start a deployment or contact PostgreSQL/Redis. Its final exit code is 1 because documented production blockers remain.
@@ -79,8 +79,8 @@ Build a modular monolith that accepts a citizen's problem in plain language, use
 
 - Live government integration, legal correctness, source refresh/currentness, jurisdiction accuracy, emergency-service coverage, and localization accuracy.
 - Production PostgreSQL migration/RLS execution and production runtime-role ownership/bypass properties. The local disposable PostgreSQL 16 test verified staff-table policies and cross-tenant denial; legacy-table tenant design is still open.
-- Legacy-record tenant design, staff UI, concurrency, assignment/appeal queues, official receipt lifecycle, secure evidence storage and deletion.
-- Security scans, signed provenance/SBOM, accessibility audit, performance/capacity, backup/restore, DR, rollback and alert response.
+- Legacy-record tenant design, production staff UI/API integration and deployment auth, concurrency, assignment/appeal queues, official receipt lifecycle, secure evidence storage and deletion.
+- Source-code/image security scans, signed provenance, accessibility audit, performance/capacity, backup/restore, DR, rollback and alert response. Dependency-lock SCA and dependency SBOMs have local evidence only.
 - Production data residency, external HTTPS/WAF boundary, approved hosting and operating procedures.
 
 ## RISKS
@@ -90,12 +90,12 @@ Build a modular monolith that accepts a citizen's problem in plain language, use
 - Public source-route endpoints are unauthenticated and rate-limited; privacy abuse, shared-cache behavior and multi-instance limit behavior need assessment.
 - Audit hashes and database triggers do not protect against a privileged database owner; there is no independent immutable anchor.
 - Existing local demo persistence and sample workflows must not be used with real citizen data.
-- A missing Git repository limits reproducibility, diff review and commit-based release provenance.
+- Current changes are not yet committed; commit and remote-push evidence must be recorded before this execution increment is considered complete.
 
 ## NEXT ACTION
 
 1. Repeat the PostgreSQL/RLS integration test in CI and validate the approved deployment database role/configuration before enabling staff routes.
 2. Decide the tenant model for legacy citizen/issue/document/chat/routing records; keep shared-tenant production data disabled until migrated and tested.
-3. Build/review the staff console and authenticated source lifecycle/publishing workflow; refresh the cybercrime source after TLS validation succeeds.
+3. Review the initial staff workspace against the deployment identity/API contract, then build authenticated source lifecycle/publishing and refresh the cybercrime source only after TLS validation succeeds.
 4. Implement a private scanned evidence vault and tenant-bound retention/deletion before accepting files.
 5. Add multilingual/adversarial routing evaluation, accessibility verification, observability, performance, backup/restore, and DR evidence.

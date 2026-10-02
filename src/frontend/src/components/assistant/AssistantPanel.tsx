@@ -46,7 +46,16 @@ export function AssistantPanel({ open, initialPrompt, onClose }: AssistantPanelP
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const text = description.trim();
-    if (!text || !consent || loading) return;
+    if (loading) return;
+    if (!text) {
+      setError('Enter a description before checking for a route.');
+      descriptionRef.current?.focus();
+      return;
+    }
+    if (!consent) {
+      setError('Consent is required before the description is processed.');
+      return;
+    }
     setLoading(true);
     setError('');
     setResult(null);
@@ -84,12 +93,12 @@ export function AssistantPanel({ open, initialPrompt, onClose }: AssistantPanelP
 
       <div className="chat-body p-3" aria-live="polite" aria-relevant="additions text">
         <p className="small text-muted">Describe what happened. SCMIRN uses deterministic rules and shows a government service only when its current official source is verified.</p>
-        <form onSubmit={submit}>
+        <form onSubmit={submit} noValidate>
           <label className="form-label fw-semibold" htmlFor="triage-description">Problem description</label>
           <textarea
             ref={descriptionRef}
             id="triage-description"
-            className="form-control"
+            className="form-control resize-none"
             value={description}
             onChange={(event) => setDescription(event.target.value)}
             rows={5}

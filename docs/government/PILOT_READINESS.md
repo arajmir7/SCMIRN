@@ -5,6 +5,8 @@
 ## What SCMIRN can do at baseline
 
 - Render the current citizen-facing React experience and route through the canonical Flask APIs.
+- Provide an initial `/staff` browser workspace for a bounded metadata-only staff API; the frontend browser tests stub the API and do not demonstrate a deployed connection.
+- Group the older office, heatmap, tracker, analytics, documents and platform demos under `/labs`, with prototype disclosures and legacy-route redirects.
 - Store and display SCMIRN issue/document/chat records and run local analytics/simulations.
 - Run selected deterministic/enterprise/IoT/twin code paths against development data; their operational inputs are not verified government feeds.
 - SCMIRN source code implements consented source-gated routing; four public official handoffs are verified at source/hash/host level. Cybercrime remains hidden because its portal did not pass TLS validation. No filing or official receipt is produced.
@@ -13,7 +15,7 @@
 
 | Capability | State |
 |---|---|
-| Tested locally | Backend suite: 67 passed with the four-role PostgreSQL/RLS integration enabled; six SQLite migration tests cover zero-to-head and existing-schema paths, and the full migration/role/RLS flow reached `20261002_04` on disposable PostgreSQL 16. Python/frontend dependency scans and dependency SBOMs are recorded. Earlier frontend typecheck/build/8 browser tests and the limited PostgreSQL Compose rehearsal are documented separately. |
+| Tested locally | Backend suite: 81 passed with the four-role PostgreSQL/RLS integration enabled; six SQLite migration tests cover zero-to-head and existing-schema paths, and the full migration/role/RLS flow reached `20261002_04` on disposable PostgreSQL 16. Python/frontend dependency scans and dependency SBOMs are recorded. Current frontend test/build evidence is maintained in the [test evidence matrix](../merge/TEST_EVIDENCE_MATRIX.md); all such evidence is local, and staff browser tests use mocked responses. |
 | Simulated | Canonical sample issues, funding counters, IoT, blockchain, resilience, digital twin, enterprise metrics and multiple civic AI/legal outputs. |
 | Needs government data | Office/service records, jurisdiction boundaries, live agency status, city asset/sensor feeds and verified legal sources. |
 | Needs official credentials | Government grievance, SSO, DigiLocker/eSign, notification, payment or case status connectors. |

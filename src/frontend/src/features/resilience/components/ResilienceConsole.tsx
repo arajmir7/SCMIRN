@@ -71,7 +71,7 @@ export function ResilienceConsole() {
 
         <div className="field">
           <label>Mutual aid request (JSON)</label>
-          <textarea className="textarea" value={aidText} onChange={(e) => setAidText(e.target.value)} />
+          <textarea className="textarea resize-none" value={aidText} onChange={(e) => setAidText(e.target.value)} />
         </div>
         {aidResult ? <JsonViewer value={aidResult} /> : null}
       </div>
@@ -80,4 +80,3 @@ export function ResilienceConsole() {
 }
 
 export default ResilienceConsole;
-

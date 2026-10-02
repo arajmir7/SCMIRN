@@ -212,11 +212,11 @@ export function EnterpriseCommandCenter() {
           <p>War game scenarios, enterprise cost-benefit, and automated daily briefing generation.</p>
           <div className="field">
             <label>Crisis simulation payload (JSON)</label>
-            <textarea className="textarea" value={crisisText} onChange={(e) => setCrisisText(e.target.value)} />
+            <textarea className="textarea resize-none" value={crisisText} onChange={(e) => setCrisisText(e.target.value)} />
           </div>
           <div className="field">
             <label>ROI calculator payload (JSON)</label>
-            <textarea className="textarea" value={roiText} onChange={(e) => setRoiText(e.target.value)} />
+            <textarea className="textarea resize-none" value={roiText} onChange={(e) => setRoiText(e.target.value)} />
           </div>
           <div className="field">
             <label>Briefing recipients (comma-separated)</label>
@@ -305,11 +305,11 @@ export function EnterpriseCommandCenter() {
           <p>Smart routing, escalation prediction, and legal precedent analysis.</p>
           <div className="field">
             <label>Workflow routing payload (JSON)</label>
-            <textarea className="textarea" value={workflowText} onChange={(e) => setWorkflowText(e.target.value)} />
+            <textarea className="textarea resize-none" value={workflowText} onChange={(e) => setWorkflowText(e.target.value)} />
           </div>
           <div className="field">
             <label>Legal precedent payload (JSON)</label>
-            <textarea className="textarea" value={legalText} onChange={(e) => setLegalText(e.target.value)} />
+            <textarea className="textarea resize-none" value={legalText} onChange={(e) => setLegalText(e.target.value)} />
           </div>
           <div className="inline-actions">
             <Button onClick={() => runGet('multimodal', '/api/v1/enterprise/ai/multimodal/capabilities')} disabled={loading.multimodal}>
@@ -361,7 +361,7 @@ export function EnterpriseCommandCenter() {
           </div>
           <div className="field">
             <label>Policy playground payload (JSON)</label>
-            <textarea className="textarea" value={policyText} onChange={(e) => setPolicyText(e.target.value)} />
+            <textarea className="textarea resize-none" value={policyText} onChange={(e) => setPolicyText(e.target.value)} />
           </div>
           <div className="inline-actions">
             <Button onClick={() => runGet('trust', '/api/v1/enterprise/blockchain/trust-layer/status')} disabled={loading.trust}>

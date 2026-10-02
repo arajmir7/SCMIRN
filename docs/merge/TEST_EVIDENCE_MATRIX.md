@@ -127,3 +127,18 @@ the current test snapshot; previous sections are historical records.
 
 Detailed implementation status and remaining controls are in
 [`../security/PHASE3_IMPLEMENTATION_STATUS.md`](../security/PHASE3_IMPLEMENTATION_STATUS.md).
+
+## Frontend Labs and staff workspace — 2026-10-02
+
+Checks run locally after adding the prototype-disclosed Labs routes and initial staff workspace. Browser tests use synthetic API responses; none establishes a production connection.
+
+| System / gate | Command or evidence | Result | Limits |
+|---|---|---|---|
+| Frontend TypeScript | `npm run typecheck` in `src/frontend` | **Passed.** | Static typecheck only. |
+| Frontend build | `npm run build` in `src/frontend` (Vite 6.4.3) | **Passed.** | Local production bundle; not deployed. |
+| Full browser suite | `npm run test:e2e` in `src/frontend` | **13 passed in 7.9 seconds.** Includes Labs/direct-route redirects, staff API disabled state, retry, malformed successful response, password+MFA, CSRF case create/status update, auditor read-only state and narrow layout overflow. | Browser staff API responses are mocked; no deployed server, identity provider or production cookies. No route-wide axe or screen-reader run. |
+| Strict premium UI audit | `python <frontend-design-premium>/scripts/audit_project.py src/frontend --mode strict` | **0 findings**; report captured in [`premium-audit.json`](../../src/frontend/premium-audit.json). | Deterministic static contract audit, not a WCAG certification or runtime accessibility evaluation. |
+| Whitespace/conflict check | `git diff --check` | **Passed.** | Does not assess semantics or runtime behavior. |
+| Visual review | Local desktop Labs/heatmap and narrow mobile staff states | Labs disclosure and map state were legible; mobile staff unavailable state has no assistant/footer overlap or horizontal overflow. | Manual, limited viewport review; screenshots are in `/tmp`, not release artifacts. |
+
+Release status remains `NOT PRODUCTION READY`: data governance approvals, deployed identity/database validation, independent accessibility/security evidence and operations remain open.

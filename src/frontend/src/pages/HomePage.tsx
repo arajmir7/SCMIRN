@@ -105,9 +105,9 @@ export function HomePage() {
               <p className="lead mb-4 opacity-90 hero-lead">
                 Describe the problem in your own words. SCMIRN checks for a currently verified official service and explains when it cannot confirm a route. It does not file a request.
               </p>
-              <form onSubmit={continueToSourceCheck} className="bg-white text-dark rounded-4 p-3 p-md-4 shadow-sm mb-4" aria-label="Start with your problem">
+              <form onSubmit={continueToSourceCheck} noValidate className="bg-white text-dark rounded-4 p-3 p-md-4 shadow-sm mb-4" aria-label="Start with your problem">
                 <label className="form-label fw-semibold" htmlFor="home-problem-query">What happened?</label>
-                <textarea id="home-problem-query" className="form-control mb-2" rows={3} maxLength={8000}
+                <textarea id="home-problem-query" className="form-control mb-2 resize-none" rows={3} maxLength={8000}
                   placeholder="Describe the issue. Leave out account numbers, Aadhaar, passwords and OTPs."
                   value={rightsQuery} onChange={(event) => setRightsQuery(event.target.value)} />
                 <div className="small text-muted mb-3">Nothing is processed until you review the consent step. No agency submission is made.</div>
@@ -132,7 +132,7 @@ export function HomePage() {
                 <img src="/images/hero-civic.jpg" alt="Citizens working together on civic technology" className="img-fluid rounded-4 shadow-lg hero-photo" />
                 <div className="position-absolute bottom-0 start-0 m-3 p-3 bg-white rounded-3 shadow-lg text-dark hero-status-card">
                   <div className="d-flex align-items-center gap-2 mb-2"><div className="bg-warning rounded-circle hero-status-dot" /><small className="fw-bold text-warning">Prototype · Source Check Required</small></div>
-                  <small className="text-muted">No verified service is currently available for handoff.</small>
+                  <small className="text-muted">Some routes have verified public sources. Each handoff is checked at request time.</small>
                 </div>
               </div>
             </div>
@@ -168,9 +168,9 @@ export function HomePage() {
           <div className="col-lg-6"><div className="bg-white border rounded-4 p-4 shadow-sm">
             <h3 className="h5 fw-bold mb-3">Check for a Verified Route</h3>
             <p className="small text-muted mb-3">Your description is sent for a consented, source-gated route check. SCMIRN does not analyze legal rights.</p>
-            <form onSubmit={continueToSourceCheck}>
+            <form onSubmit={continueToSourceCheck} noValidate>
               <label className="visually-hidden" htmlFor="rights-query">Describe an issue to check for a verified route</label>
-              <textarea id="rights-query" className="form-control mb-3" rows={4} placeholder="Describe the civic issue. Do not include account numbers, Aadhaar, passwords, or OTPs." value={rightsQuery} onChange={(event) => setRightsQuery(event.target.value)} />
+              <textarea id="rights-query" className="form-control mb-3 resize-none" rows={4} placeholder="Describe the civic issue. Do not include account numbers, Aadhaar, passwords, or OTPs." value={rightsQuery} onChange={(event) => setRightsQuery(event.target.value)} />
               <button type="submit" className="btn btn-dark w-100 mb-3" disabled={!rightsQuery.trim()}><i className="fas fa-route me-2" aria-hidden="true" />Continue to Route Check</button>
             </form>
             <div className="small text-muted">Consent is required before processing. Your description is not stored by the route-check service.</div>

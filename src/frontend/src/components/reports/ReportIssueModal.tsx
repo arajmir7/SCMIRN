@@ -51,7 +51,21 @@ export function ReportIssueModal({ open, location, onClose, onSubmitted }: Repor
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!consent) return;
+    if (loading) return;
+    if (!values.title.trim()) {
+      setFeedback({ kind: 'danger', text: 'Enter a short title for this SCMIRN demo record.' });
+      event.currentTarget.querySelector<HTMLInputElement>('#report-title')?.focus();
+      return;
+    }
+    if (!values.description.trim()) {
+      setFeedback({ kind: 'danger', text: 'Describe the issue without personal details.' });
+      event.currentTarget.querySelector<HTMLTextAreaElement>('#report-description')?.focus();
+      return;
+    }
+    if (!consent) {
+      setFeedback({ kind: 'danger', text: 'Confirm that this saves a prototype record only.' });
+      return;
+    }
     setFeedback(null);
     setLoading(true);
     const formData = new FormData();
@@ -82,7 +96,7 @@ export function ReportIssueModal({ open, location, onClose, onSubmitted }: Repor
         <div className="alert alert-warning small" role="note">
           This prototype saves a record to SCMIRN only. It does not notify or file with a government agency. Avoid personal identifiers and do not upload images showing people, documents, or private information.
         </div>
-        <form onSubmit={submit} encType="multipart/form-data">
+        <form onSubmit={submit} encType="multipart/form-data" noValidate>
           <div className="mb-3">
             <label className="visually-hidden" htmlFor="report-title">Issue title</label>
             <input id="report-title" type="text" name="title" className="form-control form-control-lg"
@@ -91,7 +105,7 @@ export function ReportIssueModal({ open, location, onClose, onSubmitted }: Repor
           </div>
           <div className="mb-3">
             <label className="visually-hidden" htmlFor="report-description">Issue description</label>
-            <textarea id="report-description" name="description" className="form-control" rows={3}
+            <textarea id="report-description" name="description" className="form-control resize-none" rows={3}
               placeholder="Describe the issue without names, account numbers, or other personal details..." required maxLength={2000}
               value={values.description} onChange={(event) => update('description', event.target.value)} />
           </div>

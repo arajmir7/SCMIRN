@@ -219,7 +219,7 @@ export function CityOrganismConsole() {
           </div>
           <div className="field">
             <label>Urban Design Prompt</label>
-            <textarea className="textarea" value={designPrompt} onChange={(e) => setDesignPrompt(e.target.value)} />
+            <textarea className="textarea resize-none" value={designPrompt} onChange={(e) => setDesignPrompt(e.target.value)} />
           </div>
           <div className="inline-actions">
             <Button

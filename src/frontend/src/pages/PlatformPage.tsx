@@ -52,7 +52,7 @@ function DocumentLookup() {
   return (
     <div className="platform-workspace">
       <p className="helper-text mb-3">Prototype lookup only. Use synthetic data; stored drafts may contain personal information. PDF delivery is not available in production.</p>
-      <form className="input-group mb-3" onSubmit={(event) => { event.preventDefault(); setActiveId(documentId.trim()); }}>
+      <form className="input-group mb-3" noValidate onSubmit={(event) => { event.preventDefault(); const id = documentId.trim(); if (!id) { setDownloadError('Enter a document ID.'); event.currentTarget.querySelector<HTMLInputElement>('#stored-document-id')?.focus(); return; } setDownloadError(''); setActiveId(id); }}>
         <label className="visually-hidden" htmlFor="stored-document-id">Document ID</label>
         <input id="stored-document-id" className="form-control" value={documentId} onChange={(event) => setDocumentId(event.target.value)} placeholder="Document ID" required />
         <button type="submit" className="btn btn-dark">Load Document</button>

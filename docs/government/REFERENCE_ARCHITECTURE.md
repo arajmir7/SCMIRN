@@ -2,7 +2,7 @@
 
 ## Implemented repository architecture
 
-SCMIRN is currently a modular monolith: a React/TypeScript/Vite frontend and Flask application with SQLAlchemy, Alembic, PostgreSQL production configuration, Redis-backed cache/rate-limit configuration, and deterministic `source_routing`. Alembic head `20261002_04` covers all 34 ORM tables. Staff password+TOTP, tenant roles and a metadata-only case API are implemented; the full migration chain, four database roles and staff RLS passed disposable PostgreSQL 16 tests. Production database/runtime-role validation remains open. No durable worker contract, production object store, government connector runtime, staff UI or production identity provider is verified.
+SCMIRN is currently a modular monolith: a React/TypeScript/Vite frontend and Flask application with SQLAlchemy, Alembic, PostgreSQL production configuration, Redis-backed cache/rate-limit configuration, and deterministic `source_routing`. Alembic head `20261002_04` covers all 34 ORM tables. Staff password+TOTP, tenant roles, a metadata-only case API and an initial `/staff` browser UI are implemented; the full migration chain, four database roles and staff RLS passed disposable PostgreSQL 16 tests. The UI's browser suite uses mock API responses; production database/runtime-role, service connectivity, identity-provider and end-to-end deployment validation remain open. No durable worker contract, production object store or government connector runtime is verified.
 
 ```mermaid
 flowchart LR

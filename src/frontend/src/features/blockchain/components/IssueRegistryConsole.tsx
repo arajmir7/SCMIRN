@@ -53,7 +53,7 @@ export function IssueRegistryConsole() {
 
         <div className="field">
           <label>Issue registry request (JSON)</label>
-          <textarea className="textarea" value={payloadText} onChange={(e) => setPayloadText(e.target.value)} />
+          <textarea className="textarea resize-none" value={payloadText} onChange={(e) => setPayloadText(e.target.value)} />
         </div>
 
         <div className="inline-actions">

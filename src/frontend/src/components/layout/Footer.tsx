@@ -13,18 +13,19 @@ export function Footer() {
             <h3 className="h6 fw-bold mb-3">Platform</h3>
             <ul className="list-unstyled text-muted small">
               <li className="mb-2"><Link to="/#features" className="text-decoration-none text-muted">Problem Solver</Link></li>
-              <li className="mb-2"><Link to="/offices" className="text-decoration-none text-muted">Office Finder</Link></li>
-              <li className="mb-2"><Link to="/documents" className="text-decoration-none text-muted">Document Gen</Link></li>
-              <li className="mb-2"><Link to="/heatmap" className="text-decoration-none text-muted">Demo Issue Map</Link></li>
+              <li className="mb-2"><Link to="/labs" className="text-decoration-none text-muted">Labs · Demo Workspaces</Link></li>
+              <li className="mb-2"><Link to="/labs/offices" className="text-decoration-none text-muted">Office Directory · Demo</Link></li>
+              <li className="mb-2"><Link to="/labs/documents" className="text-decoration-none text-muted">Draft Templates · Demo</Link></li>
+              <li className="mb-2"><Link to="/labs/heatmap" className="text-decoration-none text-muted">Issue Map · Demo</Link></li>
             </ul>
           </div>
           <div className="col-lg-2">
             <h3 className="h6 fw-bold mb-3">Resources</h3>
             <ul className="list-unstyled text-muted small">
               <li className="mb-2"><Link to="/#rights" className="text-decoration-none text-muted">Route Check Limits</Link></li>
-              <li className="mb-2"><Link to="/platform" className="text-decoration-none text-muted">Prototype Workspaces</Link></li>
-              <li className="mb-2"><Link to="/documents" className="text-decoration-none text-muted">Draft Templates</Link></li>
-              <li className="mb-2"><Link to="/offices" className="text-decoration-none text-muted">Directory Demo</Link></li>
+              <li className="mb-2"><Link to="/staff" className="text-decoration-none text-muted">Staff workspace</Link></li>
+              <li className="mb-2"><Link to="/labs/platform" className="text-decoration-none text-muted">Platform Showcase · Demo</Link></li>
+              <li className="mb-2"><Link to="/labs/tracker" className="text-decoration-none text-muted">SCMIRN Records · Demo</Link></li>
             </ul>
           </div>
           <div className="col-lg-4">

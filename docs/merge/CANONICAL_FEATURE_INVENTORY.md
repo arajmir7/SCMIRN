@@ -20,7 +20,7 @@
 | CAN-12 | File upload and generated document downloads | `/api/uploads/<filename>`, multipart report, `/api/documents/*` | `PARTIAL`; path exists; malware scanning, private object storage and complete access checks unverified | Do not import source evidence upload feature; require hardening before production. |
 | CAN-13 | Enterprise OpenAPI/docs | `docs/enterprise/openapi-enterprise.yaml` and architecture/security/ROI/design-system docs | `NOT_TESTED` as a deployment contract; docs describe broader platform than proven live code | Reconcile claims with route inventory and mark simulations/external boundaries. |
 
-## Runtime observations
+## Runtime observations (baseline snapshot, 2026-10-01)
 
 - Flask app factory registers the current active API blueprints from `src/backend/app/__init__.py`; frontend routes are `/`, `/offices`, `/heatmap`, `/tracker`, `/analytics`, `/documents`, and `/platform`.
 - Existing legacy Jinja UI is not the registered public frontend. It remains under `docs/legacy/flask-frontend-reference/`.
@@ -42,3 +42,16 @@ The descriptions above record the pre-change baseline. The following changes pre
 | Advanced workspaces | Added prototype/simulation labels; blockchain hash output is in-memory and marked `SIMULATED`, with no database or chain transaction. | `PlatformPage.tsx`, workspace components, `blockchain.py`; production gate blocks simulation APIs. |
 | Production safety | Required explicit secret/PostgreSQL/TLS Redis/HTTPS CORS config, disabled schema auto-create/seeding, added routing migration and production API allowlist; migration mode rejects traffic. Disposable PostgreSQL/Redis TLS Compose rehearsal completed migration, health, proxy and safe-abstention checks. | `config.py`, `database.py`, `__init__.py`, Alembic migration and release evidence; no RLS, identity, full schema baseline, backup/restore or live deployment proof. |
 | Footer/docs | Removed fake newsletter/social/policy controls; root README and enterprise/OpenAPI docs now separate prototype evidence from target-state proposals. | `README.md`, `docs/enterprise/*`, `openapi-enterprise.yaml`. |
+
+## Frontend Labs and staff update — 2026-10-02
+
+The original inventory and preceding implementation notes are preserved as dated snapshots. Current frontend routing and evidence are:
+
+| Area | Current implementation | Evidence and limits |
+|---|---|---|
+| Public navigation | Adds `/labs` and `/staff` navigation. Prior `/offices`, `/heatmap`, `/tracker`, `/analytics`, `/documents`, and `/platform` paths redirect to matching `/labs/*` routes. | Covered by Playwright route/navigation checks. This is UI routing, not a service authorization boundary. |
+| Labs | `/labs` lists the office directory, issue map, tracker, analytics, draft templates, and platform showcase as demo workspaces. Nested routes show the Labs disclosure; synthetic/personal-data warnings identify their boundaries. | UI labels and navigation verified locally. Underlying sample APIs and demos remain unfit for real casework. |
+| Staff workspace | `/staff` checks session state, provides password + MFA screens when the API requires sign-in, and supports bounded metadata case list/create/status update, CSRF headers, and read-only auditor UI. Disabled, malformed-response, network, empty and role states are handled. | 13 Playwright tests cover the 5 new staff/Labs flows plus existing routes; staff endpoints are mocked in browser tests. Backend staff auth, ABAC and PostgreSQL RLS have separate disposable-database evidence. Production identity and API connectivity remain unverified, and staff API stays disabled by default. |
+| Evidence | TypeScript typecheck and Vite build pass; strict premium UI audit reports zero findings; the full Playwright suite passes 13 tests. | Local static/browser evidence only. No route-wide axe scan, screen reader review, independent WCAG/GIGW audit, or production deployment smoke was run. |
+
+The conservative readiness verdict remains `NOT PRODUCTION READY`.

@@ -50,7 +50,17 @@ export function DocumentGeneratorModal({ open, initialType, onClose }: DocumentG
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!syntheticDataConfirmed) return;
+    if (loading) return;
+    const requiredValues = [values.name, values.phone, values.address, values.issue];
+    if (requiredValues.some((value) => !value.trim())) {
+      setError('Complete the applicant, contact, address, and request fields using synthetic information.');
+      event.currentTarget.querySelector<HTMLInputElement>('#document-name')?.focus();
+      return;
+    }
+    if (!syntheticDataConfirmed) {
+      setError('Confirm that the information is synthetic before generating a draft.');
+      return;
+    }
     setLoading(true);
     setError(null);
     const result = await apiPost<GenerateResponse>('/api/documents/generate', {
@@ -77,7 +87,7 @@ export function DocumentGeneratorModal({ open, initialType, onClose }: DocumentG
         <div className="alert alert-warning small" role="note">
           Prototype template only. Do not enter real names, phone numbers, addresses, or case details. The backend may retain generated drafts. Output is not legally reviewed and is not filed with an agency.
         </div>
-        <form onSubmit={submit}>
+        <form onSubmit={submit} noValidate>
           <div className="row g-3 mb-3">
             <div className="col-md-6">
               <label className="form-label small text-muted" htmlFor="document-type">Application Type</label>
@@ -111,7 +121,7 @@ export function DocumentGeneratorModal({ open, initialType, onClose }: DocumentG
           </div>
           <div className="mb-3">
             <label className="form-label small text-muted" htmlFor="document-issue">Issue / Request Summary</label>
-            <textarea id="document-issue" className="form-control" rows={4} placeholder="Describe your case in 4-6 lines" required
+            <textarea id="document-issue" className="form-control resize-none" rows={4} placeholder="Describe your case in 4-6 lines" required
               value={values.issue} onChange={(event) => update('issue', event.target.value)} />
           </div>
           <div className="form-check mb-3">
@@ -125,7 +135,7 @@ export function DocumentGeneratorModal({ open, initialType, onClose }: DocumentG
         </form>
         <div className="mt-4">
           <label className="form-label small text-muted" htmlFor="generated-document">Unreviewed Draft Output</label>
-          <textarea id="generated-document" className="form-control doc-preview" rows={14}
+          <textarea id="generated-document" className="form-control doc-preview resize-none" rows={14}
             placeholder="Generated application will appear here..." readOnly value={output} />
         </div>
       </div>

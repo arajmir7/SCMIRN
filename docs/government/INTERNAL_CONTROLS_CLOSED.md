@@ -44,4 +44,8 @@
 
 ## Release decision
 
-`NOT PRODUCTION READY`. Staff identity, roles, a metadata-only case API, and PostgreSQL RLS have local disposable-database evidence. Production database/role validation, legacy-record tenant isolation, the staff console, evidence handling, operational controls, external approvals and independent evidence remain release blockers. See [execution state](../scmirn/EXECUTION_STATE.md), [source provenance](SOURCE_PROVENANCE.md), and [database inventory](DATABASE_SCHEMA.md).
+`NOT PRODUCTION READY`. Staff identity, roles, a metadata-only case API, and PostgreSQL RLS have local disposable-database evidence. Production database/role validation, legacy-record tenant isolation, production-connected staff console and identity, evidence handling, operational controls, external approvals and independent evidence remain release blockers. See [execution state](../scmirn/EXECUTION_STATE.md), [source provenance](SOURCE_PROVENANCE.md), and [database inventory](DATABASE_SCHEMA.md).
+
+## Current frontend follow-up — 2026-10-02
+
+The Phase 2 table above is a preserved historical snapshot. An initial `/staff` browser UI has since been added for the limited metadata-only API, and legacy/demo workspaces are grouped under `/labs` with prototype disclosures. Staff browser tests use mocked service responses; there is still no production-connected staff console, identity provider, assignment/evidence workflow or independent review. These changes do not close the release blockers above. Current verification belongs in the [execution state](../scmirn/EXECUTION_STATE.md) and [test evidence matrix](../merge/TEST_EVIDENCE_MATRIX.md).

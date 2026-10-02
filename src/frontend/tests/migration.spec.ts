@@ -127,7 +127,8 @@ test('rights route handoff and consented issue demo record work', async ({ page 
     await route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify({ success: true }) });
   });
 
-  await page.getByRole('button', { name: /Create Demo Record/ }).click();
+  await page.getByRole('link', { name: 'Open Labs' }).click();
+  await page.getByRole('button', { name: 'Create a sample record' }).click();
   const dialog = page.getByRole('dialog', { name: 'Create SCMIRN Demo Record' });
   await expect(dialog).toBeVisible();
   await expect(dialog.getByRole('button', { name: 'Close' })).toBeFocused();
@@ -148,7 +149,7 @@ test('rights route handoff and consented issue demo record work', async ({ page 
   expect(multipartRequest).toBe(true);
   await page.keyboard.press('Escape');
   await expect(dialog).toBeHidden();
-  await expect(page.getByRole('button', { name: /Create Demo Record/ })).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Create a sample record' })).toBeFocused();
 });
 
 test('document generator exposes all types and reports its generated result', async ({ page }) => {
@@ -324,7 +325,8 @@ test('mobile layout has no horizontal page overflow', async ({ page }) => {
   }
 
   await page.setViewportSize({ width: 320, height: 844 });
-  await page.getByRole('button', { name: /Create Demo Record/ }).click();
+  await page.getByRole('link', { name: 'Open Labs' }).click();
+  await page.getByRole('button', { name: 'Create a sample record' }).click();
   const reportDialog = page.getByRole('dialog', { name: 'Create SCMIRN Demo Record' });
   await expect(reportDialog).toBeVisible();
   const dialog = await reportDialog.boundingBox();

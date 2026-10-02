@@ -11,6 +11,10 @@ html {
   outline-offset: 2px;
 }
 
+textarea.resize-none {
+  resize: none;
+}
+
 .min-w-0 {
   min-width: 0;
 }

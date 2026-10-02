@@ -121,7 +121,7 @@ export function LegalCopilotConsole() {
 
         <div className="field">
           <label>User query</label>
-          <textarea className="textarea" value={query} onChange={(e) => setQuery(e.target.value)} />
+          <textarea className="textarea resize-none" value={query} onChange={(e) => setQuery(e.target.value)} />
         </div>
 
         <div className="console-grid" style={{ gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 12 }}>
@@ -172,4 +172,3 @@ export function LegalCopilotConsole() {
 }
 
 export default LegalCopilotConsole;
-

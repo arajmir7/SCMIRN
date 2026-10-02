@@ -1,6 +1,7 @@
 import type {
   ButtonHTMLAttributes,
   HTMLAttributes,
+  MouseEventHandler,
   ReactNode,
 } from 'react';
 import { useMemo } from 'react';
@@ -10,11 +11,14 @@ type ButtonVariant = 'primary' | 'ghost' | 'neutral' | 'danger' | 'success' | 'w
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant | string;
   icon?: ReactNode;
+  onClick: MouseEventHandler<HTMLButtonElement>;
 }
 
 export const Button = ({
   variant = 'primary',
   icon,
+  type = 'button',
+  onClick,
   className,
   children,
   ...rest
@@ -22,7 +26,7 @@ export const Button = ({
   const bootstrapVariant = variant === 'ghost' ? 'outline-secondary' : variant === 'neutral' ? 'outline-dark' : String(variant);
   const classes = ['btn', `btn-${bootstrapVariant}`, 'platform-action', className].filter(Boolean).join(' ');
   return (
-    <button className={classes} {...rest}>
+    <button type={type} onClick={onClick} className={classes} {...rest}>
       {icon ? <span className="btn-icon" aria-hidden="true">{icon}</span> : null}
       <span className="btn-label">{children}</span>
     </button>

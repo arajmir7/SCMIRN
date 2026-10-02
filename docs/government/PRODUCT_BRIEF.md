@@ -10,7 +10,9 @@ The React home page begins with “What happened?” and offers consent-gated de
 
 Other legacy workspaces remain demo or draft capabilities. They do not constitute live government records, case tracking, legal advice, or connected agency services. See [integration status](INTEGRATION_MATRIX.md) and [pilot readiness](PILOT_PROPOSAL.md).
 
-An opt-in staff-only API now supports password+TOTP login, tenant roles, session revocation, and bounded metadata-only case status workflows. It has no staff UI, citizen-record linkage, evidence upload, government submission, or verified PostgreSQL RLS deployment. It remains disabled by default in production.
+An opt-in staff-only API supports password+TOTP login, tenant roles, session revocation, and bounded metadata-only case status workflows. A new `/staff` workspace provides a browser UI for this limited API; it does not add citizen-record linkage, evidence upload, agency submission, assignment queues, or official status federation. The UI is locally exercised with mocked browser responses, and the API/RLS path has disposable PostgreSQL evidence. Neither the staff API nor its deployment identity/database configuration has been verified in production; staff routes remain disabled by default.
+
+The `/labs` workspace collects legacy office, heatmap, tracker, analytics, document, and platform demonstrations under explicit prototype disclosures. These screens still rely on sample/demo capabilities and are not live government services. Older direct routes redirect into the disclosed Labs area.
 
 ## Users and intended value
 
