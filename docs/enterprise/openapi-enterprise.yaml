@@ -44,7 +44,7 @@ paths:
       tags: [Routing]
       summary: Check for a source-verified civic service route
       description: Requires explicit consent. Returns route guidance only; it never submits a request to an agency.
-      x-scmirn-production-status: Allowlisted prototype endpoint; service catalog currently empty
+      x-scmirn-production-status: Disabled with deterministic 503 until route-decision storage has an enforced subject/tenant boundary
       parameters:
         - in: header
           name: Idempotency-Key
@@ -71,13 +71,13 @@ paths:
                 $ref: "#/components/schemas/RouteDecision"
         "400": { description: Invalid input or missing consent }
         "409": { description: Idempotency key reused with different input }
-        "503": { description: Endpoint disabled during production migration mode }
+        "503": { description: Endpoint disabled until decision retention and tenant/subject isolation are implemented }
   /api/v1/jurisdiction/resolve:
     post:
       tags: [Routing]
       summary: Alias for the consented source-gated route check
       description: Returns route guidance only; it never files a government complaint.
-      x-scmirn-production-status: Allowlisted prototype endpoint; service catalog currently empty
+      x-scmirn-production-status: Disabled with deterministic 503 until route-decision storage has an enforced subject/tenant boundary
       requestBody:
         required: true
         content:
@@ -99,6 +99,7 @@ paths:
                 $ref: "#/components/schemas/RouteDecision"
         "400": { description: Invalid input or missing consent }
         "409": { description: Idempotency key conflict }
+        "503": { description: Endpoint disabled until decision retention and tenant/subject isolation are implemented }
   /api/v1/services:
     get:
       tags: [Routing]

@@ -54,25 +54,58 @@ def test_forced_staff_rls_with_non_owner_runtime_role(monkeypatch):
 
     suffix = uuid.uuid4().hex[:12]
     database_name = f"scmirn_rls_{suffix}"
-    role_name = f"scmirn_runtime_{suffix}"
-    role_password = f"test-only-{uuid.uuid4().hex}"
+    role_names = {
+        "SCMIRN_MIGRATOR_DB_ROLE": f"scmirn_migrator_{suffix}",
+        "SCMIRN_APP_DB_ROLE": f"scmirn_app_{suffix}",
+        "SCMIRN_WORKER_DB_ROLE": f"scmirn_worker_{suffix}",
+        "SCMIRN_AUDITOR_DB_ROLE": f"scmirn_auditor_{suffix}",
+    }
+    overprivileged_role = f"scmirn_overprivileged_{suffix}"
+    role_passwords = {
+        key.replace("_ROLE", "_PASSWORD"): f"test-only-{uuid.uuid4().hex}"
+        for key in role_names
+    }
     root_engine = create_engine(owner_url)
     with root_engine.connect().execution_options(isolation_level="AUTOCOMMIT") as connection:
         connection.execute(text(f'CREATE DATABASE "{database_name}"'))
-        connection.execute(text(f"CREATE ROLE {role_name} LOGIN PASSWORD '{role_password}'"))
 
     test_url = owner_url.set(database=database_name)
-    runtime_url = test_url.set(username=role_name, password=role_password)
+    for key, value in role_names.items():
+        monkeypatch.setenv(key, value)
+    for key, value in role_passwords.items():
+        monkeypatch.setenv(key, value)
+    monkeypatch.setenv(
+        "SCMIRN_ROLE_PROVISIONER_DATABASE_URL",
+        test_url.render_as_string(hide_password=False),
+    )
+    migrator_url = test_url.set(
+        username=role_names["SCMIRN_MIGRATOR_DB_ROLE"],
+        password=role_passwords["SCMIRN_MIGRATOR_DB_PASSWORD"],
+    )
+    runtime_url = test_url.set(
+        username=role_names["SCMIRN_APP_DB_ROLE"],
+        password=role_passwords["SCMIRN_APP_DB_PASSWORD"],
+    )
+    auditor_url = test_url.set(
+        username=role_names["SCMIRN_AUDITOR_DB_ROLE"],
+        password=role_passwords["SCMIRN_AUDITOR_DB_PASSWORD"],
+    )
     runtime_engine = None
+    auditor_engine = None
+    overprivileged_engine = None
+    overprivileged_password = f"test-only-{uuid.uuid4().hex}"
     test_admin_engine = create_engine(test_url)
     app = None
     runtime_app = None
     try:
+        from scripts.provision_postgres_roles import provision
+        provision()
+
         class PostgresMigrationTestConfig(TestingConfig):
             AUTO_CREATE_DB = False
             AUTO_SEED_ROUTING_REGISTRY = False
             STAFF_AUTH_ENABLED = True
-            SQLALCHEMY_DATABASE_URI = test_url.render_as_string(hide_password=False)
+            SQLALCHEMY_DATABASE_URI = migrator_url.render_as_string(hide_password=False)
 
         monkeypatch.setitem(config_by_name, "postgres_rls_test", PostgresMigrationTestConfig)
         monkeypatch.setattr(app_package.app_config, "DATA_DIR", tempfile.mkdtemp(prefix="scmirn-pg-rls-data-"))
@@ -83,6 +116,7 @@ def test_forced_staff_rls_with_non_owner_runtime_role(monkeypatch):
             alembic_config = Config(str(migrations / "alembic.ini"))
             alembic_config.set_main_option("script_location", str(migrations))
             command.upgrade(alembic_config, "head")
+        provision()
 
         tenant_scoped_tables = (
             "tenants", "staff_users", "staff_mfa_factors", "staff_mfa_challenges",
@@ -94,14 +128,6 @@ def test_forced_staff_rls_with_non_owner_runtime_role(monkeypatch):
             "staff_role_grants", "staff_sessions", "staff_cases",
             "staff_case_events", "staff_audit_events",
         )
-        with test_admin_engine.begin() as connection:
-            connection.execute(text(f"GRANT CONNECT ON DATABASE {database_name} TO {role_name}"))
-            connection.execute(text(f"GRANT USAGE ON SCHEMA public TO {role_name}"))
-            connection.execute(text(f"GRANT SELECT, INSERT, UPDATE, DELETE ON tenants TO {role_name}"))
-            connection.execute(text(
-                f"GRANT SELECT, INSERT, UPDATE, DELETE ON {', '.join(staff_tables)} TO {role_name}"
-            ))
-
         now = datetime.now(timezone.utc)
         tenant_a, tenant_b = str(uuid.uuid4()), str(uuid.uuid4())
         user_a, user_b = str(uuid.uuid4()), str(uuid.uuid4())
@@ -122,6 +148,22 @@ def test_forced_staff_rls_with_non_owner_runtime_role(monkeypatch):
             ])
 
         runtime_engine = create_engine(runtime_url)
+        auditor_engine = create_engine(auditor_url)
+        role_name = role_names["SCMIRN_APP_DB_ROLE"]
+        from app.infrastructure.database.security import validate_production_runtime_role
+        with runtime_engine.connect() as connection:
+            assert validate_production_runtime_role(connection, expected_role=role_name) == role_name
+        with root_engine.connect().execution_options(isolation_level="AUTOCOMMIT") as connection:
+            connection.execute(text(f"CREATE ROLE {overprivileged_role} LOGIN CREATEDB PASSWORD '{overprivileged_password}'"))
+            connection.execute(text(f"GRANT CONNECT ON DATABASE {database_name} TO {overprivileged_role}"))
+        overprivileged_engine = create_engine(
+            test_url.set(username=overprivileged_role, password=overprivileged_password)
+        )
+        with overprivileged_engine.connect() as connection:
+            with pytest.raises(RuntimeError, match="privileged capability"):
+                validate_production_runtime_role(connection, expected_role=overprivileged_role)
+        overprivileged_engine.dispose()
+        overprivileged_engine = None
         with runtime_engine.connect() as connection:
             role_state = connection.execute(text("SELECT rolsuper, rolbypassrls FROM pg_roles WHERE rolname = current_user")).one()
             assert role_state.rolsuper is False
@@ -134,6 +176,10 @@ def test_forced_staff_rls_with_non_owner_runtime_role(monkeypatch):
             assert connection.execute(text("SELECT count(*) FROM staff_users")).scalar_one() == 0
             tenant_directory = connection.execute(text("SELECT count(*) FROM tenants")).scalar_one()
             assert tenant_directory == 2
+
+        with runtime_engine.begin() as connection:
+            assert connection.execute(text("SELECT count(*) FROM staff_users")).scalar_one() == 0
+            assert connection.execute(text("SELECT count(*) FROM staff_cases")).scalar_one() == 0
 
         with runtime_engine.begin() as connection:
             connection.execute(text("SELECT set_config('scmirn.tenant_id', :tenant, true)"), {"tenant": tenant_a})
@@ -190,8 +236,30 @@ def test_forced_staff_rls_with_non_owner_runtime_role(monkeypatch):
         runtime_app = create_app("postgres_runtime_test")
         with runtime_app.app_context():
             from app.staff_auth.security import encrypt_totp_secret, hash_password
+            from app.source_routing.audit_chain import append_event
             password_hash = hash_password(_TEST_PASSWORD)
             encrypted_secret = encrypt_totp_secret(secret)
+            audit_row = append_event(
+                tenant_id=tenant_a,
+                actor_id=user_a,
+                actor_role="CASE_OFFICER",
+                action="test.database_role",
+                object_type="test",
+                object_id="role-boundary",
+                details={"scope": "synthetic"},
+            )
+            audit_hash = audit_row.event_hash
+            db.session.commit()
+        with test_admin_engine.connect() as connection:
+            from app.source_routing.audit_chain import verify_chain
+            assert verify_chain(connection)["valid"] is True
+            assert connection.execute(text("SELECT event_hash FROM audit_events")).scalar_one() == audit_hash
+        with auditor_engine.connect() as connection:
+            assert connection.execute(text("SELECT event_hash FROM public.audit_events")).scalar_one() == audit_hash
+            assert connection.execute(text("SELECT count(*) FROM public.staff_audit_events")).scalar_one() == 0
+            with pytest.raises(DBAPIError):
+                connection.execute(text("DELETE FROM public.audit_events"))
+                connection.rollback()
         with test_admin_engine.begin() as connection:
             connection.execute(text("INSERT INTO staff_mfa_factors (id, tenant_id, user_id, secret_ciphertext, active, last_totp_step, failed_attempts, created_at) VALUES (:id, :tenant, :user, :secret, true, -1, 0, :now)"), {
                 "id": str(uuid.uuid4()), "tenant": tenant_a, "user": user_a,
@@ -205,6 +273,29 @@ def test_forced_staff_rls_with_non_owner_runtime_role(monkeypatch):
                 "id": str(uuid.uuid4()), "tenant": tenant_b, "user": user_b, "now": now,
             })
             foreign_case_id = connection.execute(text("SELECT id FROM staff_cases WHERE tenant_id = :tenant"), {"tenant": tenant_b}).scalar_one()
+
+        # The runtime role cannot use DDL, disable forced RLS, or read audit
+        # tables directly. SET row_security=off must error on protected rows.
+        for statement in (
+            "CREATE TABLE public.scmirn_forbidden_table (id integer)",
+            "CREATE ROLE scmirn_forbidden",
+            "ALTER TABLE public.staff_users DISABLE ROW LEVEL SECURITY",
+            "SELECT * FROM public.staff_audit_events",
+            "SELECT event_hash FROM public.audit_events",
+            "SELECT * FROM public.users",
+        ):
+            with runtime_engine.connect() as connection:
+                with pytest.raises(DBAPIError):
+                    connection.execute(text(statement))
+            connection.rollback()
+        with runtime_engine.connect().execution_options(isolation_level="AUTOCOMMIT") as connection:
+            with pytest.raises(DBAPIError):
+                connection.execute(text("CREATE DATABASE scmirn_forbidden_database"))
+        with runtime_engine.begin() as connection:
+            connection.execute(text("SELECT set_config('scmirn.tenant_id', :tenant, true)"), {"tenant": tenant_a})
+            connection.execute(text("SET LOCAL row_security = off"))
+            with pytest.raises(DBAPIError):
+                connection.execute(text("SELECT id FROM staff_users")).all()
 
         client = runtime_app.test_client()
         challenge_response = client.post("/api/v1/staff/auth/login", json={
@@ -248,6 +339,10 @@ def test_forced_staff_rls_with_non_owner_runtime_role(monkeypatch):
     finally:
         if runtime_engine is not None:
             runtime_engine.dispose()
+        if auditor_engine is not None:
+            auditor_engine.dispose()
+        if overprivileged_engine is not None:
+            overprivileged_engine.dispose()
         test_admin_engine.dispose()
         if app is not None:
             with app.app_context():
@@ -259,5 +354,7 @@ def test_forced_staff_rls_with_non_owner_runtime_role(monkeypatch):
                 db.engine.dispose()
         with root_engine.connect().execution_options(isolation_level="AUTOCOMMIT") as connection:
             connection.execute(text(f'DROP DATABASE IF EXISTS "{database_name}" WITH (FORCE)'))
-            connection.execute(text(f"DROP ROLE IF EXISTS {role_name}"))
+            connection.execute(text(f"DROP ROLE IF EXISTS {overprivileged_role}"))
+            for role_name in role_names.values():
+                connection.execute(text(f"DROP ROLE IF EXISTS {role_name}"))
         root_engine.dispose()

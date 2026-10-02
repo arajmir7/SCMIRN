@@ -7,7 +7,7 @@ import argparse
 import re
 import sys
 from pathlib import Path
-from urllib.parse import parse_qs, urlsplit
+from urllib.parse import parse_qs, unquote, urlsplit
 
 
 PLACEHOLDER_MARKERS = ("replace", "example", "changeme", "url_encoded_password")
@@ -54,22 +54,76 @@ def validate(values: dict[str, str]) -> list[str]:
     if secrets[0] and secrets[1] and secrets[0] == secrets[1]:
         errors.append("SCMIRN_SECRET_KEY and SCMIRN_JWT_SECRET_KEY must be different values")
 
-    database_url = values.get("DATABASE_URL", "")
+    runtime_role = values.get("SCMIRN_APP_DB_ROLE", "scmirn_app")
+    migration_role = values.get("SCMIRN_MIGRATOR_DB_ROLE", "scmirn_migrator")
+    role_pattern = r"[A-Za-z_][A-Za-z0-9_]{0,62}"
+    if not re.fullmatch(role_pattern, runtime_role):
+        errors.append("SCMIRN_APP_DB_ROLE must be a PostgreSQL role identifier")
+    if not re.fullmatch(role_pattern, migration_role):
+        errors.append("SCMIRN_MIGRATOR_DB_ROLE must be a PostgreSQL role identifier")
+    if runtime_role == migration_role:
+        errors.append("Application and migrator PostgreSQL role names must be different")
+    for name in (
+        "SCMIRN_APP_DB_PASSWORD", "SCMIRN_MIGRATOR_DB_PASSWORD",
+        "SCMIRN_WORKER_DB_PASSWORD", "SCMIRN_AUDITOR_DB_PASSWORD",
+    ):
+        value = values.get(name, "")
+        if len(value) < 32 or _is_placeholder(value):
+            errors.append(f"{name} must be a non-placeholder password of at least 32 characters")
+    role_passwords = [values.get(name, "") for name in (
+        "SCMIRN_APP_DB_PASSWORD", "SCMIRN_MIGRATOR_DB_PASSWORD",
+        "SCMIRN_WORKER_DB_PASSWORD", "SCMIRN_AUDITOR_DB_PASSWORD",
+    )]
+    if all(role_passwords) and len(set(role_passwords)) != len(role_passwords):
+        errors.append("Each PostgreSQL runtime role must have a different password")
+
+    staff_api_enabled = values.get("STAFF_API_ENABLED", "false").lower()
+    if staff_api_enabled not in {"true", "false"}:
+        errors.append("STAFF_API_ENABLED must be exactly true or false")
+
+    for variable, default_role in (
+        ("DATABASE_URL", "scmirn_app"),
+        ("SCMIRN_MIGRATION_DATABASE_URL", "scmirn_migrator"),
+    ):
+        database_url = values.get(variable, "")
+        try:
+            database = urlsplit(database_url)
+            db_options = parse_qs(database.query, strict_parsing=True)
+            if database.scheme != "postgresql+psycopg":
+                errors.append(f"{variable} must use postgresql+psycopg://")
+            if not database.hostname or not database.username or not database.password:
+                errors.append(f"{variable} must include a real host and explicit database credentials")
+            if database.username != values.get(
+                "SCMIRN_APP_DB_ROLE" if variable == "DATABASE_URL" else "SCMIRN_MIGRATOR_DB_ROLE", default_role,
+            ):
+                errors.append(f"{variable} must use its dedicated PostgreSQL role")
+            password_env = "SCMIRN_APP_DB_PASSWORD" if variable == "DATABASE_URL" else "SCMIRN_MIGRATOR_DB_PASSWORD"
+            if values.get(password_env) and database.password and unquote(database.password) != values[password_env]:
+                errors.append(f"{variable} password must match {password_env}")
+            if database.hostname and (database.hostname.lower().endswith(".example") or "example." in database.hostname.lower()):
+                errors.append(f"{variable} must not use an example host")
+            if db_options.get("sslmode") != ["verify-full"] or db_options.get("sslrootcert") != ["/run/postgres-ca.crt"]:
+                errors.append(f"{variable} must verify TLS and the PostgreSQL hostname using /run/postgres-ca.crt")
+            if _is_placeholder(database_url):
+                errors.append(f"{variable} must not contain example credentials or placeholders")
+        except ValueError:
+            errors.append(f"{variable} must be a valid PostgreSQL URL with an unambiguous query")
+
     try:
-        database = urlsplit(database_url)
-        db_options = parse_qs(database.query, strict_parsing=True)
-        if database.scheme != "postgresql+psycopg":
-            errors.append("DATABASE_URL must use postgresql+psycopg://")
-        if not database.hostname or not database.username or not database.password:
-            errors.append("DATABASE_URL must include a real host and explicit database credentials")
-        if database.hostname and (database.hostname.lower().endswith(".example") or "example." in database.hostname.lower()):
-            errors.append("DATABASE_URL must not use an example host")
-        if db_options.get("sslmode") != ["verify-full"] or db_options.get("sslrootcert") != ["/run/postgres-ca.crt"]:
-            errors.append("DATABASE_URL must verify TLS and the PostgreSQL hostname using /run/postgres-ca.crt")
-        if _is_placeholder(database_url):
-            errors.append("DATABASE_URL must not contain example credentials or placeholders")
+        app_database = urlsplit(values.get("DATABASE_URL", ""))
+        migrator_database = urlsplit(values.get("SCMIRN_MIGRATION_DATABASE_URL", ""))
+        if app_database.hostname and migrator_database.hostname and (
+            app_database.hostname.lower(), app_database.port, app_database.path
+        ) != (
+            migrator_database.hostname.lower(), migrator_database.port, migrator_database.path
+        ):
+            errors.append("Application and migration URLs must target the same PostgreSQL database")
+        if app_database.username and app_database.username == migrator_database.username:
+            errors.append("Application and migration URLs must use different PostgreSQL roles")
+        if app_database.password and app_database.password == migrator_database.password:
+            errors.append("Application and migration URLs must use different PostgreSQL passwords")
     except ValueError:
-        errors.append("DATABASE_URL must be a valid PostgreSQL URL with an unambiguous query")
+        errors.append("Application and migration URLs must be valid PostgreSQL URLs")
 
     redis_url = values.get("REDIS_URL", "")
     try:

@@ -19,7 +19,13 @@ run_gate() {
   fi
 }
 
-run_gate "Backend unit and policy tests" "${PYTHON_BIN}" -m pytest -q -p no:cacheprovider src/backend/tests
+run_gate "Backend unit, integration and policy tests" "${PYTHON_BIN}" -m pytest -q -p no:cacheprovider src/backend/tests
+if [[ -n "${SCMIRN_POSTGRES_RLS_TEST_URL:-}" ]]; then
+  printf 'PostgreSQL RLS integration is enabled with the supplied disposable-test URL.\n'
+else
+  printf 'BLOCKED: set SCMIRN_POSTGRES_RLS_TEST_URL to a disposable PostgreSQL instance; database boundary tests are opt-in.\n' >&2
+  failed=1
+fi
 run_gate "Frontend typecheck" npm --prefix src/frontend run typecheck
 run_gate "Frontend production build" npm --prefix src/frontend run build
 run_gate "Frontend browser flows" npm --prefix src/frontend run test:e2e
@@ -34,10 +40,11 @@ else
 fi
 
 blockers=(
-  "Hash-pinned backend dependency locks are present; signed build provenance and fresh SCA/container/secret scans are not available."
-  "PostgreSQL migration and trigger were exercised in a disposable TLS Compose rehearsal; full canonical schema baseline, RLS, tenant-isolation and concurrency gates remain open."
-  "Production authn/authz, four-eyes controls, connector reliability, outbox/inbox, and AI evaluation/security gates are not verified."
-  "Backup/restore, disaster recovery, performance/capacity, rollback rehearsal, and production observability/alert routing are not verified."
+  "Nine legacy tables and additional infrastructure/audit data remain quarantined without app/worker access; ownership-aware RLS and subject isolation are incomplete."
+  "Staff MFA recovery, approved identity/federation, complete seven-role RBAC/ABAC review, reviewer separation, and deployment authorization remain open; staff APIs default off."
+  "No scheduled retention purge, private object store/evidence lifecycle, production metrics/SLOs, SIEM alert owner, or synthetic production monitoring is configured."
+  "Fresh SAST, SCA, container/OS and IaC scans, image SBOM, and signed build provenance are not complete for this candidate."
+  "Backup/restore, disaster recovery, performance/capacity, rollback rehearsal, and multi-region resilience are not verified."
   "Accessibility requires route-wide automated and manual keyboard/screen-reader/reflow evidence."
   "Government source onboarding, legal/privacy approvals, external security assessment and authorization remain external blockers."
 )

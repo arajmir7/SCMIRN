@@ -3,8 +3,6 @@
 PRODUCTION_API_ALLOWLIST = {
     "/api/health": frozenset({"GET"}),
     "/api/ready": frozenset({"GET"}),
-    "/api/v1/triage": frozenset({"POST"}),
-    "/api/v1/jurisdiction/resolve": frozenset({"POST"}),
     "/api/v1/services": frozenset({"GET"}),
     "/api/v1/services/<service_id>": frozenset({"GET"}),
     "/api/v1/evidence/check": frozenset({"POST"}),

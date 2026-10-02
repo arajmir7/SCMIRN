@@ -69,7 +69,7 @@ def _assert_at_head():
     with db.engine.connect() as connection:
         assert connection.exec_driver_sql(
             "SELECT version_num FROM alembic_version"
-        ).scalar_one() == "20261002_03"
+        ).scalar_one() == "20261002_04"
         staff_tables = {"tenants", "staff_users", "staff_mfa_factors", "staff_mfa_challenges", "staff_role_grants", "staff_sessions", "staff_cases", "staff_case_events", "staff_audit_events"}
 
         def include_object(obj, name, object_type, reflected, compare_to):

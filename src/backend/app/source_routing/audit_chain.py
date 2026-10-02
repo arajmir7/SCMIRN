@@ -94,8 +94,15 @@ def append_event(*, tenant_id, actor_id, actor_role, action, object_type, object
         # prevents concurrent requests from selecting the same chain head.
         db.session.execute(text("SELECT pg_advisory_xact_lock(:lock_key)"), {"lock_key": _POSTGRES_LOCK_KEY})
 
-    previous = AuditEvent.query.order_by(AuditEvent.sequence.desc()).first()
-    previous_hash = previous.event_hash if previous else GENESIS_HASH
+    if connection.dialect.name == "postgresql":
+        # The web role receives EXECUTE on a SECURITY DEFINER function that
+        # returns only the chain head; it has no SELECT privilege on audit rows.
+        previous_hash = db.session.execute(
+            text("SELECT public.scmirn_audit_head()")
+        ).scalar_one_or_none() or GENESIS_HASH
+    else:
+        previous = AuditEvent.query.order_by(AuditEvent.sequence.desc()).first()
+        previous_hash = previous.event_hash if previous else GENESIS_HASH
     event_id = str(uuid.uuid4())
     occurred_at = utcnow_naive()
     payload = _event_payload(
@@ -123,29 +130,40 @@ def append_event(*, tenant_id, actor_id, actor_role, action, object_type, object
     return row
 
 
-def verify_chain():
+def verify_chain(audit_connection=None):
     """Return a verifiable summary; no event content is returned."""
     previous_hash = GENESIS_HASH
     count = 0
     last_sequence = None
-    for row in AuditEvent.query.order_by(AuditEvent.sequence.asc()).yield_per(500):
-        if row.previous_hash != previous_hash:
-            return {"valid": False, "count": count, "failed_sequence": row.sequence, "reason": "previous_hash_mismatch"}
+    if audit_connection is None:
+        rows = AuditEvent.query.order_by(AuditEvent.sequence.asc()).yield_per(500)
+    else:
+        rows = audit_connection.execute(text("""
+            SELECT sequence, event_id, tenant_id, actor_id, actor_role, action,
+                   object_type, object_id, details, occurred_at, previous_hash, event_hash
+              FROM public.audit_events ORDER BY sequence ASC
+        """))
+    for result in rows:
+        row = result._mapping if hasattr(result, "_mapping") else result
+        get = (lambda name: row[name]) if hasattr(row, "__getitem__") else (lambda name: getattr(row, name))
+        sequence = get("sequence")
+        if get("previous_hash") != previous_hash:
+            return {"valid": False, "count": count, "failed_sequence": sequence, "reason": "previous_hash_mismatch"}
         expected = _digest(_event_payload(
-            event_id=row.event_id,
-            tenant_id=row.tenant_id,
-            actor_id=row.actor_id,
-            actor_role=row.actor_role,
-            action=row.action,
-            object_type=row.object_type,
-            object_id=row.object_id,
-            details=row.details,
-            occurred_at=row.occurred_at,
-            previous_hash=row.previous_hash,
+            event_id=get("event_id"),
+            tenant_id=get("tenant_id"),
+            actor_id=get("actor_id"),
+            actor_role=get("actor_role"),
+            action=get("action"),
+            object_type=get("object_type"),
+            object_id=get("object_id"),
+            details=get("details"),
+            occurred_at=get("occurred_at"),
+            previous_hash=get("previous_hash"),
         ))
-        if row.event_hash != expected:
-            return {"valid": False, "count": count, "failed_sequence": row.sequence, "reason": "event_hash_mismatch"}
-        previous_hash = row.event_hash
-        last_sequence = row.sequence
+        if get("event_hash") != expected:
+            return {"valid": False, "count": count, "failed_sequence": sequence, "reason": "event_hash_mismatch"}
+        previous_hash = get("event_hash")
+        last_sequence = sequence
         count += 1
     return {"valid": True, "count": count, "head_sequence": last_sequence, "head_hash": previous_hash}

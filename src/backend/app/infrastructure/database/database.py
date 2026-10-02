@@ -55,20 +55,20 @@ def init_database(app: Flask) -> None:
         if app.config.get('AUTO_CREATE_DB', True):
             db.create_all()
         elif app.config.get('SCMIRN_ENVIRONMENT') == 'production' and not app.config.get('MIGRATION_MODE', False):
-            required_tables = (
-                'official_sources', 'authorities', 'government_services',
-                'government_service_sources', 'route_rules', 'route_decisions', 'audit_events',
-            )
-            if app.config.get('STAFF_AUTH_ENABLED'):
-                required_tables += (
-                    'tenants', 'staff_users', 'staff_mfa_factors', 'staff_mfa_challenges',
-                    'staff_role_grants', 'staff_sessions', 'staff_cases',
-                    'staff_case_events', 'staff_audit_events',
-                )
             inspector = inspect(db.engine)
+            required_tables = sorted(db.metadata.tables)
             missing = [name for name in required_tables if not inspector.has_table(name)]
             if missing:
-                raise RuntimeError('Production database schema is not prepared; missing tables: ' + ', '.join(missing))
+                raise RuntimeError('Production database schema is not prepared; missing mapped tables: ' + ', '.join(missing))
+            from .security import validate_production_runtime_role
+            with db.engine.connect() as connection:
+                validate_production_runtime_role(
+                    connection,
+                    expected_role=app.config.get('SCMIRN_APP_DB_ROLE', 'scmirn_app'),
+                    staff_api_enabled=app.config.get(
+                        'STAFF_API_ENABLED', app.config.get('STAFF_AUTH_ENABLED', False)
+                    ),
+                )
 
         if app.config.get('AUTO_SEED_ROUTING_REGISTRY'):
             from app.source_routing.registry_seed import seed_routing_registry

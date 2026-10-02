@@ -2,7 +2,7 @@
 
 SCMIRN is a civic technology prototype. The canonical application is a React/Vite frontend in `src/frontend` and a Flask API in `src/backend`.
 
-**Status (2026-10-02): not production ready.** SCMIRN has no government deployment, agency account, approved filing connector, certified legal content, or external compliance certification. Do not enter real citizen, case, contact, or identity data in the demo. Local verification includes 65 backend tests, a disposable PostgreSQL 16 tenant/RLS integration, and a 17-path production API allowlist; these checks do not establish deployment readiness.
+**Status (2026-10-02): not production ready.** SCMIRN has no government deployment, agency account, approved filing connector, certified legal content, or external compliance certification. Do not enter real citizen, case, contact, or identity data in the demo. Local verification includes 67 backend tests, a disposable PostgreSQL 16 four-role/RLS integration, and a 15-path production API allowlist; these checks do not establish deployment readiness.
 
 ## Available workflow
 
@@ -61,23 +61,25 @@ The web container binds to `127.0.0.1` on `SCMIRN_HTTP_PORT` (default `8080`). P
 
 - `SCMIRN_SECRET_KEY` and `SCMIRN_JWT_SECRET_KEY` — independent random secrets, each at least 32 characters.
 - `SCMIRN_RELEASE_ID` — an immutable, non-placeholder image tag for this release.
-- `DATABASE_URL` — PostgreSQL with the installed Psycopg 3 SQLAlchemy driver; use TLS and certificate verification for remote databases.
+- `DATABASE_URL` — PostgreSQL connection for the web app using the `scmirn_app` least-privilege role and installed Psycopg 3 SQLAlchemy driver.
+- `SCMIRN_MIGRATION_DATABASE_URL` — separate PostgreSQL connection for the one-shot migrator using `scmirn_migrator`; use TLS and certificate verification for remote databases. Provision all four database roles with `scripts/provision_postgres_roles.py` before and after migrations, following [`docs/security/POSTGRESQL_ROLES.md`](docs/security/POSTGRESQL_ROLES.md).
+- `STAFF_API_ENABLED` — defaults to `false`; staff endpoints stay unavailable until explicitly enabled after the deployment role and operating controls are reviewed.
 - `REDIS_URL` — `rediss://` URL for TLS-protected Redis.
 - `SCMIRN_POSTGRES_CA_FILE` and `SCMIRN_REDIS_CA_FILE` — absolute paths to the CA certificates mounted read-only for hostname and certificate verification. Connection URLs must include `sslmode=verify-full&sslrootcert=/run/postgres-ca.crt` and `ssl_ca_certs=/run/redis-ca.crt&ssl_cert_reqs=required&ssl_check_hostname=true`, respectively. Redis hostname verification is explicit because redis-py 5.x defaults it off; redis-py connection URLs accept TLS options via query parameters ([documentation](https://redis.readthedocs.io/en/stable/connections.html)).
 - `CORS_ORIGINS` — comma-separated HTTPS origins only.
 - `SCMIRN_HTTP_PORT` — optional loopback port for the HTTPS proxy upstream.
 
-The one-shot migration container runs with `SCMIRN_MIGRATION_MODE=true`; this blocks all HTTP traffic in that container while Alembic runs. The application container starts only after the migration exits successfully. Alembic head `20261002_03` covers the current 34 ORM tables. Staff authentication and metadata-only case endpoints are present but disabled by default; staff/case RLS passed against a disposable PostgreSQL 16 runtime role. Production database role validation, RLS for legacy citizen/report/document/chat/route data, and production migration/restore rehearsals remain open. The production API allowlist documents 17 paths; 91 other registered API operations are rejected. Legacy reporting, uploads, documents, offices, tracking, analytics and simulation APIs remain unavailable.
+The one-shot migration container uses `SCMIRN_MIGRATION_MODE=true` and the separate migrator URL; it blocks HTTP traffic while Alembic runs. The application starts only after the migration exits successfully and validates that its connection is the non-owner, non-BYPASSRLS `scmirn_app` role. Alembic head `20261002_04` covers all 34 ORM tables. The role provisioner also creates separate worker and auditor identities; the worker has no grants until a job contract exists, while audit verification uses the read-only auditor URL. Staff authentication and metadata-only case endpoints default off through `STAFF_API_ENABLED=false`. Forced RLS and role boundaries passed against disposable PostgreSQL 16 logins. The 34-table inventory classifies every table; nine legacy tables and infrastructure/audit records remain quarantined without app/worker grants pending ownership/RLS work. The production API allowlist documents 15 paths; 93 other registered API operations are rejected. Legacy reporting, uploads, documents, offices, tracking, analytics and simulation APIs remain unavailable.
 
 The retention purge is not scheduled by this stack. Configure and monitor an operator-controlled scheduled job only after the retention policy and operational owner are approved. Database backup, restore, point-in-time recovery, TLS proxy configuration, external audit, and production smoke beyond the script's local checks are not configured or verified. Before a pilot, define the database provider's backup policy and demonstrate restoration into an isolated environment.
 
 To apply the routing schema manually from `src/backend` in an isolated operator job:
 
 ```sh
-APP_CONFIG=production SCMIRN_MIGRATION_MODE=true flask --app wsgi:app db upgrade
+APP_CONFIG=production SCMIRN_MIGRATION_MODE=true SCMIRN_MIGRATION_DATABASE_URL="$SCMIRN_MIGRATION_DATABASE_URL" flask --app wsgi:app db upgrade
 ```
 
-Unset `SCMIRN_MIGRATION_MODE` before starting the application. Production configuration and the migration path have local code-level checks, but still require environment-specific verification. Route/audit and legacy-data tenant isolation, production database least-privilege validation, retention scheduling, backup/restore, current source/container scanning, legal review, accessibility review and external assessments remain open.
+Unset `SCMIRN_MIGRATION_MODE` before starting the application and use `DATABASE_URL` for the web process. Production role checks have disposable-PostgreSQL evidence but still require environment-specific verification. Legacy-data tenant isolation, MFA recovery, retention scheduling, backup/restore, current source/container scans, signed provenance, production observability, legal review, accessibility review and external assessments remain open.
 
 ## Verification
 

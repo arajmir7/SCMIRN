@@ -13,7 +13,7 @@
 
 | Capability | State |
 |---|---|
-| Tested locally | Backend suite: 65 passed with the PostgreSQL RLS integration enabled; six SQLite migration tests cover zero-to-head and existing-schema paths, and the full migration/RLS flow also passed on disposable PostgreSQL 16. Python/frontend dependency scans and SBOMs are recorded. Earlier frontend typecheck/build/8 browser tests and the limited PostgreSQL Compose rehearsal are documented separately. |
+| Tested locally | Backend suite: 67 passed with the four-role PostgreSQL/RLS integration enabled; six SQLite migration tests cover zero-to-head and existing-schema paths, and the full migration/role/RLS flow reached `20261002_04` on disposable PostgreSQL 16. Python/frontend dependency scans and dependency SBOMs are recorded. Earlier frontend typecheck/build/8 browser tests and the limited PostgreSQL Compose rehearsal are documented separately. |
 | Simulated | Canonical sample issues, funding counters, IoT, blockchain, resilience, digital twin, enterprise metrics and multiple civic AI/legal outputs. |
 | Needs government data | Office/service records, jurisdiction boundaries, live agency status, city asset/sensor feeds and verified legal sources. |
 | Needs official credentials | Government grievance, SSO, DigiLocker/eSign, notification, payment or case status connectors. |

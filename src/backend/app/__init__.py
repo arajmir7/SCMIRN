@@ -143,8 +143,21 @@ def create_app(config_name='development'):
     def verify_route_audit_chain_command():
         """Verify the metadata-only route audit chain without exposing event data."""
         import json
+        import os
+        from sqlalchemy import create_engine
         from app.source_routing.audit_chain import verify_chain
-        result = verify_chain()
+        auditor_url = os.environ.get('SCMIRN_AUDITOR_DATABASE_URL')
+        if auditor_url:
+            auditor_engine = create_engine(auditor_url, pool_pre_ping=True)
+            try:
+                with auditor_engine.connect() as connection:
+                    result = verify_chain(connection)
+            finally:
+                auditor_engine.dispose()
+        elif app.config.get('SCMIRN_ENVIRONMENT') == 'production':
+            raise click.ClickException('SCMIRN_AUDITOR_DATABASE_URL is required for production audit verification.')
+        else:
+            result = verify_chain()
         click.echo(json.dumps(result, sort_keys=True))
         if not result['valid']:
             raise click.exceptions.Exit(1)

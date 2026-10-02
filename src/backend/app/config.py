@@ -29,7 +29,13 @@ class Config:
     AUTO_CREATE_DB = True
     AUTO_SEED_ROUTING_REGISTRY = False
     DEMO_MODE = os.getenv('DEMO_MODE', 'false').lower() == 'true'
-    STAFF_AUTH_ENABLED = os.getenv('STAFF_AUTH_ENABLED', 'false').lower() == 'true'
+    STAFF_API_ENABLED = os.getenv(
+        'STAFF_API_ENABLED', os.getenv('STAFF_AUTH_ENABLED', 'false')
+    ).lower() == 'true'
+    # Compatibility alias for existing route guards and downstream deployments.
+    STAFF_AUTH_ENABLED = STAFF_API_ENABLED
+    SCMIRN_APP_DB_ROLE = os.getenv('SCMIRN_APP_DB_ROLE', 'scmirn_app')
+    SCMIRN_MIGRATOR_DB_ROLE = os.getenv('SCMIRN_MIGRATOR_DB_ROLE', 'scmirn_migrator')
     STAFF_MFA_ENCRYPTION_KEY = os.getenv('STAFF_MFA_ENCRYPTION_KEY', '')
     STAFF_SESSION_IDLE_MINUTES = 30
     STAFF_SESSION_ABSOLUTE_HOURS = 12
@@ -93,7 +99,12 @@ class ProductionConfig(Config):
     AUTO_CREATE_DB = False
     AUTO_SEED_ROUTING_REGISTRY = False
     DEMO_MODE = False
-    STAFF_AUTH_ENABLED = os.getenv('STAFF_AUTH_ENABLED', 'false').lower() == 'true'
+    STAFF_API_ENABLED = os.getenv(
+        'STAFF_API_ENABLED', os.getenv('STAFF_AUTH_ENABLED', 'false')
+    ).lower() == 'true'
+    STAFF_AUTH_ENABLED = STAFF_API_ENABLED
+    SCMIRN_APP_DB_ROLE = os.getenv('SCMIRN_APP_DB_ROLE', 'scmirn_app')
+    SCMIRN_MIGRATOR_DB_ROLE = os.getenv('SCMIRN_MIGRATOR_DB_ROLE', 'scmirn_migrator')
     MIGRATION_MODE = os.getenv('SCMIRN_MIGRATION_MODE', 'false').lower() == 'true'
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')  # Required in prod
     SQLALCHEMY_ENGINE_OPTIONS = {
@@ -130,6 +141,7 @@ class TestingConfig(Config):
     AUTO_SEED_ROUTING_REGISTRY = True
     DEMO_MODE = False
     STAFF_AUTH_ENABLED = True
+    STAFF_API_ENABLED = True
     STAFF_MFA_ENCRYPTION_KEY = base64.urlsafe_b64encode(secrets.token_bytes(32)).decode('ascii')
     # Disable rate limiting for tests
     RATELIMIT_ENABLED = False
@@ -151,7 +163,7 @@ def validate_production_config(config):
         value = config.get(name)
         if not isinstance(value, str) or len(value) < 32:
             errors.append(f'{name} must be configured with at least 32 characters')
-    if config.get('STAFF_AUTH_ENABLED'):
+    if config.get('STAFF_API_ENABLED', config.get('STAFF_AUTH_ENABLED', False)):
         key = config.get('STAFF_MFA_ENCRYPTION_KEY', '')
         try:
             import base64
@@ -161,13 +173,22 @@ def validate_production_config(config):
         except Exception:
             decoded_key = b''
         if len(decoded_key) != 32:
-            errors.append('STAFF_MFA_ENCRYPTION_KEY must be URL-safe base64 for exactly 32 key bytes when staff auth is enabled')
+            errors.append('STAFF_MFA_ENCRYPTION_KEY must be URL-safe base64 for exactly 32 key bytes when staff APIs are enabled')
     database_url = config.get('SQLALCHEMY_DATABASE_URI')
     if not isinstance(database_url, str) or not database_url.startswith(('postgresql+psycopg://',)):
         errors.append('DATABASE_URL must use the installed PostgreSQL psycopg 3 driver in production')
     else:
         try:
-            database_options = make_url(database_url).query
+            database_settings = make_url(database_url)
+            database_options = database_settings.query
+            migration_mode = config.get('MIGRATION_MODE', False)
+            expected_db_role = config.get(
+                'SCMIRN_MIGRATOR_DB_ROLE' if migration_mode else 'SCMIRN_APP_DB_ROLE',
+                'scmirn_migrator' if migration_mode else 'scmirn_app',
+            )
+            if database_settings.username != expected_db_role:
+                required_identity = 'migration' if migration_mode else 'application'
+                errors.append(f'DATABASE_URL must use the dedicated {required_identity} PostgreSQL role')
             if database_options.get('sslmode') != 'verify-full':
                 errors.append('DATABASE_URL must require PostgreSQL TLS with sslmode=verify-full')
             if database_options.get('sslrootcert') != '/run/postgres-ca.crt':

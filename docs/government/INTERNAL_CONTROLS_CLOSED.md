@@ -1,5 +1,9 @@
 # Phase 2 internal control status
 
+> This file preserves the Phase 2 snapshot. Its status is superseded by the
+> current [Phase 3 implementation status](../security/PHASE3_IMPLEMENTATION_STATUS.md)
+> and [Phase 3 test evidence](../merge/TEST_EVIDENCE_MATRIX.md#phase-3-database-privilege-and-boundary-evidence).
+
 **Assessment date:** 2026-10-02. **Overall state:** `PARTIAL`. This evidence is local and bounded; it is not agency acceptance, security certification, or production deployment.
 
 ## Implemented with local evidence

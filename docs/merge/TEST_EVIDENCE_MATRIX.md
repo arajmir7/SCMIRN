@@ -109,3 +109,21 @@ Checks run on **2026-10-02** after implementing staff password+TOTP, session man
 | Dependency SCA and SBOM | Updated hash-locked `requirements-dev.lock`, `pip-audit`, `npm audit`, CycloneDX exports | Python audit: no known findings; frontend audit: 0 findings. Updated evidence and digests are in [dependency scan report](../security/DEPENDENCY_SCAN_2026-10-02.md). | Lockfile scope only; no source, image or OS scan. |
 
 Production staff authentication remains disabled until the approved deployment database role/configuration and operating controls are validated. The overall release remains `NOT PRODUCTION READY`.
+
+## Phase 3 database privilege and boundary evidence
+
+Checks run on **2026-10-02** against a disposable PostgreSQL 16 instance after
+adding separate app, migrator, worker and auditor identities. This section is
+the current test snapshot; previous sections are historical records.
+
+| System / gate | Command or evidence | Result | Limits |
+|---|---|---|---|
+| Backend suite with PostgreSQL integration | Hash-locked Python 3.11 runner; `SCMIRN_POSTGRES_RLS_TEST_URL` pointed only to disposable PostgreSQL | **67 passed, two existing SQLAlchemy `Query.get()` deprecation warnings.** | No production database, deployment, or external service. |
+| PostgreSQL roles and grants | Role provisioner plus integration test; provisioner was run twice to check repeatability | Four distinct logins; app cannot create DB/roles/schema objects, own relations, bypass RLS, or read audit/legacy content. Auditor is read-only; worker has no table grants. | Synthetic role passwords/database only. Deployment role provisioning remains unverified. |
+| Migration and mapped-table inventory | Alembic zero-to-head plus `test_database_security_contract.py` | Head `20261002_04`; 34 of 34 mapped tables classified. Nine legacy tables are quarantined without app/worker grants. | Does not complete ownership keys/RLS for legacy data. |
+| RLS and audit separation | `tests/integration/test_postgres_staff_rls.py` | Forced tenant RLS and cross-tenant denial; audit append-only web access; auditor read; app audit read, DDL, and an overprivileged role rejected. | Disposable PostgreSQL 16 only. |
+| Production API contract | OpenAPI validator and production gate | 15 allowlisted paths; 93 other registered API operations returned deterministic HTTP 503, including triage/jurisdiction. | Synthetic Flask production mode only; no external ingress/WAF. |
+| Production readiness | `scripts/release_gate.sh` | Release verdict remains **`NOT PRODUCTION READY`**; PostgreSQL integration is required by the gate when run. | Production auth/recovery, legacy isolation, scheduled purge, observability, scans/provenance, accessibility, and DR controls remain open. |
+
+Detailed implementation status and remaining controls are in
+[`../security/PHASE3_IMPLEMENTATION_STATUS.md`](../security/PHASE3_IMPLEMENTATION_STATUS.md).

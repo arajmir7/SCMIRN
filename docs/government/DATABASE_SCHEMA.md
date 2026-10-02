@@ -8,6 +8,7 @@ Purpose: generated inventory of ORM-managed tables, columns, foreign keys, index
 - 20261002_01 creates the legacy ORM tables. Its downgrade is blocked because dropping canonical application tables is destructive.
 - 20261002_02 translates legacy source states to the explicit DRAFT, VERIFIED, SUPERSEDED, or REVOKED lifecycle.
 - 20261002_03 adds tenant/staff identity, MFA/session, role, metadata-only case workflow and audit tables; it defines PostgreSQL RLS policies and append-only staff-history triggers.
+- 20261002_04 adds the narrowly scoped PostgreSQL audit-chain-head function used by app writes and verifies runtime database-role boundaries at startup. All 34 mapped tables are inventoried in the [data-boundary matrix](../security/DATA_BOUNDARY_MATRIX.md); nine legacy tables are explicitly quarantined without app/worker grants.
 - An empty database upgrades to head. Existing exact ORM schemas are preserved and upgraded; legacy-only schemas are preflighted; unknown tables or structural drift fail before DDL.
 - Production keeps AUTO_CREATE_DB=False; migration is an explicit operator action. Development and test profiles still allow ORM auto-creation.
 
@@ -17,7 +18,7 @@ The new staff identity and case tables carry tenant_id. The PostgreSQL revision 
 
 The full migration chain and RLS policies were executed against a disposable PostgreSQL 16 database. An integration test used a non-owner, non-BYPASSRLS runtime role and verified forced RLS, tenant-scoped reads and writes, session-hash access and user-scoped session revocation, the staff password/TOTP and case APIs, and append-only history triggers. This is local test evidence, not a production deployment. Before enabling staff routes in a deployment, verify its migration/runtime role configuration and repeat the checks against the approved deployment setup. Legacy issue, document, chat, routing, and other non-staff records do not have a complete tenant model and remain outside this shared-tenant boundary.
 
-Staff MFA secrets are AES-GCM encrypted with the configured 32-byte STAFF_MFA_ENCRYPTION_KEY; production configuration validates the key only when STAFF_AUTH_ENABLED=true. Session tokens are opaque and only their SHA-256 hashes are stored. Cases accept a bounded type and priority, not arbitrary citizen text or uploads. Staff and case history append-only triggers are present only in PostgreSQL.
+Staff MFA secrets are AES-GCM encrypted with the configured 32-byte STAFF_MFA_ENCRYPTION_KEY; production configuration validates the key only when STAFF_API_ENABLED=true. Session tokens are opaque and only their SHA-256 hashes are stored. Cases accept a bounded type and priority, not arbitrary citizen text or uploads. Staff and case history append-only triggers are present only in PostgreSQL. The web role cannot read audit content; a separate read-only auditor connection verifies the chain.
 
 ## Tables
 

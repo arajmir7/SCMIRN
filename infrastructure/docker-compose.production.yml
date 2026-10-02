@@ -10,11 +10,12 @@ services:
       FLASK_DEBUG: "0"
       SECRET_KEY: ${SCMIRN_SECRET_KEY:?Set SCMIRN_SECRET_KEY in .env.production}
       JWT_SECRET_KEY: ${SCMIRN_JWT_SECRET_KEY:?Set SCMIRN_JWT_SECRET_KEY in .env.production}
-      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL for PostgreSQL in .env.production}
       REDIS_URL: ${REDIS_URL:?Set REDIS_URL using TLS in .env.production}
       CORS_ORIGINS: ${CORS_ORIGINS:?Set HTTPS CORS_ORIGINS in .env.production}
+      STAFF_API_ENABLED: ${STAFF_API_ENABLED:-false}
       SCMIRN_MIGRATION_MODE: "true"
       DEMO_MODE: "false"
+      DATABASE_URL: ${SCMIRN_MIGRATION_DATABASE_URL:?Set SCMIRN_MIGRATION_DATABASE_URL for the separate migrator role}
     volumes:
       - type: bind
         source: ${SCMIRN_POSTGRES_CA_FILE:?Set SCMIRN_POSTGRES_CA_FILE in .env.production}
@@ -38,6 +39,7 @@ services:
     restart: unless-stopped
     environment:
       <<: *backend_environment
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL for the separate application role}
       SCMIRN_MIGRATION_MODE: "false"
       DEMO_MODE: "false"
     volumes:

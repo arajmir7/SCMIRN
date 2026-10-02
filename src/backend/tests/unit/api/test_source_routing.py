@@ -376,11 +376,15 @@ def test_production_config_requires_tls_database_cache_and_explicit_secrets():
     ready = {
         "SECRET_KEY": "s" * 48,
         "JWT_SECRET_KEY": "j" * 48,
-        "SQLALCHEMY_DATABASE_URI": "postgresql+psycopg://db-user:db-pass@db.internal/scmirn?sslmode=verify-full&sslrootcert=%2Frun%2Fpostgres-ca.crt",
+        "SQLALCHEMY_DATABASE_URI": "postgresql+psycopg://scmirn_app:db-pass@db.internal/scmirn?sslmode=verify-full&sslrootcert=%2Frun%2Fpostgres-ca.crt",
         "REDIS_URL": "rediss://cache-user:cache-pass@cache.example.test:6380/0?ssl_ca_certs=%2Frun%2Fredis-ca.crt&ssl_cert_reqs=required&ssl_check_hostname=true",
         "CORS_ORIGINS": ["https://civic.gov.in"],
     }
     validate_production_config(ready)
+
+    wrong_runtime_role = {**ready, "SQLALCHEMY_DATABASE_URI": ready["SQLALCHEMY_DATABASE_URI"].replace("scmirn_app", "scmirn_migrator")}
+    with pytest.raises(RuntimeError, match="dedicated application PostgreSQL role"):
+        validate_production_config(wrong_runtime_role)
 
     unsafe = {**ready, "REDIS_URL": "redis://cache.example.test:6379/0", "CORS_ORIGINS": ["http://localhost:5173"]}
     with pytest.raises(RuntimeError, match="TLS-protected Redis"):

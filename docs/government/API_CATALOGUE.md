@@ -1,6 +1,6 @@
 # API catalogue
 
-The machine-readable contract is [`../enterprise/openapi-enterprise.yaml`](../enterprise/openapi-enterprise.yaml), OpenAPI 3.1. The production route/method gate allows 17 source/health/staff paths; staff APIs remain disabled unless `STAFF_AUTH_ENABLED=true` and the production MFA key passes validation. Its synthetic check verified that 91 other registered API operations return 503. This is a local configuration test, not an external ingress or PostgreSQL auth test.
+The machine-readable contract is [`../enterprise/openapi-enterprise.yaml`](../enterprise/openapi-enterprise.yaml), OpenAPI 3.1. The production route/method gate allows 15 source/health/staff paths; staff APIs remain disabled unless `STAFF_API_ENABLED=true` and the production MFA key passes validation. Its synthetic check verified that 93 other registered API operations return 503. This is a local configuration test, not an external ingress or PostgreSQL auth test.
 
 | Method and path | Purpose | Production boundary |
 |---|---|---|
