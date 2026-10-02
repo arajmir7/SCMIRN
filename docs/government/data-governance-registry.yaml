@@ -1,0 +1,3101 @@
+# Machine-generated schema inventory plus field classification.
+# Personal-field records are engineering inventoried, not legally approved.
+version: 1
+status: ENGINEERING_INVENTORY_ONLY_NOT_A_LEGAL_BASIS_OR_DPDP_COMPLIANCE_CLAIM
+tables:
+  audit_events:
+    columns:
+    - action
+    - actor_id
+    - actor_role
+    - details
+    - event_hash
+    - event_id
+    - object_id
+    - object_type
+    - occurred_at
+    - previous_hash
+    - sequence
+    - tenant_id
+    data_boundary_classification: AUDIT_SCOPED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: audit_scoped
+    sensitivity: AUDIT_SCOPED
+    retention_class: audit_retention_not_configured
+  authorities:
+    columns:
+    - authority_key
+    - authority_level
+    - canonical_name
+    - created_at
+    - effective_from
+    - effective_until
+    - id
+    - jurisdiction
+    - official_source_id
+    - status
+    - version
+    data_boundary_classification: GLOBAL_REFERENCE
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: global_reference
+    sensitivity: GLOBAL_REFERENCE
+    retention_class: versioned_reference_expiry_review_required
+  blockchain_tx:
+    columns:
+    - block_number
+    - contract_address
+    - created_at
+    - id
+    - payload_hash
+    - status
+    - tx_hash
+    data_boundary_classification: SECURITY_SCOPED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: security_scoped
+    sensitivity: SECURITY_SCOPED
+    retention_class: security_record_retention_not_configured
+  chat_logs:
+    columns:
+    - confidence
+    - id
+    - intent
+    - message
+    - response
+    - session_id
+    - timestamp
+    data_boundary_classification: LEGACY_UNCLASSIFIED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: quarantined_legacy
+    sensitivity: LEGACY_UNCLASSIFIED
+    retention_class: legacy_retention_not_configured
+  documents:
+    columns:
+    - created_at
+    - doc_type
+    - downloaded_at
+    - file_path
+    - file_size
+    - generated_at
+    - id
+    - jurisdiction
+    - public_id
+    - status
+    - template_data
+    - title
+    - user_id
+    data_boundary_classification: LEGACY_UNCLASSIFIED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: quarantined_legacy
+    sensitivity: LEGACY_UNCLASSIFIED
+    retention_class: legacy_retention_not_configured
+  government_service_sources:
+    columns:
+    - service_version_id
+    - source_id
+    data_boundary_classification: GLOBAL_REFERENCE
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: global_reference
+    sensitivity: GLOBAL_REFERENCE
+    retention_class: versioned_reference_expiry_review_required
+  government_services:
+    columns:
+    - appeal_channel
+    - application_channel
+    - authority_id
+    - authority_level
+    - canonical_name
+    - connector_id
+    - created_at
+    - department
+    - description
+    - effective_from
+    - effective_until
+    - eligibility
+    - escalation_channel
+    - exclusions
+    - geography
+    - grievance_channel
+    - id
+    - identity_assurance_required
+    - integration_mode
+    - issue_types
+    - jurisdiction
+    - last_verified
+    - official_sla
+    - official_url
+    - optional_evidence
+    - recommended_evidence
+    - required_evidence
+    - service_key
+    - status
+    - version
+    data_boundary_classification: GLOBAL_REFERENCE
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: global_reference
+    sensitivity: GLOBAL_REFERENCE
+    retention_class: versioned_reference_expiry_review_required
+  iot_assets:
+    columns:
+    - asset_type
+    - created_at
+    - health_score
+    - id
+    - last_reading
+    - lat
+    - lng
+    - predictive_maintenance_due
+    - status
+    - updated_at
+    - ward
+    data_boundary_classification: SECURITY_SCOPED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: security_scoped
+    sensitivity: SECURITY_SCOPED
+    retention_class: security_record_retention_not_configured
+  iot_readings:
+    columns:
+    - anomaly_type
+    - asset_id
+    - asset_type
+    - blockchain_hash
+    - confidence
+    - deviation_from_baseline
+    - environmental_context
+    - estimated_downtime_hours
+    - failure_probability_30d
+    - failure_probability_7d
+    - health_score
+    - id
+    - ingestion_id
+    - is_anomaly
+    - lat
+    - lng
+    - maintenance_priority
+    - maintenance_triggered
+    - predicted_failure_date
+    - primary_failure_mode
+    - processed_at
+    - recommended_action
+    - remaining_useful_life_days
+    - secondary_failure_modes
+    - sensor_readings
+    - severity
+    - skill_level
+    - spare_parts_required
+    - status
+    - timestamp_utc
+    - ward
+    data_boundary_classification: SECURITY_SCOPED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: security_scoped
+    sensitivity: SECURITY_SCOPED
+    retention_class: security_record_retention_not_configured
+  issues:
+    columns:
+    - ai_confidence
+    - category
+    - created_at
+    - description
+    - fund_collected
+    - fund_target
+    - id
+    - integrity_hash
+    - lat
+    - location_landmarks
+    - lon
+    - media_files
+    - priority_score
+    - priority_tier
+    - public_id
+    - reporter_id
+    - reporter_phone
+    - resolved_at
+    - status
+    - title
+    - updated_at
+    data_boundary_classification: LEGACY_UNCLASSIFIED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: quarantined_legacy
+    sensitivity: LEGACY_UNCLASSIFIED
+    retention_class: legacy_retention_not_configured
+  offices:
+    columns:
+    - address
+    - department
+    - id
+    - lat
+    - lon
+    - name
+    - officer_name
+    - phone
+    - rating
+    - services
+    - timings
+    data_boundary_classification: LEGACY_UNCLASSIFIED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: quarantined_legacy
+    sensitivity: LEGACY_UNCLASSIFIED
+    retention_class: legacy_retention_not_configured
+  official_sources:
+    columns:
+    - authority
+    - canonical_url
+    - document_hash
+    - effective_from
+    - effective_until
+    - id
+    - jurisdiction
+    - parser_version
+    - retrieved_at
+    - reviewer
+    - source_key
+    - source_type
+    - superseded_by_id
+    - supersedes_id
+    - title
+    - verification_status
+    - verified_at
+    - version
+    data_boundary_classification: GLOBAL_REFERENCE
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: global_reference
+    sensitivity: GLOBAL_REFERENCE
+    retention_class: versioned_reference_expiry_review_required
+  resilience_hubs:
+    columns:
+    - address
+    - battery_soc_percent
+    - connected_loads
+    - created_at
+    - grid_connection
+    - id
+    - lat
+    - lng
+    - occupancy
+    - operational_mode
+    - solar_generation_kw
+    - supplies
+    - updated_at
+    data_boundary_classification: SECURITY_SCOPED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: security_scoped
+    sensitivity: SECURITY_SCOPED
+    retention_class: security_record_retention_not_configured
+  route_decisions:
+    columns:
+    - created_at
+    - explanation
+    - id
+    - idempotency_key
+    - input_facts
+    - input_fingerprint
+    - model_version
+    - outcome
+    - output
+    - output_authority_id
+    - retention_until
+    - route_rule_id
+    - route_rule_version
+    - service_registry_version
+    - source_versions
+    data_boundary_classification: LEGACY_UNCLASSIFIED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: quarantined_legacy
+    sensitivity: LEGACY_UNCLASSIFIED
+    retention_class: legacy_retention_not_configured
+  route_rules:
+    columns:
+    - authority_id
+    - created_at
+    - effective_from
+    - effective_until
+    - exclusion_terms
+    - id
+    - issue_type
+    - match_terms
+    - priority
+    - rule_key
+    - service_version_id
+    - source_ids
+    - status
+    - version
+    data_boundary_classification: GLOBAL_REFERENCE
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: global_reference
+    sensitivity: GLOBAL_REFERENCE
+    retention_class: versioned_reference_expiry_review_required
+  srs_assets:
+    columns:
+    - accessibility_compliant
+    - age_years
+    - asset_id
+    - asset_type
+    - created_at
+    - criticality
+    - degradation_rate
+    - health_score
+    - last_inspection_at
+    - last_sensor_score
+    - lat
+    - lon
+    - maintenance_status
+    - predicted_failure_days
+    - updated_at
+    - usage_index
+    - ward
+    data_boundary_classification: SECURITY_SCOPED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: security_scoped
+    sensitivity: SECURITY_SCOPED
+    retention_class: security_record_retention_not_configured
+  srs_audit_logs:
+    columns:
+    - actor_id
+    - actor_role
+    - after_state
+    - before_state
+    - created_at
+    - entity_id
+    - entity_type
+    - event_type
+    - id
+    - immutable_hash
+    - previous_hash
+    - reason
+    data_boundary_classification: AUDIT_SCOPED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: audit_scoped
+    sensitivity: AUDIT_SCOPED
+    retention_class: audit_retention_not_configured
+  srs_budget_events:
+    columns:
+    - actual_cost
+    - anomaly_flag
+    - anomaly_reason
+    - category
+    - created_at
+    - id
+    - planned_cost
+    - variance_percent
+    - work_order_id
+    data_boundary_classification: SECURITY_SCOPED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: security_scoped
+    sensitivity: SECURITY_SCOPED
+    retention_class: security_record_retention_not_configured
+  srs_contractors:
+    columns:
+    - availability_status
+    - avg_resolution_hours
+    - blacklisted
+    - capacity_per_day
+    - contractor_id
+    - created_at
+    - durability_score
+    - fraud_flags
+    - name
+    - reliability_score
+    - repair_quality_score
+    - sla_adherence_score
+    - specialization
+    - total_jobs
+    - updated_at
+    data_boundary_classification: SECURITY_SCOPED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: security_scoped
+    sensitivity: SECURITY_SCOPED
+    retention_class: security_record_retention_not_configured
+  srs_issue_events:
+    columns:
+    - actor_id
+    - actor_role
+    - created_at
+    - from_status
+    - id
+    - issue_public_id
+    - metadata_json
+    - notes
+    - to_status
+    data_boundary_classification: LEGACY_UNCLASSIFIED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: quarantined_legacy
+    sensitivity: LEGACY_UNCLASSIFIED
+    retention_class: legacy_retention_not_configured
+  srs_issues:
+    columns:
+    - accessibility_barrier_type
+    - accessibility_flag
+    - assigned_contractor_id
+    - assigned_team
+    - captured_at
+    - captured_offline
+    - category
+    - citizen_confirmed
+    - citizen_feedback_comment
+    - citizen_feedback_rating
+    - closed_at
+    - cost_impact
+    - created_at
+    - description
+    - duplicate_of_issue_id
+    - duplicate_score
+    - emergency_reason
+    - escalated_at
+    - evidence_urls
+    - explainability
+    - fraud_score
+    - id
+    - is_emergency
+    - is_malicious
+    - lat
+    - lon
+    - priority_score
+    - priority_tier
+    - public_id
+    - reporter_id
+    - reporter_language
+    - reporter_reputation
+    - resolved_at
+    - risk_level
+    - safety_impact
+    - severity
+    - sla_deadline
+    - source
+    - status
+    - synced_at
+    - title
+    - updated_at
+    - usage_impact
+    - ward
+    - work_order_id
+    data_boundary_classification: LEGACY_UNCLASSIFIED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: quarantined_legacy
+    sensitivity: LEGACY_UNCLASSIFIED
+    retention_class: legacy_retention_not_configured
+  srs_utility_map:
+    columns:
+    - active
+    - created_at
+    - depth_m
+    - geometry_json
+    - updated_at
+    - utility_id
+    - utility_type
+    - ward
+    data_boundary_classification: SECURITY_SCOPED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: security_scoped
+    sensitivity: SECURITY_SCOPED
+    retention_class: security_record_retention_not_configured
+  srs_work_orders:
+    columns:
+    - actual_cost
+    - ai_quality_score
+    - assigned_team
+    - assignee_type
+    - citizen_validated
+    - completed_at
+    - contractor_id
+    - created_at
+    - due_at
+    - estimated_cost
+    - id
+    - inspector_validated
+    - issue_public_id
+    - payment_status
+    - quality_score
+    - repeat_failure_count
+    - sensor_health_delta
+    - sla_hours
+    - started_at
+    - status
+    - updated_at
+    - warranty_days
+    - warranty_expiry
+    - work_order_id
+    data_boundary_classification: SECURITY_SCOPED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: security_scoped
+    sensitivity: SECURITY_SCOPED
+    retention_class: security_record_retention_not_configured
+  staff_audit_events:
+    columns:
+    - action
+    - actor_id
+    - created_at
+    - id
+    - object_id
+    - object_type
+    - request_id
+    - tenant_id
+    data_boundary_classification: AUDIT_SCOPED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: audit_scoped
+    sensitivity: AUDIT_SCOPED
+    retention_class: audit_retention_not_configured
+  staff_case_events:
+    columns:
+    - actor_id
+    - case_id
+    - created_at
+    - event_type
+    - from_status
+    - id
+    - metadata_json
+    - tenant_id
+    - to_status
+    data_boundary_classification: TENANT_SCOPED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: tenant_scoped
+    sensitivity: TENANT_SCOPED
+    retention_class: tenant_case_retention_not_configured
+  staff_cases:
+    columns:
+    - assigned_user_id
+    - case_ref
+    - case_type
+    - created_at
+    - created_by
+    - id
+    - priority
+    - status
+    - tenant_id
+    - title
+    - updated_at
+    data_boundary_classification: TENANT_SCOPED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: tenant_scoped
+    sensitivity: TENANT_SCOPED
+    retention_class: tenant_case_retention_not_configured
+  staff_mfa_challenges:
+    columns:
+    - consumed_at
+    - created_at
+    - expires_at
+    - tenant_id
+    - token_hash
+    - user_id
+    data_boundary_classification: SECURITY_SCOPED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: security_scoped
+    sensitivity: SECURITY_SCOPED
+    retention_class: security_record_retention_not_configured
+  staff_mfa_factors:
+    columns:
+    - activated_at
+    - active
+    - created_at
+    - enrollment_expires_at
+    - enrollment_token_hash
+    - failed_attempts
+    - id
+    - last_totp_step
+    - locked_until
+    - secret_ciphertext
+    - tenant_id
+    - user_id
+    data_boundary_classification: SECURITY_SCOPED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: security_scoped
+    sensitivity: SECURITY_SCOPED
+    retention_class: security_record_retention_not_configured
+  staff_role_grants:
+    columns:
+    - created_at
+    - granted_by
+    - id
+    - role
+    - tenant_id
+    - user_id
+    data_boundary_classification: SECURITY_SCOPED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: security_scoped
+    sensitivity: SECURITY_SCOPED
+    retention_class: security_record_retention_not_configured
+  staff_sessions:
+    columns:
+    - absolute_expires_at
+    - created_at
+    - csrf_hash
+    - idle_expires_at
+    - last_seen_at
+    - mfa_verified_at
+    - revoked_at
+    - session_hash
+    - tenant_id
+    - user_id
+    data_boundary_classification: SECURITY_SCOPED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: security_scoped
+    sensitivity: SECURITY_SCOPED
+    retention_class: security_record_retention_not_configured
+  staff_users:
+    columns:
+    - active
+    - created_at
+    - display_name
+    - email
+    - failed_login_count
+    - id
+    - locked_until
+    - password_changed_at
+    - password_hash
+    - tenant_id
+    data_boundary_classification: SECURITY_SCOPED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: security_scoped
+    sensitivity: SECURITY_SCOPED
+    retention_class: security_record_retention_not_configured
+  tenants:
+    columns:
+    - active
+    - created_at
+    - display_name
+    - id
+    - slug
+    data_boundary_classification: TENANT_SCOPED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: tenant_scoped
+    sensitivity: TENANT_SCOPED
+    retention_class: tenant_case_retention_not_configured
+  user_gamification:
+    columns:
+    - badges
+    - civic_score
+    - last_updated
+    - rank
+    - streak_weeks
+    - user_id
+    data_boundary_classification: LEGACY_UNCLASSIFIED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: quarantined_legacy
+    sensitivity: LEGACY_UNCLASSIFIED
+    retention_class: legacy_retention_not_configured
+  users:
+    columns:
+    - created_at
+    - district
+    - email
+    - id
+    - is_active
+    - last_login
+    - name
+    - password_hash
+    - phone
+    - phone_verified
+    - pincode
+    - preferred_language
+    - public_id
+    - state
+    data_boundary_classification: LEGACY_UNCLASSIFIED
+    owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
+    scope: quarantined_legacy
+    sensitivity: LEGACY_UNCLASSIFIED
+    retention_class: legacy_retention_not_configured
+profiles:
+  unreviewed_personal_data:
+    processing_justification: UNASSESSED_REQUIRES_ACCOUNTABLE_PRIVACY_AND_LEGAL_REVIEW
+    consent_notice_requirement: UNASSESSED_REQUIRES_NOTICE_AND_CONSENT_REVIEW
+    processor: DEPLOYMENT_PROCESSOR_UNCONFIGURED
+    storage: APPLICATION_DATABASE_OR_LEGACY_STORE_DEPLOYMENT_NOT_VERIFIED
+    region: UNCONFIGURED
+    encryption: DEPLOYMENT_AT_REST_CONTROLS_NOT_VERIFIED
+    authorized_roles:
+    - NOT_APPROVED
+    retention: UNCONFIGURED_OR_NOT_ENFORCED_FOR_LEGACY_DATA
+    deletion: PARTIAL_OR_UNVERIFIED; route CLI is not a production scheduler
+    export: NOT_IMPLEMENTED
+    correction: NOT_IMPLEMENTED
+    grievance_path: UNCONFIGURED
+personal_fields:
+  audit_events.action:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Append metadata for source-routing accountability and retention events; actor linkability
+      review remains required.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  audit_events.actor_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Append metadata for source-routing accountability and retention events; actor linkability
+      review remains required.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  audit_events.actor_role:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Append metadata for source-routing accountability and retention events; actor linkability
+      review remains required.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  audit_events.details:
+    classification: USER_SUPPLIED_OR_DOCUMENT_CONTENT
+    purpose: Append metadata for source-routing accountability and retention events; actor linkability
+      review remains required.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  audit_events.event_hash:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Append metadata for source-routing accountability and retention events; actor linkability
+      review remains required.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  audit_events.event_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Append metadata for source-routing accountability and retention events; actor linkability
+      review remains required.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  audit_events.object_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Append metadata for source-routing accountability and retention events; actor linkability
+      review remains required.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  audit_events.object_type:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Append metadata for source-routing accountability and retention events; actor linkability
+      review remains required.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  audit_events.occurred_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Append metadata for source-routing accountability and retention events; actor linkability
+      review remains required.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  audit_events.previous_hash:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Append metadata for source-routing accountability and retention events; actor linkability
+      review remains required.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  audit_events.sequence:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Append metadata for source-routing accountability and retention events; actor linkability
+      review remains required.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  audit_events.tenant_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Append metadata for source-routing accountability and retention events; actor linkability
+      review remains required.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  chat_logs.confidence:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy assistant conversation persistence in prototype flows; production use is not approved.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  chat_logs.id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy assistant conversation persistence in prototype flows; production use is not approved.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  chat_logs.intent:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy assistant conversation persistence in prototype flows; production use is not approved.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  chat_logs.message:
+    classification: USER_SUPPLIED_OR_DOCUMENT_CONTENT
+    purpose: Legacy assistant conversation persistence in prototype flows; production use is not approved.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  chat_logs.response:
+    classification: USER_SUPPLIED_OR_DOCUMENT_CONTENT
+    purpose: Legacy assistant conversation persistence in prototype flows; production use is not approved.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  chat_logs.session_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy assistant conversation persistence in prototype flows; production use is not approved.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  chat_logs.timestamp:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy assistant conversation persistence in prototype flows; production use is not approved.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  documents.created_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy draft generation metadata and file reference; private vault and lifecycle are not
+      implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  documents.doc_type:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy draft generation metadata and file reference; private vault and lifecycle are not
+      implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  documents.downloaded_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy draft generation metadata and file reference; private vault and lifecycle are not
+      implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  documents.file_path:
+    classification: USER_SUPPLIED_OR_DOCUMENT_CONTENT
+    purpose: Legacy draft generation metadata and file reference; private vault and lifecycle are not
+      implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  documents.file_size:
+    classification: USER_SUPPLIED_OR_DOCUMENT_CONTENT
+    purpose: Legacy draft generation metadata and file reference; private vault and lifecycle are not
+      implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  documents.generated_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy draft generation metadata and file reference; private vault and lifecycle are not
+      implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  documents.id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy draft generation metadata and file reference; private vault and lifecycle are not
+      implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  documents.jurisdiction:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy draft generation metadata and file reference; private vault and lifecycle are not
+      implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  documents.public_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy draft generation metadata and file reference; private vault and lifecycle are not
+      implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  documents.status:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy draft generation metadata and file reference; private vault and lifecycle are not
+      implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  documents.template_data:
+    classification: USER_SUPPLIED_OR_DOCUMENT_CONTENT
+    purpose: Legacy draft generation metadata and file reference; private vault and lifecycle are not
+      implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  documents.title:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy draft generation metadata and file reference; private vault and lifecycle are not
+      implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  documents.user_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy draft generation metadata and file reference; private vault and lifecycle are not
+      implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  issues.ai_confidence:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy civic issue report and map workflow; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  issues.category:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy civic issue report and map workflow; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  issues.created_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy civic issue report and map workflow; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  issues.description:
+    classification: USER_SUPPLIED_OR_DOCUMENT_CONTENT
+    purpose: Legacy civic issue report and map workflow; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  issues.fund_collected:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy civic issue report and map workflow; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  issues.fund_target:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy civic issue report and map workflow; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  issues.id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy civic issue report and map workflow; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  issues.integrity_hash:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy civic issue report and map workflow; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  issues.lat:
+    classification: LOCATION_OR_GEOGRAPHIC_DATA
+    purpose: Legacy civic issue report and map workflow; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  issues.location_landmarks:
+    classification: LOCATION_OR_GEOGRAPHIC_DATA
+    purpose: Legacy civic issue report and map workflow; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  issues.lon:
+    classification: LOCATION_OR_GEOGRAPHIC_DATA
+    purpose: Legacy civic issue report and map workflow; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  issues.media_files:
+    classification: USER_SUPPLIED_OR_DOCUMENT_CONTENT
+    purpose: Legacy civic issue report and map workflow; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  issues.priority_score:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy civic issue report and map workflow; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  issues.priority_tier:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy civic issue report and map workflow; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  issues.public_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy civic issue report and map workflow; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  issues.reporter_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy civic issue report and map workflow; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  issues.reporter_phone:
+    classification: DIRECT_IDENTIFIER_OR_CONTACT_DATA
+    purpose: Legacy civic issue report and map workflow; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  issues.resolved_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy civic issue report and map workflow; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  issues.status:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy civic issue report and map workflow; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  issues.title:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy civic issue report and map workflow; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  issues.updated_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy civic issue report and map workflow; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  offices.officer_name:
+    classification: DIRECT_IDENTIFIER_OR_CONTACT_DATA
+    purpose: Legacy directory records may include public-service staff work contact; source and publication
+      review required.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  offices.phone:
+    classification: DIRECT_IDENTIFIER_OR_CONTACT_DATA
+    purpose: Legacy directory records may include public-service staff work contact; source and publication
+      review required.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  route_decisions.created_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Store bounded derived source-routing facts and decision provenance after consent; retention
+      scheduling is not configured.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  route_decisions.explanation:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Store bounded derived source-routing facts and decision provenance after consent; retention
+      scheduling is not configured.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  route_decisions.id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Store bounded derived source-routing facts and decision provenance after consent; retention
+      scheduling is not configured.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  route_decisions.idempotency_key:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Store bounded derived source-routing facts and decision provenance after consent; retention
+      scheduling is not configured.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  route_decisions.input_facts:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Store bounded derived source-routing facts and decision provenance after consent; retention
+      scheduling is not configured.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  route_decisions.input_fingerprint:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Store bounded derived source-routing facts and decision provenance after consent; retention
+      scheduling is not configured.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  route_decisions.model_version:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Store bounded derived source-routing facts and decision provenance after consent; retention
+      scheduling is not configured.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  route_decisions.outcome:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Store bounded derived source-routing facts and decision provenance after consent; retention
+      scheduling is not configured.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  route_decisions.output:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Store bounded derived source-routing facts and decision provenance after consent; retention
+      scheduling is not configured.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  route_decisions.output_authority_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Store bounded derived source-routing facts and decision provenance after consent; retention
+      scheduling is not configured.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  route_decisions.retention_until:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Store bounded derived source-routing facts and decision provenance after consent; retention
+      scheduling is not configured.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  route_decisions.route_rule_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Store bounded derived source-routing facts and decision provenance after consent; retention
+      scheduling is not configured.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  route_decisions.route_rule_version:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Store bounded derived source-routing facts and decision provenance after consent; retention
+      scheduling is not configured.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  route_decisions.service_registry_version:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Store bounded derived source-routing facts and decision provenance after consent; retention
+      scheduling is not configured.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  route_decisions.source_versions:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Store bounded derived source-routing facts and decision provenance after consent; retention
+      scheduling is not configured.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_audit_logs.actor_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure workflow accountability metadata; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_audit_logs.actor_role:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure workflow accountability metadata; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_audit_logs.after_state:
+    classification: LOCATION_OR_GEOGRAPHIC_DATA
+    purpose: Legacy infrastructure workflow accountability metadata; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_audit_logs.before_state:
+    classification: LOCATION_OR_GEOGRAPHIC_DATA
+    purpose: Legacy infrastructure workflow accountability metadata; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_audit_logs.created_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure workflow accountability metadata; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_audit_logs.entity_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure workflow accountability metadata; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_audit_logs.entity_type:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure workflow accountability metadata; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_audit_logs.event_type:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure workflow accountability metadata; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_audit_logs.id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure workflow accountability metadata; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_audit_logs.immutable_hash:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure workflow accountability metadata; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_audit_logs.previous_hash:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure workflow accountability metadata; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_audit_logs.reason:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure workflow accountability metadata; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_contractors.name:
+    classification: DIRECT_IDENTIFIER_OR_CONTACT_DATA
+    purpose: Legacy contractor directory; records may identify sole traders and require privacy review.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issue_events.actor_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue event history; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issue_events.actor_role:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue event history; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issue_events.created_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue event history; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issue_events.from_status:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue event history; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issue_events.id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue event history; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issue_events.issue_public_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue event history; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issue_events.metadata_json:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue event history; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issue_events.notes:
+    classification: USER_SUPPLIED_OR_DOCUMENT_CONTENT
+    purpose: Legacy infrastructure issue event history; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issue_events.to_status:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue event history; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.accessibility_barrier_type:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.accessibility_flag:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.assigned_contractor_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.assigned_team:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.captured_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.captured_offline:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.category:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.citizen_confirmed:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.citizen_feedback_comment:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.citizen_feedback_rating:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.closed_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.cost_impact:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.created_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.description:
+    classification: USER_SUPPLIED_OR_DOCUMENT_CONTENT
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.duplicate_of_issue_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.duplicate_score:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.emergency_reason:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.escalated_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.evidence_urls:
+    classification: USER_SUPPLIED_OR_DOCUMENT_CONTENT
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.explainability:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.fraud_score:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.is_emergency:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.is_malicious:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.lat:
+    classification: LOCATION_OR_GEOGRAPHIC_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.lon:
+    classification: LOCATION_OR_GEOGRAPHIC_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.priority_score:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.priority_tier:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.public_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.reporter_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.reporter_language:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.reporter_reputation:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.resolved_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.risk_level:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.safety_impact:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.severity:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.sla_deadline:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.source:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.status:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.synced_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.title:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.updated_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.usage_impact:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.ward:
+    classification: LOCATION_OR_GEOGRAPHIC_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_issues.work_order_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy infrastructure issue workflow including possible reporter linkage; production use
+      is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.actual_cost:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.ai_quality_score:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.assigned_team:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.assignee_type:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.citizen_validated:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.completed_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.contractor_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.created_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.due_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.estimated_cost:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.inspector_validated:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.issue_public_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.payment_status:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.quality_score:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.repeat_failure_count:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.sensor_health_delta:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.sla_hours:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.started_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.status:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.updated_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.warranty_days:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.warranty_expiry:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  srs_work_orders.work_order_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy work-order workflow and citizen validation; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_audit_events.action:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff security and case accountability metadata; audit retention and accountable access require
+      review.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_audit_events.actor_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff security and case accountability metadata; audit retention and accountable access require
+      review.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_audit_events.created_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff security and case accountability metadata; audit retention and accountable access require
+      review.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_audit_events.id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff security and case accountability metadata; audit retention and accountable access require
+      review.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_audit_events.object_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff security and case accountability metadata; audit retention and accountable access require
+      review.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_audit_events.object_type:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff security and case accountability metadata; audit retention and accountable access require
+      review.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_audit_events.request_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff security and case accountability metadata; audit retention and accountable access require
+      review.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_audit_events.tenant_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff security and case accountability metadata; audit retention and accountable access require
+      review.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_case_events.actor_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Tenant-scoped metadata case history for staff workflows; citizen case linkage is not implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_case_events.case_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Tenant-scoped metadata case history for staff workflows; citizen case linkage is not implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_case_events.created_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Tenant-scoped metadata case history for staff workflows; citizen case linkage is not implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_case_events.event_type:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Tenant-scoped metadata case history for staff workflows; citizen case linkage is not implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_case_events.from_status:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Tenant-scoped metadata case history for staff workflows; citizen case linkage is not implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_case_events.id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Tenant-scoped metadata case history for staff workflows; citizen case linkage is not implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_case_events.metadata_json:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Tenant-scoped metadata case history for staff workflows; citizen case linkage is not implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_case_events.tenant_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Tenant-scoped metadata case history for staff workflows; citizen case linkage is not implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_case_events.to_status:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Tenant-scoped metadata case history for staff workflows; citizen case linkage is not implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_cases.assigned_user_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Tenant-scoped metadata-only staff workflow; no citizen narrative or official submission is
+      stored.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_cases.case_ref:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Tenant-scoped metadata-only staff workflow; no citizen narrative or official submission is
+      stored.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_cases.case_type:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Tenant-scoped metadata-only staff workflow; no citizen narrative or official submission is
+      stored.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_cases.created_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Tenant-scoped metadata-only staff workflow; no citizen narrative or official submission is
+      stored.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_cases.created_by:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Tenant-scoped metadata-only staff workflow; no citizen narrative or official submission is
+      stored.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_cases.id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Tenant-scoped metadata-only staff workflow; no citizen narrative or official submission is
+      stored.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_cases.priority:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Tenant-scoped metadata-only staff workflow; no citizen narrative or official submission is
+      stored.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_cases.status:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Tenant-scoped metadata-only staff workflow; no citizen narrative or official submission is
+      stored.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_cases.tenant_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Tenant-scoped metadata-only staff workflow; no citizen narrative or official submission is
+      stored.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_cases.title:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Tenant-scoped metadata-only staff workflow; no citizen narrative or official submission is
+      stored.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_cases.updated_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Tenant-scoped metadata-only staff workflow; no citizen narrative or official submission is
+      stored.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_mfa_challenges.consumed_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Short-lived staff MFA challenge and account linkage for authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_mfa_challenges.created_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Short-lived staff MFA challenge and account linkage for authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_mfa_challenges.expires_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Short-lived staff MFA challenge and account linkage for authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_mfa_challenges.tenant_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Short-lived staff MFA challenge and account linkage for authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_mfa_challenges.token_hash:
+    classification: AUTHENTICATION_OR_SESSION_SECRET
+    purpose: Short-lived staff MFA challenge and account linkage for authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_mfa_challenges.user_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Short-lived staff MFA challenge and account linkage for authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_mfa_factors.activated_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff MFA factor storage and enrollment metadata for authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_mfa_factors.active:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff MFA factor storage and enrollment metadata for authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_mfa_factors.created_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff MFA factor storage and enrollment metadata for authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_mfa_factors.enrollment_expires_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff MFA factor storage and enrollment metadata for authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_mfa_factors.enrollment_token_hash:
+    classification: AUTHENTICATION_OR_SESSION_SECRET
+    purpose: Staff MFA factor storage and enrollment metadata for authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_mfa_factors.failed_attempts:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff MFA factor storage and enrollment metadata for authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_mfa_factors.id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff MFA factor storage and enrollment metadata for authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_mfa_factors.last_totp_step:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff MFA factor storage and enrollment metadata for authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_mfa_factors.locked_until:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff MFA factor storage and enrollment metadata for authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_mfa_factors.secret_ciphertext:
+    classification: AUTHENTICATION_OR_SESSION_SECRET
+    purpose: Staff MFA factor storage and enrollment metadata for authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_mfa_factors.tenant_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff MFA factor storage and enrollment metadata for authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_mfa_factors.user_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff MFA factor storage and enrollment metadata for authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_role_grants.created_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff authorization grant administration and attribution.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_role_grants.granted_by:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff authorization grant administration and attribution.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_role_grants.id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff authorization grant administration and attribution.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_role_grants.role:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff authorization grant administration and attribution.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_role_grants.tenant_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff authorization grant administration and attribution.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_role_grants.user_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff authorization grant administration and attribution.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_sessions.absolute_expires_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff authenticated session, CSRF and revocation metadata.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_sessions.created_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff authenticated session, CSRF and revocation metadata.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_sessions.csrf_hash:
+    classification: AUTHENTICATION_OR_SESSION_SECRET
+    purpose: Staff authenticated session, CSRF and revocation metadata.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_sessions.idle_expires_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff authenticated session, CSRF and revocation metadata.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_sessions.last_seen_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff authenticated session, CSRF and revocation metadata.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_sessions.mfa_verified_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff authenticated session, CSRF and revocation metadata.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_sessions.revoked_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff authenticated session, CSRF and revocation metadata.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_sessions.session_hash:
+    classification: AUTHENTICATION_OR_SESSION_SECRET
+    purpose: Staff authenticated session, CSRF and revocation metadata.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_sessions.tenant_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff authenticated session, CSRF and revocation metadata.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_sessions.user_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff authenticated session, CSRF and revocation metadata.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_users.active:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff identity and account authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_users.created_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff identity and account authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_users.display_name:
+    classification: DIRECT_IDENTIFIER_OR_CONTACT_DATA
+    purpose: Staff identity and account authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_users.email:
+    classification: DIRECT_IDENTIFIER_OR_CONTACT_DATA
+    purpose: Staff identity and account authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_users.failed_login_count:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff identity and account authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_users.id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff identity and account authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_users.locked_until:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff identity and account authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_users.password_changed_at:
+    classification: AUTHENTICATION_OR_SESSION_SECRET
+    purpose: Staff identity and account authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_users.password_hash:
+    classification: AUTHENTICATION_OR_SESSION_SECRET
+    purpose: Staff identity and account authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  staff_users.tenant_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Staff identity and account authentication.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  tenants.display_name:
+    classification: DIRECT_IDENTIFIER_OR_CONTACT_DATA
+    purpose: Staff tenant organization registry; display label can contain personal information and is
+      unreviewed.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  user_gamification.badges:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy citizen-linked score and engagement profile; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  user_gamification.civic_score:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy citizen-linked score and engagement profile; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  user_gamification.last_updated:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy citizen-linked score and engagement profile; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  user_gamification.rank:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy citizen-linked score and engagement profile; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  user_gamification.streak_weeks:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy citizen-linked score and engagement profile; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  user_gamification.user_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy citizen-linked score and engagement profile; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  users.created_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy citizen account, contact and authentication data; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  users.district:
+    classification: LOCATION_OR_GEOGRAPHIC_DATA
+    purpose: Legacy citizen account, contact and authentication data; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  users.email:
+    classification: DIRECT_IDENTIFIER_OR_CONTACT_DATA
+    purpose: Legacy citizen account, contact and authentication data; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  users.id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy citizen account, contact and authentication data; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  users.is_active:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy citizen account, contact and authentication data; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  users.last_login:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy citizen account, contact and authentication data; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  users.name:
+    classification: DIRECT_IDENTIFIER_OR_CONTACT_DATA
+    purpose: Legacy citizen account, contact and authentication data; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  users.password_hash:
+    classification: AUTHENTICATION_OR_SESSION_SECRET
+    purpose: Legacy citizen account, contact and authentication data; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  users.phone:
+    classification: DIRECT_IDENTIFIER_OR_CONTACT_DATA
+    purpose: Legacy citizen account, contact and authentication data; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  users.phone_verified:
+    classification: DIRECT_IDENTIFIER_OR_CONTACT_DATA
+    purpose: Legacy citizen account, contact and authentication data; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  users.pincode:
+    classification: LOCATION_OR_GEOGRAPHIC_DATA
+    purpose: Legacy citizen account, contact and authentication data; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  users.preferred_language:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy citizen account, contact and authentication data; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  users.public_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Legacy citizen account, contact and authentication data; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  users.state:
+    classification: LOCATION_OR_GEOGRAPHIC_DATA
+    purpose: Legacy citizen account, contact and authentication data; production use is quarantined.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+nonpersonal_fields:
+  authorities.authority_key:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  authorities.authority_level:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  authorities.canonical_name:
+    classification: ENGINEERING_CLASSIFIED_NON_PERSONAL_CANDIDATE
+    reason: Published name of an authority in the global reference catalog.
+    status: REVIEWED
+  authorities.created_at:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  authorities.effective_from:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  authorities.effective_until:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  authorities.id:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  authorities.jurisdiction:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  authorities.official_source_id:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  authorities.status:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  authorities.version:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  blockchain_tx.block_number:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  blockchain_tx.contract_address:
+    classification: ENGINEERING_CLASSIFIED_NON_PERSONAL_CANDIDATE
+    reason: Public infrastructure contract address, not a natural-person identifier.
+    status: REVIEWED
+  blockchain_tx.created_at:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  blockchain_tx.id:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  blockchain_tx.payload_hash:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  blockchain_tx.status:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  blockchain_tx.tx_hash:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_service_sources.service_version_id:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_service_sources.source_id:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.appeal_channel:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.application_channel:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.authority_id:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.authority_level:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.canonical_name:
+    classification: ENGINEERING_CLASSIFIED_NON_PERSONAL_CANDIDATE
+    reason: Published service name in the global reference catalog.
+    status: REVIEWED
+  government_services.connector_id:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.created_at:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.department:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.description:
+    classification: ENGINEERING_CLASSIFIED_NON_PERSONAL_CANDIDATE
+    reason: Published general service description, not citizen supplied text.
+    status: REVIEWED
+  government_services.effective_from:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.effective_until:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.eligibility:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.escalation_channel:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.exclusions:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.geography:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.grievance_channel:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.id:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.identity_assurance_required:
+    classification: ENGINEERING_CLASSIFIED_NON_PERSONAL_CANDIDATE
+    reason: Published service assurance category, not a person's identity record.
+    status: REVIEWED
+  government_services.integration_mode:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.issue_types:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.jurisdiction:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.last_verified:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.official_sla:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.official_url:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.optional_evidence:
+    classification: ENGINEERING_CLASSIFIED_NON_PERSONAL_CANDIDATE
+    reason: Published evidence category, not an uploaded citizen document.
+    status: REVIEWED
+  government_services.recommended_evidence:
+    classification: ENGINEERING_CLASSIFIED_NON_PERSONAL_CANDIDATE
+    reason: Published evidence category, not an uploaded citizen document.
+    status: REVIEWED
+  government_services.required_evidence:
+    classification: ENGINEERING_CLASSIFIED_NON_PERSONAL_CANDIDATE
+    reason: Published evidence category, not an uploaded citizen document.
+    status: REVIEWED
+  government_services.service_key:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.status:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  government_services.version:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_assets.asset_type:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_assets.created_at:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_assets.health_score:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_assets.id:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_assets.last_reading:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_assets.lat:
+    classification: ENGINEERING_CLASSIFIED_NON_PERSONAL_CANDIDATE
+    reason: Infrastructure asset coordinates; separately security-sensitive, not person location data.
+    status: REVIEWED
+  iot_assets.lng:
+    classification: ENGINEERING_CLASSIFIED_NON_PERSONAL_CANDIDATE
+    reason: Infrastructure asset coordinates; separately security-sensitive, not person location data.
+    status: REVIEWED
+  iot_assets.predictive_maintenance_due:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_assets.status:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_assets.updated_at:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_assets.ward:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.anomaly_type:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.asset_id:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.asset_type:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.blockchain_hash:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.confidence:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.deviation_from_baseline:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.environmental_context:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.estimated_downtime_hours:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.failure_probability_30d:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.failure_probability_7d:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.health_score:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.id:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.ingestion_id:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.is_anomaly:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.lat:
+    classification: ENGINEERING_CLASSIFIED_NON_PERSONAL_CANDIDATE
+    reason: Infrastructure sensor coordinates; separately security-sensitive, not person location data.
+    status: REVIEWED
+  iot_readings.lng:
+    classification: ENGINEERING_CLASSIFIED_NON_PERSONAL_CANDIDATE
+    reason: Infrastructure sensor coordinates; separately security-sensitive, not person location data.
+    status: REVIEWED
+  iot_readings.maintenance_priority:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.maintenance_triggered:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.predicted_failure_date:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.primary_failure_mode:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.processed_at:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.recommended_action:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.remaining_useful_life_days:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.secondary_failure_modes:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.sensor_readings:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.severity:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.skill_level:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.spare_parts_required:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.status:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.timestamp_utc:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  iot_readings.ward:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  offices.address:
+    classification: ENGINEERING_CLASSIFIED_NON_PERSONAL_CANDIDATE
+    reason: Public office address, not a citizen or employee home address.
+    status: REVIEWED
+  offices.department:
+    classification: LEGACY_QUARANTINED_OPERATIONAL_DATA
+    reason: Current field belongs to the LEGACY_UNCLASSIFIED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  offices.id:
+    classification: LEGACY_QUARANTINED_OPERATIONAL_DATA
+    reason: Current field belongs to the LEGACY_UNCLASSIFIED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  offices.lat:
+    classification: ENGINEERING_CLASSIFIED_NON_PERSONAL_CANDIDATE
+    reason: Public office coordinates, not a person's location.
+    status: REVIEWED
+  offices.lon:
+    classification: ENGINEERING_CLASSIFIED_NON_PERSONAL_CANDIDATE
+    reason: Public office coordinates, not a person's location.
+    status: REVIEWED
+  offices.name:
+    classification: ENGINEERING_CLASSIFIED_NON_PERSONAL_CANDIDATE
+    reason: Published name of an office in the public directory.
+    status: REVIEWED
+  offices.rating:
+    classification: LEGACY_QUARANTINED_OPERATIONAL_DATA
+    reason: Current field belongs to the LEGACY_UNCLASSIFIED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  offices.services:
+    classification: LEGACY_QUARANTINED_OPERATIONAL_DATA
+    reason: Current field belongs to the LEGACY_UNCLASSIFIED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  offices.timings:
+    classification: LEGACY_QUARANTINED_OPERATIONAL_DATA
+    reason: Current field belongs to the LEGACY_UNCLASSIFIED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  official_sources.authority:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  official_sources.canonical_url:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  official_sources.document_hash:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  official_sources.effective_from:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  official_sources.effective_until:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  official_sources.id:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  official_sources.jurisdiction:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  official_sources.parser_version:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  official_sources.retrieved_at:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  official_sources.reviewer:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  official_sources.source_key:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  official_sources.source_type:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  official_sources.superseded_by_id:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  official_sources.supersedes_id:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  official_sources.title:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  official_sources.verification_status:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  official_sources.verified_at:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  official_sources.version:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  resilience_hubs.address:
+    classification: ENGINEERING_CLASSIFIED_NON_PERSONAL_CANDIDATE
+    reason: Infrastructure facility address; separately security-sensitive, not personal address data.
+    status: REVIEWED
+  resilience_hubs.battery_soc_percent:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  resilience_hubs.connected_loads:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  resilience_hubs.created_at:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  resilience_hubs.grid_connection:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  resilience_hubs.id:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  resilience_hubs.lat:
+    classification: ENGINEERING_CLASSIFIED_NON_PERSONAL_CANDIDATE
+    reason: Infrastructure facility coordinates, not a person's location.
+    status: REVIEWED
+  resilience_hubs.lng:
+    classification: ENGINEERING_CLASSIFIED_NON_PERSONAL_CANDIDATE
+    reason: Infrastructure facility coordinates, not a person's location.
+    status: REVIEWED
+  resilience_hubs.occupancy:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  resilience_hubs.operational_mode:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  resilience_hubs.solar_generation_kw:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  resilience_hubs.supplies:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  resilience_hubs.updated_at:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  route_rules.authority_id:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  route_rules.created_at:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  route_rules.effective_from:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  route_rules.effective_until:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  route_rules.exclusion_terms:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  route_rules.id:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  route_rules.issue_type:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  route_rules.match_terms:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  route_rules.priority:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  route_rules.rule_key:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  route_rules.service_version_id:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  route_rules.source_ids:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  route_rules.status:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  route_rules.version:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_assets.accessibility_compliant:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_assets.age_years:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_assets.asset_id:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_assets.asset_type:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_assets.created_at:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_assets.criticality:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_assets.degradation_rate:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_assets.health_score:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_assets.last_inspection_at:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_assets.last_sensor_score:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_assets.lat:
+    classification: ENGINEERING_CLASSIFIED_NON_PERSONAL_CANDIDATE
+    reason: Infrastructure asset coordinates; separately security-sensitive, not person location data.
+    status: REVIEWED
+  srs_assets.lon:
+    classification: ENGINEERING_CLASSIFIED_NON_PERSONAL_CANDIDATE
+    reason: Infrastructure asset coordinates; separately security-sensitive, not person location data.
+    status: REVIEWED
+  srs_assets.maintenance_status:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_assets.predicted_failure_days:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_assets.updated_at:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_assets.usage_index:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_assets.ward:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_budget_events.actual_cost:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_budget_events.anomaly_flag:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_budget_events.anomaly_reason:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_budget_events.category:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_budget_events.created_at:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_budget_events.id:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_budget_events.planned_cost:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_budget_events.variance_percent:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_budget_events.work_order_id:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_contractors.availability_status:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_contractors.avg_resolution_hours:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_contractors.blacklisted:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_contractors.capacity_per_day:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_contractors.contractor_id:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_contractors.created_at:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_contractors.durability_score:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_contractors.fraud_flags:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_contractors.reliability_score:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_contractors.repair_quality_score:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_contractors.sla_adherence_score:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_contractors.specialization:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_contractors.total_jobs:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_contractors.updated_at:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_utility_map.active:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_utility_map.created_at:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_utility_map.depth_m:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_utility_map.geometry_json:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_utility_map.updated_at:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_utility_map.utility_id:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_utility_map.utility_type:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  srs_utility_map.ward:
+    classification: SECURITY_SENSITIVE_OPERATIONAL_DATA
+    reason: Current field belongs to the SECURITY_SCOPED table boundary and has no direct person-field
+      name/context; reassess if semantic use changes.
+    status: REVIEWED
+  tenants.active:
+    classification: TENANT_OR_OPERATIONAL_DATA
+    reason: Current field belongs to the TENANT_SCOPED table boundary and has no direct person-field name/context;
+      reassess if semantic use changes.
+    status: REVIEWED
+  tenants.created_at:
+    classification: TENANT_OR_OPERATIONAL_DATA
+    reason: Current field belongs to the TENANT_SCOPED table boundary and has no direct person-field name/context;
+      reassess if semantic use changes.
+    status: REVIEWED
+  tenants.id:
+    classification: TENANT_OR_OPERATIONAL_DATA
+    reason: Current field belongs to the TENANT_SCOPED table boundary and has no direct person-field name/context;
+      reassess if semantic use changes.
+    status: REVIEWED
+  tenants.slug:
+    classification: TENANT_OR_OPERATIONAL_DATA
+    reason: Current field belongs to the TENANT_SCOPED table boundary and has no direct person-field name/context;
+      reassess if semantic use changes.
+    status: REVIEWED
+candidate_exemptions:
+  authorities.canonical_name:
+    reason: Published name of an authority in the global reference catalog.
+  blockchain_tx.contract_address:
+    reason: Public infrastructure contract address, not a natural-person identifier.
+  government_services.canonical_name:
+    reason: Published service name in the global reference catalog.
+  government_services.description:
+    reason: Published general service description, not citizen supplied text.
+  government_services.identity_assurance_required:
+    reason: Published service assurance category, not a person's identity record.
+  government_services.optional_evidence:
+    reason: Published evidence category, not an uploaded citizen document.
+  government_services.recommended_evidence:
+    reason: Published evidence category, not an uploaded citizen document.
+  government_services.required_evidence:
+    reason: Published evidence category, not an uploaded citizen document.
+  iot_assets.lat:
+    reason: Infrastructure asset coordinates; separately security-sensitive, not person location data.
+  iot_assets.lng:
+    reason: Infrastructure asset coordinates; separately security-sensitive, not person location data.
+  iot_readings.lat:
+    reason: Infrastructure sensor coordinates; separately security-sensitive, not person location data.
+  iot_readings.lng:
+    reason: Infrastructure sensor coordinates; separately security-sensitive, not person location data.
+  offices.address:
+    reason: Public office address, not a citizen or employee home address.
+  offices.lat:
+    reason: Public office coordinates, not a person's location.
+  offices.lon:
+    reason: Public office coordinates, not a person's location.
+  offices.name:
+    reason: Published name of an office in the public directory.
+  resilience_hubs.address:
+    reason: Infrastructure facility address; separately security-sensitive, not personal address data.
+  resilience_hubs.lat:
+    reason: Infrastructure facility coordinates, not a person's location.
+  resilience_hubs.lng:
+    reason: Infrastructure facility coordinates, not a person's location.
+  srs_assets.lat:
+    reason: Infrastructure asset coordinates; separately security-sensitive, not person location data.
+  srs_assets.lon:
+    reason: Infrastructure asset coordinates; separately security-sensitive, not person location data.

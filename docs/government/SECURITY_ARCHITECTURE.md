@@ -15,3 +15,10 @@ and [`../release/PHASE4_ABAC_EVIDENCE.md`](../release/PHASE4_ABAC_EVIDENCE.md).
 The role taxonomy, department/jurisdiction case keys, source-governance routes,
 and staff production authorization remain incomplete; this does not change the
 partial security status.
+
+The field-level inventory is checked against ORM metadata in CI and recorded
+in [`data-governance-registry.yaml`](data-governance-registry.yaml). It covers
+452 columns; all 254 personal/linkable entries remain `INVENTORIED`, not
+`APPROVED`. Privacy/legal sign-off and deployed processor, region, retention
+and rights workflows are still release blockers. See
+[`../release/PHASE4_DATA_GOVERNANCE_EVIDENCE.md`](../release/PHASE4_DATA_GOVERNANCE_EVIDENCE.md).

@@ -38,7 +38,7 @@ Advance SCMIRN from mixed prototype workspaces to a source-verifiable citizen-re
 
 - Add a centralized default-deny ABAC evaluator and use it for staff case visibility and mutation; preserve database tenant filters and non-enumerating 404s. **Implemented for the existing four staff grants** in `authorization.py`; target citizen/operator/supervisor role provisioning and service-level scope remain open.
 - Add negative unit and authenticated API tests before policy code.
-- Add machine-readable data governance coverage and a CI parity gate for persisted fields.
+- Add machine-readable data governance coverage and a CI parity gate for persisted fields. **Implemented** for all 452 current SQLAlchemy columns; strict release mode remains blocked on 254 personal/linkable field approvals and accountable privacy ownership.
 - Complete missing ownership, role/reviewer-separation, privacy, evidence, retention, supply-chain, observability, backup and accessibility controls in independently reviewable slices. Keep blocked controls explicit.
 
 ### 2. Domain core

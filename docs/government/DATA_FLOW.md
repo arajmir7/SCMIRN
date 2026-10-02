@@ -2,6 +2,14 @@
 
 **Scope:** code and configuration inventory; production traffic and processor locations were not inspected.
 
+The machine-readable [data-governance registry](data-governance-registry.yaml)
+tracks the 34 mapped SQLAlchemy tables and all 452 fields. The CI checker
+compares that inventory to live ORM metadata and requires each field to be
+recorded as potentially personal/linkable or explicitly classified otherwise.
+The 254 personal/linkable entries are engineering-inventoried only; the
+release approval mode blocks them until an accountable privacy owner approves
+the processing metadata.
+
 ## Consent-gated source triage
 
 1. The browser collects a free-text description and submits only after the explicit triage consent control.
@@ -18,4 +26,3 @@ Legacy issue, assistant, document, upload, analytics, map, and tracking paths ma
 ## External systems
 
 No government connector, official status feed, identity broker, document vault, notification provider, or AI processor is verified as connected for this assessment. Browser geocoding/map providers are separately described in the privacy matrix; provider terms, location, and retention remain to be confirmed for deployment.
-

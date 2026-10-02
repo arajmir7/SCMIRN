@@ -20,6 +20,8 @@ run_gate() {
 }
 
 run_gate "Backend unit, integration and policy tests" "${PYTHON_BIN}" -m pytest -q -p no:cacheprovider src/backend/tests
+run_gate "Persisted data governance inventory parity" "${PYTHON_BIN}" scripts/check_data_governance.py
+run_gate "Accountable personal-data approval" "${PYTHON_BIN}" scripts/check_data_governance.py --require-approved
 if [[ -n "${SCMIRN_POSTGRES_RLS_TEST_URL:-}" ]]; then
   printf 'PostgreSQL RLS integration is enabled with the supplied disposable-test URL.\n'
 else
@@ -46,6 +48,7 @@ blockers=(
   "Fresh SAST, SCA, container/OS and IaC scans, image SBOM, and signed build provenance are not complete for this candidate."
   "Backup/restore, disaster recovery, performance/capacity, rollback rehearsal, and multi-region resilience are not verified."
   "Accessibility requires route-wide automated and manual keyboard/screen-reader/reflow evidence."
+  "The field registry is engineering-inventoried, but personal-data purpose/processing justification, processor, region, retention, rights workflow and accountable privacy approval are incomplete."
   "Government source onboarding, legal/privacy approvals, external security assessment and authorization remain external blockers."
 )
 

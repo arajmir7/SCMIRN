@@ -2,6 +2,8 @@
 
 **Status:** privacy engineering inventory only. This is not a legal opinion or a claim of DPDP compliance. Applicable legal commencement and obligations must be confirmed by Indian counsel at deployment time.
 
+The field-level inventory is [`../government/data-governance-registry.yaml`](../government/data-governance-registry.yaml). The checked-in schema snapshot enumerates all 452 mapped columns across 34 SQLAlchemy tables. It records 254 potentially personal/linkable fields and explicit candidate exemptions. New mapped fields fail the CI parity check until they have an inventory entry and classification. Existing personal-field entries are `INVENTORIED`, not legally `APPROVED`; the release gate's `--require-approved` mode remains blocked. Owner, processor, region, lawful processing justification, applicable notice/consent, retention, deletion, export/correction and grievance workflow still require accountable review and implementation.
+
 | Data / flow | Purpose visible in implementation | Storage / recipient | Retention / deletion | Access / control | Gap / action |
 |---|---|---|---|---|---|
 | Issue title, description, category, coordinates, landmark | Display/report civic issue | Canonical `issues`/`srs_issues`; frontend map/analytics | No complete retention/deletion schedule verified | Public anonymous API; rate limiting on some routes | Define notice, necessity, precise-location minimization, access/export/erasure and public visibility. |
