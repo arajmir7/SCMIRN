@@ -1,0 +1,14 @@
+flask
+flask-cors
+flask-sqlalchemy
+flask-migrate
+flask-jwt-extended
+flask-caching
+flask-limiter
+redis>=5,<9
+marshmallow
+sqlalchemy
+boto3
+cryptography>=50.0.2,<51
+psycopg[binary]>=3.2,<4
+gunicorn>=23,<24

@@ -1,0 +1,281 @@
+{
+  "schema_version": 1,
+  "git_sha": null,
+  "working_tree": "UNAVAILABLE_NO_GIT_METADATA",
+  "timestamp": "2026-10-02T03:26:08+05:30",
+  "migration_head": {
+    "revision": "20261001_01",
+    "status": "LOCAL_POSTGRESQL_PASS",
+    "scope": "Fresh disposable PostgreSQL; source-routing/audit tables only, not full legacy schema baseline."
+  },
+  "frontend_build": {
+    "status": "PASS_CURRENT_GOVERNMENT_TRANSFORMATION",
+    "typecheck": "PASS",
+    "build": "PASS",
+    "browser_tests": "8 passed in 6.6 seconds",
+    "note": "All current local frontend checks passed in the 2026-10-02 release gate; no production deployment was performed."
+  },
+  "backend_tests": {
+    "status": "PASS",
+    "locked_python_3_11": "46 passed, 2 existing SQLAlchemy Query.get() deprecation warnings; 1.71 seconds",
+    "native_python_3_13_release_gate": "39 passed, 116 existing deprecation warnings",
+    "snapshot_scope": "Historical pre-Phase-2 suite snapshot; latest suite is recorded under phase2_blocker_closure.backend_tests."
+  },
+  "feature_parity": {
+    "status": "PASS",
+    "source_features": 9,
+    "integrated": 9,
+    "unexplained": 0
+  },
+  "openapi_route_gate": {
+    "status": "PASS_LATEST_PHASE2_CONTRACT_CHECK",
+    "openapi_version": "3.1.0",
+    "documented_production_paths": 17,
+    "other_registered_api_operations_rejected_with_503": 91
+  },
+  "dependency_locks": {
+    "backend_runtime_sha256": "0df7ea755e0b7c9ce517a5475d5508972f3b940d30db7f19c69aacd40e994e57",
+    "backend_dev_sha256": "90a79c09c4d5b6e069a5bd1e849c43bdb133bef47cd4b2dc35954e79f00883f9",
+    "frontend_package_lock_sha256": "0556ff7e169f9c332fb8c7a30c1251a72d50d20ce3ad505cad2c5f993bc48d8e"
+  },
+  "local_image_build": {
+    "status": "PASS_LOCAL_BUILD_ONLY",
+    "release_tag": "local-govtrans-20261002-434dc1c3",
+    "production_config_check": "PASS_WITH_TEMPORARY_SYNTHETIC_SECRETS_AND_PLACEHOLDER_CA_FILES",
+    "services_contacted": false,
+    "deployment_started": false,
+    "backend_image_id": "sha256:55a4f655625ea767314dbdd641faf89d982900171a847bae61b28e7f66f565f4",
+    "frontend_image_id": "sha256:5b36ec6f35cbf210d03323e25066f7ea1ad6fcc5b2bfdb584388fb96744f6f15",
+    "base_images": [
+      "python:3.11-slim@sha256:e41613d42d4891e4930f79523f93f81bbc7632584ec65e36ab055f41a800b41e",
+      "node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293",
+      "nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10"
+    ],
+    "sbom": "NOT_GENERATED",
+    "signed_provenance": "NOT_GENERATED",
+    "container_scan": "NOT_RUN",
+    "tag_reuse_guard": "PASS; unique release tag used for local image build only"
+  },
+  "release_gate": {
+    "executable_checks": "7 of 7 passed",
+    "backend_tests": "46 passed, 2 existing SQLAlchemy deprecation warnings",
+    "frontend_typecheck": "PASS",
+    "frontend_build": "PASS",
+    "browser_tests": "8 passed",
+    "feature_parity": "9 integrated, 0 unexplained",
+    "openapi_route_gate": "PASS; 8 allowlisted paths, 91 other operations rejected with 503 in synthetic production mode",
+    "production_config_and_local_image_build": "PASS using temporary synthetic values and placeholder CA files",
+    "overall_exit": "BLOCKED_BY_UNRESOLVED_PRODUCTION_CONTROLS; script returned exit 1 as designed",
+    "verdict": "NOT PRODUCTION READY",
+    "snapshot_scope": "Historical pre-Phase-2 gate snapshot; its 46 backend tests and 8-path allowlist predate the staff identity/RLS changes. See phase2_blocker_closure for the latest backend and API evidence."
+  },
+  "database_tests": {
+    "status": "PASS_DISPOSABLE_POSTGRESQL_16_RLS_AND_API_INTEGRATION",
+    "evidence": [
+      "Full Alembic migration chain applied to disposable PostgreSQL 16",
+      "Runtime test role verified non-owner and non-BYPASSRLS",
+      "Forced staff/case RLS verified for tenant reads and writes",
+      "Session-hash scope and staff password/TOTP/case API exercised",
+      "Case and staff audit history UPDATE/DELETE rejected",
+      "Earlier disposable PostgreSQL/Redis TLS Compose smoke also passed its limited scope"
+    ],
+    "not_covered": [
+      "production database or deployment role configuration",
+      "tenant isolation for legacy citizen/issue/document/chat/route/audit tables",
+      "concurrent write invariants",
+      "backup/restore, disaster recovery or rollback"
+    ]
+  },
+  "browser_tests": {
+    "status": "PASS_CURRENT_GOVERNMENT_TRANSFORMATION",
+    "count": 8,
+    "responsive_widths_checked": [
+      320,
+      360,
+      375,
+      390,
+      430,
+      768,
+      1024,
+      1280,
+      1366,
+      1440,
+      1536,
+      1920,
+      2560
+    ],
+    "accessibility": "NOT_TESTED"
+  },
+  "accessibility_tests": {
+    "status": "NOT_TESTED",
+    "automated": "NOT_RUN",
+    "manual": "NOT_RUN"
+  },
+  "authorization_tests": {
+    "status": "PASS_LOCAL_STAFF_FLOW; DEPLOYMENT_AUTH_UNVERIFIED",
+    "reason": "Staff auth/RBAC passed unit tests and disposable PostgreSQL 16 API integration. Production identity, ingress, operational controls and legacy authorization remain incomplete."
+  },
+  "tenant_tests": {
+    "status": "PASS_STAFF_SCOPE_DISPOSABLE_POSTGRESQL_16; LEGACY_SCOPE_OPEN",
+    "reason": "Forced RLS and cross-tenant staff/case access were exercised as a non-owner, non-BYPASSRLS role. Other legacy tables are outside this staff tenant boundary."
+  },
+  "ai_tests": {
+    "status": "NOT_APPLICABLE_TO_PRODUCTION_ROUTE",
+    "reason": "Production triage is deterministic; legacy AI is gated. No golden model evaluation exists."
+  },
+  "security_scans": {
+    "status": "PARTIAL",
+    "sast": "NOT_RUN",
+    "sca": "PASS_DEPENDENCY_LOCK_SCOPE_ONLY; Python pip-audit reports 0 known issues (43 components); npm audit reports 0 known issues (152 components)",
+    "secret_scan": "NOT_RUN",
+    "dast": "NOT_RUN",
+    "container_scan": "NOT_RUN",
+    "scan_date": "2026-10-02"
+  },
+  "container_scan": {
+    "status": "NOT_RUN",
+    "sbom": "DEPENDENCY_SBOMS_GENERATED; NO_IMAGE_SBOM",
+    "provenance": "NOT_GENERATED"
+  },
+  "backup_result": "NOT_TESTED",
+  "restore_result": "NOT_TESTED",
+  "rollback_result": "HELPER_IMPLEMENTED_NOT_REHEARSED",
+  "compose_rehearsal": {
+    "status": "VERIFIED_LOCAL_PRODUCTION_REHEARSAL",
+    "date": "2026-10-01",
+    "services": {
+      "postgresql": "PASS_DISPOSABLE_TLS",
+      "redis": "PASS_DISPOSABLE_TLS"
+    },
+    "hostname_verification": "PASS",
+    "migration": "PASS revision 20261001_01",
+    "audit_update_rejection": "PASS",
+    "backend_health": "PASS",
+    "frontend_health": "PASS",
+    "root_route": "PASS",
+    "nested_frontend_route": "PASS /documents",
+    "api_readiness_through_proxy": "PASS",
+    "disabled_legacy_api": "PASS HTTP 503",
+    "synthetic_triage": "PASS safe abstention; submission_status NOT_SUBMITTED",
+    "container_versions": {
+      "postgresql": "16",
+      "redis": "7"
+    },
+    "container_digests": "NOT_RECORDED",
+    "failure_count": 0,
+    "limits": [
+      "not a live production deployment",
+      "did not verify RLS/tenant isolation",
+      "did not verify backup/restore or rollback"
+    ]
+  },
+  "known_findings": [
+    "Production identity/federation, deployment authorization and tenant boundaries for legacy records remain incomplete.",
+    "Alembic covers all 34 ORM tables through 20261002_03; the full chain and new staff/case RLS passed against disposable PostgreSQL 16, not a production database.",
+    "Four official handoff candidates pass current source checks; none performs a filing or creates an official receipt.",
+    "Retention purge is not scheduled or monitored in production Compose.",
+    "Production backup/restore, disaster recovery and rollback rehearsal are absent.",
+    "Fresh SAST/secret/DAST/container scans and image SBOM/provenance are absent; dependency scans cover lockfiles only.",
+    "Manual and automated accessibility audits are absent.",
+    "No production observability, alert owner, SLO measurements, or performance benchmark is configured."
+  ],
+  "external_blockers": [
+    "Cybercrime portal certificate renewal is required before its public source can pass TLS verification and be re-reviewed.",
+    "Agency authorization, current interface contracts, approved sandbox/credentials, and a named service owner are required before any connected filing or status integration.",
+    "Qualified legal/privacy owners must approve legal scope, purpose/retention, notices, and data-sharing arrangements before production casework.",
+    "A named hosting operator must provide the approved identity/federation choice (if required), TLS ingress, secrets/KMS, PostgreSQL/Redis/object storage, backup/DR, monitoring, and incident ownership.",
+    "Independent assessment or government certification, where required, must be performed by the designated assessor against an approved scope."
+  ],
+  "maturity_level": "L3 \u2014 LOCAL PRODUCTION REHEARSAL VERIFIED",
+  "maturity_scope": "Earlier local Compose deployment slice plus current local build/test evidence; latest code was not deployed to the disposable services.",
+  "verdict": "NOT PRODUCTION READY",
+  "previous_local_image_build": {
+    "status": "PASS_LOCAL_BUILD_ONLY",
+    "release_tag": "local-hardening-20261001-d49f12a",
+    "production_config_check": "PASS_WITH_SYNTHETIC_SECRETS_AND_PLACEHOLDER_CA_FILES",
+    "services_contacted": false,
+    "backend_image_id": "sha256:603bcf46e8817314c6bfe00c4e536e78d6a0bfea2c85f6946360f36f88d2655f",
+    "frontend_image_id": "sha256:9297bd75148c984bd9073888d443598f17237b997cf30397c948f02f02dcba7e",
+    "base_images": [
+      "python:3.11-slim@sha256:e41613d42d4891e4930f79523f93f81bbc7632584ec65e36ab055f41a800b41e",
+      "node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293",
+      "nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10"
+    ],
+    "sbom": "NOT_GENERATED",
+    "signed_provenance": "NOT_GENERATED",
+    "container_scan": "NOT_RUN",
+    "tag_reuse_guard": "PASS; build attempt with existing local backend tag was rejected before any image build"
+  },
+  "documentation_check": {
+    "status": "PASS_RELATIVE_LINKS",
+    "scope": "docs/government/*.md relative Markdown links",
+    "authority_or_compliance_claims_validated": false
+  },
+  "phase2_blocker_closure": {
+    "date": "2026-10-02",
+    "status": "PARTIAL_LOCAL_IMPLEMENTATION",
+    "database_migrations": {
+      "head": "20261002_03",
+      "orm_table_count": 34,
+      "sqlite_migration_tests": "6 passed",
+      "postgresql_migration_tests": "1 passed; full chain to head on disposable PostgreSQL 16",
+      "coverage": [
+        "zero-to-head",
+        "existing exact schema",
+        "legacy-only schema",
+        "pre-DDL drift refusal",
+        "legacy source status migration",
+        "PostgreSQL tenant RLS and staff API integration using non-owner/non-BYPASSRLS role"
+      ],
+      "postgresql_execution": "PASS_DISPOSABLE_POSTGRESQL_16; NO PRODUCTION DATABASE USED",
+      "rls": "FORCED_RLS_TESTED_FOR_TENANT_STAFF_AND_CASE_TABLES; LEGACY_NONSTAFF_TENANT_BOUNDARY_OPEN"
+    },
+    "official_registry": {
+      "service_candidates": 5,
+      "hash_reviewed_official_pages": 9,
+      "draft_source_count": 1,
+      "publicly_listed_handoffs": 4,
+      "integration_mode": "OFFICIAL_HANDOFF_ONLY",
+      "agency_submission_enabled": false,
+      "cybercrime_portal": "DRAFT; TLS certificate validation failed on 2026-10-02"
+    },
+    "backend_tests": "65 passed; 2 existing SQLAlchemy Query.get deprecation warnings; opt-in PostgreSQL RLS integration enabled",
+    "documents": [
+      "docs/government/API_CATALOGUE.md",
+      "docs/government/DATABASE_SCHEMA.md",
+      "docs/government/DEPLOYMENT_GUIDE.md",
+      "docs/government/INTERNAL_CONTROLS_CLOSED.md",
+      "docs/government/PILOT_READINESS.md",
+      "docs/government/REFERENCE_ARCHITECTURE.md",
+      "docs/government/SOURCE_PROVENANCE.md",
+      "docs/merge/DATA_MODEL_MATRIX.md",
+      "docs/merge/GOVERNMENT_READINESS_MATRIX.md",
+      "docs/merge/SECURITY_GAP_MATRIX.md",
+      "docs/merge/TEST_EVIDENCE_MATRIX.md",
+      "docs/security/ABUSE_CASES.md",
+      "docs/security/DEPENDENCY_SCAN_2026-10-02.md",
+      "docs/security/SECURITY_ARCHITECTURE.md",
+      "docs/security/THREAT_MODEL.md",
+      "docs/scmirn/EXECUTION_STATE.md"
+    ],
+    "still_open_internal": [
+      "production validation of PostgreSQL runtime role/configuration and CI repetition of the local RLS test",
+      "tenant ownership/RLS for legacy citizen, issue, document, chat, route-decision and related records",
+      "staff console, identity federation/recovery, reviewer separation and independent auth review",
+      "case assignment/work queues, official source publication and government receipt lifecycle",
+      "private malware-scanned evidence vault and deletion proof",
+      "security source/image scans and signed provenance",
+      "accessibility, observability, performance, backup/restore, DR and rollback evidence"
+    ],
+    "verdict": "NOT PRODUCTION READY",
+    "dependency_scans": {
+      "pip_audit": "No known vulnerabilities reported; 43 CycloneDX components; requirements-dev.lock scope",
+      "npm_audit": "0 info/low/moderate/high/critical; 152 CycloneDX components; package-lock.json scope",
+      "container_scan": "NOT_RUN",
+      "sast_secret_dast": "NOT_RUN",
+      "signed_provenance": "NOT_GENERATED",
+      "evidence_doc": "docs/security/DEPENDENCY_SCAN_2026-10-02.md"
+    },
+    "updated_at": "2026-10-02T03:26:08+05:30"
+  }
+}

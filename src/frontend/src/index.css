@@ -1,0 +1,262 @@
+html {
+  scroll-behavior: auto;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+:focus-visible {
+  outline: 3px solid #0ea5e9;
+  outline-offset: 2px;
+}
+
+.min-w-0 {
+  min-width: 0;
+}
+
+.hero-accent {
+  color: var(--accent);
+}
+
+.hero-lead {
+  font-size: 1.25rem;
+  max-width: 600px;
+}
+
+.hero-photo {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.hero-status-card {
+  max-width: 250px;
+}
+
+.hero-status-dot {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+}
+
+.map-tools {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0;
+}
+
+.map-search {
+  min-width: 320px;
+  margin-top: 1rem;
+}
+
+.map-search .input-group-text {
+  background: #fff;
+}
+
+.map-search-status {
+  width: 100%;
+  min-height: 0;
+  margin-top: 0.5rem;
+  text-align: left;
+}
+
+.civic-map-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+}
+
+.civic-map-layout.with-recent-reports .civic-map-grid {
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+}
+
+.civic-map-frame {
+  min-width: 0;
+  height: 500px;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+#civicMap,
+.civic-map-frame .leaflet-container {
+  width: 100%;
+  height: 100%;
+}
+
+.recent-reports-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.recent-report-image {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 0.375rem;
+  flex: 0 0 auto;
+}
+
+.civic-issue-marker {
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--marker-color) 50%, transparent);
+  background: var(--marker-color);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.civic-user-marker {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  background: var(--accent);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  animation: pulse 2s infinite;
+}
+
+.issue-popup-content {
+  min-width: 260px;
+  max-width: 320px;
+}
+
+.issue-popup-image {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.issue-popup-title {
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.issue-popup-description {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.issue-funding-box {
+  background: #f0fdf4;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: #166534;
+}
+
+.issue-funding-box .progress {
+  height: 6px;
+}
+
+.issue-funding-box .progress-bar {
+  height: 100%;
+}
+
+.issue-popup-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  align-items: start;
+}
+
+.issue-donation .input-group {
+  margin-bottom: 0.5rem;
+}
+
+.rights-result-content {
+  color: var(--primary);
+}
+
+.report-upload {
+  cursor: pointer;
+}
+
+.report-upload:focus-within,
+.report-upload:hover {
+  border-color: var(--accent) !important;
+}
+
+.report-photo-preview {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 0.375rem;
+}
+
+.civic-modal {
+  z-index: 1055;
+  overflow-y: auto;
+}
+
+.civic-modal .modal-dialog {
+  pointer-events: auto;
+}
+
+.civic-modal .modal-content {
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
+}
+
+.civic-modal .doc-preview {
+  background: #f8fafc;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+@media (max-width: 991.98px) {
+  .map-tools {
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .civic-map-layout.with-recent-reports .civic-map-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-civic .badge {
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  .hero-civic {
+    min-height: auto;
+    padding: 120px 0 80px;
+  }
+
+  .chat-intelligence {
+    width: calc(100vw - 40px);
+    right: 20px;
+    height: min(650px, calc(100dvh - 140px));
+  }
+
+  .civic-map-layout .map-search {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .issue-popup-content {
+    min-width: 220px;
+  }
+
+  .civic-modal .modal-dialog {
+    margin: 0.75rem;
+  }
+}

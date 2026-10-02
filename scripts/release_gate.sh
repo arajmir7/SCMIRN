@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -uo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "${ROOT_DIR}"
+PYTHON_BIN="${SCMIRN_PYTHON:-python3}"
+
+failed=0
+run_gate() {
+  local label="$1"
+  shift
+  printf '\n== %s ==\n' "${label}"
+  if "$@"; then
+    printf 'PASS: %s\n' "${label}"
+  else
+    local status=$?
+    printf 'FAIL (%s): %s\n' "${status}" "${label}" >&2
+    failed=1
+  fi
+}
+
+run_gate "Backend unit and policy tests" "${PYTHON_BIN}" -m pytest -q -p no:cacheprovider src/backend/tests
+run_gate "Frontend typecheck" npm --prefix src/frontend run typecheck
+run_gate "Frontend production build" npm --prefix src/frontend run build
+run_gate "Frontend browser flows" npm --prefix src/frontend run test:e2e
+run_gate "Feature parity ledger" "${PYTHON_BIN}" scripts/check_feature_parity.py
+run_gate "OpenAPI syntax and route/method parity" "${PYTHON_BIN}" scripts/validate_openapi_contract.py
+
+if [[ -n "${SCMIRN_ENV_FILE:-}" && -f "${SCMIRN_ENV_FILE}" ]]; then
+  run_gate "Production config validation and image build" scripts/deploy.sh build
+else
+  printf '\nBLOCKED: production config/build gate needs an explicit SCMIRN_ENV_FILE and CA files.\n' >&2
+  failed=1
+fi
+
+blockers=(
+  "Hash-pinned backend dependency locks are present; signed build provenance and fresh SCA/container/secret scans are not available."
+  "PostgreSQL migration and trigger were exercised in a disposable TLS Compose rehearsal; full canonical schema baseline, RLS, tenant-isolation and concurrency gates remain open."
+  "Production authn/authz, four-eyes controls, connector reliability, outbox/inbox, and AI evaluation/security gates are not verified."
+  "Backup/restore, disaster recovery, performance/capacity, rollback rehearsal, and production observability/alert routing are not verified."
+  "Accessibility requires route-wide automated and manual keyboard/screen-reader/reflow evidence."
+  "Government source onboarding, legal/privacy approvals, external security assessment and authorization remain external blockers."
+)
+
+printf '\n== Release blockers ==\n'
+for blocker in "${blockers[@]}"; do
+  printf 'BLOCKED: %s\n' "${blocker}"
+done
+
+if [[ "${failed}" -ne 0 ]]; then
+  printf '\nRelease gate failed because one or more executable checks failed.\n' >&2
+  exit 1
+fi
+printf '\nLocal automated checks passed, but release remains NOT PRODUCTION READY because the blockers above are unresolved.\n' >&2
+exit 1

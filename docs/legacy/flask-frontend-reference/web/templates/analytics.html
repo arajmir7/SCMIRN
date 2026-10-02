@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Predictive Intelligence{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+    <div class="container py-5">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+            <div>
+                <h2 class="display-6 fw-bold mb-1">Predictive Intelligence</h2>
+                <p class="text-muted mb-0">Corporate-grade operational analytics for civic issue management.</p>
+            </div>
+            <button class="btn btn-dark" onclick="loadAnalyticsDashboard()">
+                <i class="fas fa-chart-line me-2"></i>Refresh Insights
+            </button>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="tracker-kpi">
+                    <div class="tracker-kpi-label">Total Reports</div>
+                    <div class="tracker-kpi-value" id="analyticsTotal">0</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="tracker-kpi">
+                    <div class="tracker-kpi-label">Critical Share</div>
+                    <div class="tracker-kpi-value" id="analyticsCritical">0%</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="tracker-kpi">
+                    <div class="tracker-kpi-label">Predicted SLA</div>
+                    <div class="tracker-kpi-value" id="analyticsSla">-</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="tracker-kpi">
+                    <div class="tracker-kpi-label">Bottleneck</div>
+                    <div class="tracker-kpi-value" id="analyticsBottleneck">-</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white border-0 py-3">
+                        <h5 class="fw-bold mb-0">Category Distribution</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="analyticsCategoryChart" height="240"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white border-0 py-3">
+                        <h5 class="fw-bold mb-0">Status Distribution</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="analyticsStatusChart" height="240"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}

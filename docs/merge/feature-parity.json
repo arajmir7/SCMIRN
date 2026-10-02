@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-01",
+  "source_review_copy": "/tmp/scmirn3-source-review-efec6db4",
+  "source_real_features": [
+    {"id": "SRC-01", "name": "Consent-gated civic intake", "proposed_disposition": "INTEGRATED"},
+    {"id": "SRC-02", "name": "Deterministic classification and emergency abstention", "proposed_disposition": "INTEGRATED"},
+    {"id": "SRC-03", "name": "Immutable versioned source, service, authority and rule registry", "proposed_disposition": "INTEGRATED"},
+    {"id": "SRC-04", "name": "Source provenance and official handoff gate", "proposed_disposition": "INTEGRATED"},
+    {"id": "SRC-05", "name": "Verified service catalog and evidence checklist", "proposed_disposition": "INTEGRATED"},
+    {"id": "SRC-06", "name": "Idempotency and privacy-minimized decision record", "proposed_disposition": "INTEGRATED"},
+    {"id": "SRC-07", "name": "Thirty-day retention purge", "proposed_disposition": "INTEGRATED"},
+    {"id": "SRC-08", "name": "Metadata-only hash-chained audit", "proposed_disposition": "INTEGRATED"},
+    {"id": "SRC-09", "name": "Citizen route result and handoff presentation", "proposed_disposition": "INTEGRATED"}
+  ],
+  "final_dispositions": [
+    {"id": "SRC-01", "disposition": "INTEGRATED", "evidence": ["src/frontend/src/components/assistant/AssistantPanel.tsx", "src/frontend/tests/migration.spec.ts"]},
+    {"id": "SRC-02", "disposition": "INTEGRATED", "evidence": ["src/backend/app/source_routing/service.py", "src/backend/tests/unit/api/test_source_routing.py"]},
+    {"id": "SRC-03", "disposition": "INTEGRATED", "evidence": ["src/backend/app/source_routing/models.py", "src/backend/app/infrastructure/database/migrations/versions/20261001_01_source_gated_routing.py"]},
+    {"id": "SRC-04", "disposition": "INTEGRATED", "evidence": ["src/backend/app/source_routing/api.py", "src/frontend/src/api/resolution.ts", "src/frontend/src/components/assistant/AssistantPanel.tsx"]},
+    {"id": "SRC-05", "disposition": "INTEGRATED", "evidence": ["src/backend/app/source_routing/api.py", "src/backend/tests/unit/api/test_source_routing.py"]},
+    {"id": "SRC-06", "disposition": "INTEGRATED", "evidence": ["src/backend/app/source_routing/service.py", "src/backend/tests/unit/api/test_source_routing.py"]},
+    {"id": "SRC-07", "disposition": "INTEGRATED", "evidence": ["src/backend/app/source_routing/retention.py", "src/backend/app/__init__.py", "src/backend/tests/unit/api/test_source_routing.py"]},
+    {"id": "SRC-08", "disposition": "INTEGRATED", "evidence": ["src/backend/app/source_routing/audit_chain.py", "src/backend/app/source_routing/audit_models.py", "src/backend/app/infrastructure/database/migrations/versions/20261001_01_source_gated_routing.py"]},
+    {"id": "SRC-09", "disposition": "INTEGRATED", "evidence": ["src/frontend/src/components/assistant/AssistantPanel.tsx", "src/frontend/src/api/resolution.ts", "src/frontend/tests/migration.spec.ts"]}
+  ]
+}

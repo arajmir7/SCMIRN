@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Government Tracker{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+    <div class="container py-5">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+            <div>
+                <h2 class="display-6 fw-bold mb-1">Government Tracker</h2>
+                <p class="text-muted mb-0">Track complaint flow, escalation readiness, and operational status.</p>
+            </div>
+            <button class="btn btn-dark" onclick="loadTrackerDashboard()">
+                <i class="fas fa-rotate me-2"></i>Refresh
+            </button>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="tracker-kpi">
+                    <div class="tracker-kpi-label">Open Cases</div>
+                    <div class="tracker-kpi-value" id="trackerOpen">0</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="tracker-kpi">
+                    <div class="tracker-kpi-label">Due Escalations</div>
+                    <div class="tracker-kpi-value" id="trackerEscalations">0</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="tracker-kpi">
+                    <div class="tracker-kpi-label">Avg ETA (Days)</div>
+                    <div class="tracker-kpi-value" id="trackerEta">0</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="tracker-kpi">
+                    <div class="tracker-kpi-label">Funded Progress</div>
+                    <div class="tracker-kpi-value" id="trackerFunded">0%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="fw-bold mb-0">Case Queue</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Case</th>
+                                <th>Status</th>
+                                <th>Priority</th>
+                                <th>Category</th>
+                                <th>ETA</th>
+                                <th>Escalation</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trackerTableBody">
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">Loading tracker data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

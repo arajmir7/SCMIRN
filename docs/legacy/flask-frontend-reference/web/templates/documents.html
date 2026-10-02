@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Documents{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container py-5">
+        <div class="row justify-content-center text-center mb-4">
+            <div class="col-lg-8">
+                <h2 class="display-5 fw-bold">Professional Application Studio</h2>
+                <p class="lead text-muted">Generate structured civic and legal applications with startup-grade workflows.</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-2">RTI Application</h5>
+                        <p class="text-muted small mb-3">Right to Information request format.</p>
+                        <button class="btn btn-outline-info w-100" onclick="openDocumentModal('rti')">Generate</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-2">FIR Complaint</h5>
+                        <p class="text-muted small mb-3">Complaint for non-registration of FIR.</p>
+                        <button class="btn btn-outline-danger w-100" onclick="openDocumentModal('fir')">Generate</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-2">Consumer Complaint</h5>
+                        <p class="text-muted small mb-3">District/State/National Commission draft.</p>
+                        <button class="btn btn-outline-success w-100" onclick="openDocumentModal('consumer')">Generate</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-2">Electricity Grievance</h5>
+                        <p class="text-muted small mb-3">Wrong bill, outage, and supply restoration complaints.</p>
+                        <button class="btn btn-outline-secondary w-100" onclick="openDocumentModal('electricity')">Generate</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-2">Pension Grievance</h5>
+                        <p class="text-muted small mb-3">Delayed pension and disbursement escalation format.</p>
+                        <button class="btn btn-outline-warning w-100" onclick="openDocumentModal('pension')">Generate</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-2">Cybercrime Complaint</h5>
+                        <p class="text-muted small mb-3">Payment fraud and online scam complaint template.</p>
+                        <button class="btn btn-outline-primary w-100" onclick="openDocumentModal('cybercrime')">Generate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

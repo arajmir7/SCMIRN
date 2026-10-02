@@ -1,0 +1,22 @@
+{
+  "city_id": "metro-demo",
+  "population": 2500000,
+  "districts": ["Central", "North", "South", "East", "West"],
+  "assets": {
+    "streetlights": 14000,
+    "transformers": 2300,
+    "water_pumps": 870,
+    "waste_nodes": 1200
+  },
+  "operational_targets": {
+    "uptime_sla_percent": 99.999,
+    "monthly_active_users_percent": 60,
+    "citizen_satisfaction_percent": 80
+  },
+  "risk_profile": {
+    "climate": "high",
+    "cyber": "medium",
+    "social": "medium",
+    "infrastructure": "high"
+  }
+}

@@ -1,0 +1,690 @@
+openapi: 3.1.0
+info:
+  title: SCMIRN Enterprise API
+  version: 1.0.0
+  description: >-
+    Prototype API specification. Staff routes are allowlisted only when explicitly
+    enabled with production secrets; all enterprise and simulation routes remain disabled
+    by the production readiness gate. No government filing or connector exists. This
+    document is not evidence of deployment, certification, agency approval, or production readiness.
+  x-scmirn-production-status: Prototype only; staff auth is opt-in and operator-configured
+servers:
+  - url: https://api.scmirn.local
+    description: Placeholder hostname; not a deployed service
+  - url: http://localhost:5000
+    description: Local
+tags:
+  - name: Executive
+  - name: Integration
+  - name: Automation
+  - name: Security
+  - name: Platform
+  - name: Routing
+  - name: Staff Security
+  - name: Staff Cases
+paths:
+  /api/health:
+    get:
+      tags: [Routing]
+      summary: Process liveness probe
+      x-scmirn-production-status: Available; process liveness only
+      responses:
+        "200": { description: Process is serving requests }
+  /api/ready:
+    get:
+      tags: [Routing]
+      summary: Dependency readiness probe
+      description: Reports ready only when required database and Redis dependencies respond.
+      x-scmirn-production-status: Available; dependency readiness only
+      responses:
+        "200": { description: Required dependencies are ready }
+        "503": { description: A required dependency is unavailable }
+  /api/v1/triage:
+    post:
+      tags: [Routing]
+      summary: Check for a source-verified civic service route
+      description: Requires explicit consent. Returns route guidance only; it never submits a request to an agency.
+      x-scmirn-production-status: Allowlisted prototype endpoint; service catalog currently empty
+      parameters:
+        - in: header
+          name: Idempotency-Key
+          required: false
+          schema: { type: string, maxLength: 128 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [description, consent_to_process]
+              properties:
+                description: { type: string, minLength: 1, maxLength: 8000 }
+                state: { type: string, maxLength: 120 }
+                district: { type: string, maxLength: 120 }
+                consent_to_process: { type: boolean, enum: [true] }
+      responses:
+        "200":
+          description: Route result with `submission_status` set to `NOT_SUBMITTED` and a null official reference
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RouteDecision"
+        "400": { description: Invalid input or missing consent }
+        "409": { description: Idempotency key reused with different input }
+        "503": { description: Endpoint disabled during production migration mode }
+  /api/v1/jurisdiction/resolve:
+    post:
+      tags: [Routing]
+      summary: Alias for the consented source-gated route check
+      description: Returns route guidance only; it never files a government complaint.
+      x-scmirn-production-status: Allowlisted prototype endpoint; service catalog currently empty
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [description, consent_to_process]
+              properties:
+                description: { type: string, minLength: 1, maxLength: 8000 }
+                state: { type: string, maxLength: 120 }
+                district: { type: string, maxLength: 120 }
+                consent_to_process: { type: boolean, enum: [true] }
+      responses:
+        "200":
+          description: Route result; urgency remains unassessed without a reviewed severity policy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RouteDecision"
+        "400": { description: Invalid input or missing consent }
+        "409": { description: Idempotency key conflict }
+  /api/v1/services:
+    get:
+      tags: [Routing]
+      summary: List active services with verified current sources
+      x-scmirn-production-status: Allowlisted prototype endpoint; currently returns an empty list
+      responses:
+        "200":
+          description: Source-verified service catalog
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                count: { type: integer }
+                items: { type: array, items: { type: object } }
+  /api/v1/services/{service_id}:
+    get:
+      tags: [Routing]
+      summary: Get a registered service's source-verification state
+      x-scmirn-production-status: Allowlisted prototype endpoint; no service catalog is seeded
+      parameters:
+        - in: path
+          name: service_id
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Service routing policy and evidence requirements }
+        "404": { description: Service is not registered }
+  /api/v1/evidence/check:
+    post:
+      tags: [Routing]
+      summary: Check evidence identifiers for a registered service
+      description: Accepts evidence identifiers only; it does not upload or store evidence files.
+      x-scmirn-production-status: Allowlisted prototype endpoint
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [service_id]
+              properties:
+                service_id: { type: string }
+                provided_evidence_ids: { type: array, maxItems: 100, items: { type: string } }
+      responses:
+        "200": { description: Evidence checklist result }
+        "400": { description: Invalid request }
+  /api/v1/sources/{source_key}:
+    get:
+      tags: [Routing]
+      summary: Get source provenance and verification state
+      x-scmirn-production-status: Allowlisted prototype endpoint
+      parameters:
+        - in: path
+          name: source_key
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Source metadata, including hash and review state }
+        "404": { description: Source not found }
+  /api/v1/staff/auth/login:
+    post:
+      tags: [Staff Security]
+      summary: Verify a staff password and begin an MFA challenge
+      description: Requires an existing operator-provisioned account. It does not create a session until the second factor succeeds.
+      x-scmirn-production-status: Available only when STAFF_AUTH_ENABLED=true and its production MFA key is configured
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tenant_slug, email, password]
+              properties:
+                tenant_slug: { type: string, maxLength: 80 }
+                email: { type: string, format: email, maxLength: 254 }
+                password: { type: string, maxLength: 256 }
+      responses:
+        "200": { description: Short-lived signed MFA challenge; no authenticated session yet }
+        "401": { description: Generic credential failure }
+        "429": { description: Login rate limit exceeded }
+        "503": { description: Staff authentication disabled }
+  /api/v1/staff/auth/mfa:
+    post:
+      tags: [Staff Security]
+      summary: Complete a staff login with TOTP
+      x-scmirn-production-status: Available only when staff authentication is enabled
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [challenge, code]
+              properties:
+                challenge: { type: string, maxLength: 1024 }
+                code: { type: string, pattern: '^[0-9]{6}$' }
+      responses:
+        "200":
+          description: MFA verified; opaque session token is set in an HttpOnly cookie and CSRF token in a Strict same-site cookie
+          headers:
+            Set-Cookie: { schema: { type: string } }
+        "401": { description: Challenge or code rejected, expired, or replayed }
+        "429": { description: MFA rate limit exceeded }
+        "503": { description: Staff authentication disabled }
+  /api/v1/staff/auth/mfa/enroll/confirm:
+    post:
+      tags: [Staff Security]
+      summary: Confirm operator-provisioned TOTP enrollment
+      description: The enrollment token and provisioning URI are delivered once by the operator CLI. Confirmation consumes the token.
+      x-scmirn-production-status: Available only when staff authentication is enabled
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tenant_slug, enrollment_token, code]
+              properties:
+                tenant_slug: { type: string }
+                enrollment_token: { type: string, maxLength: 256 }
+                code: { type: string, pattern: '^[0-9]{6}$' }
+      responses:
+        "200": { description: MFA factor activated }
+        "401": { description: Enrollment token or code rejected or expired }
+        "429": { description: Enrollment rate limit exceeded }
+  /api/v1/staff/auth/me:
+    get:
+      tags: [Staff Security]
+      summary: Read the current authenticated staff identity and roles
+      security: [{ staffSession: [] }]
+      x-scmirn-production-status: Available only when staff authentication is enabled
+      responses:
+        "200": { description: Current tenant-bound staff identity, roles and MFA time }
+        "401": { description: Missing, revoked or expired session }
+  /api/v1/staff/auth/logout:
+    post:
+      tags: [Staff Security]
+      summary: Revoke the current staff session
+      security: [{ staffSession: [], staffCsrf: [] }]
+      x-scmirn-production-status: Available only when staff authentication is enabled
+      responses:
+        "200": { description: Session revoked and cookies cleared }
+        "401": { description: Missing, revoked or expired session }
+        "403": { description: CSRF token rejected }
+  /api/v1/staff/auth/password/change:
+    post:
+      tags: [Staff Security]
+      summary: Change the current staff password and revoke all sessions
+      security: [{ staffSession: [], staffCsrf: [] }]
+      x-scmirn-production-status: Available only when staff authentication is enabled
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [current_password, new_password]
+              properties:
+                current_password: { type: string, maxLength: 256 }
+                new_password: { type: string, minLength: 14, maxLength: 128 }
+      responses:
+        "200": { description: Password changed; all sessions revoked; new login required }
+        "400": { description: Current or new password rejected }
+        "401": { description: Missing, revoked or expired session }
+        "403": { description: CSRF token rejected }
+  /api/v1/staff/cases:
+    get:
+      tags: [Staff Cases]
+      summary: List up to 100 cases in the authenticated tenant
+      security: [{ staffSession: [] }]
+      x-scmirn-production-status: Tenant admin, case officer or auditor role required
+      responses:
+        "200": { description: Tenant-scoped case metadata; citizen evidence and personal details are not stored here }
+        "401": { description: Missing or expired session }
+        "403": { description: Required role missing }
+    post:
+      tags: [Staff Cases]
+      summary: Create a metadata-only case
+      description: Accepts a bounded case type and priority; title is selected server-side. Arbitrary citizen text and file uploads are not accepted.
+      security: [{ staffSession: [], staffCsrf: [] }]
+      x-scmirn-production-status: Tenant admin or case officer role required
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [case_type]
+              properties:
+                case_type: { type: string, enum: [ROADS, WATER, WASTE, ELECTRICITY, PUBLIC_SERVICE] }
+                priority: { type: string, enum: [LOW, NORMAL, HIGH, URGENT], default: NORMAL }
+      responses:
+        "201": { description: Case created with initial audit event; no government submission occurred }
+        "400": { description: Case type or priority invalid }
+        "401": { description: Missing or expired session }
+        "403": { description: CSRF token rejected or required role missing }
+  /api/v1/staff/cases/{case_id}:
+    get:
+      tags: [Staff Cases]
+      summary: Read a case and its metadata status events
+      security: [{ staffSession: [] }]
+      x-scmirn-production-status: Tenant admin, case officer or auditor role required
+      parameters:
+        - in: path
+          name: case_id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200": { description: Tenant-scoped case and status history }
+        "401": { description: Missing or expired session }
+        "403": { description: Required role missing }
+        "404": { description: Case does not exist in the authenticated tenant }
+  /api/v1/staff/cases/{case_id}/status:
+    post:
+      tags: [Staff Cases]
+      summary: Advance a case through an allowed status transition
+      security: [{ staffSession: [], staffCsrf: [] }]
+      x-scmirn-production-status: Tenant admin or case officer role required
+      parameters:
+        - in: path
+          name: case_id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status: { type: string, enum: [OPEN, UNDER_REVIEW, ACTION_REQUIRED, RESOLVED, CLOSED] }
+      responses:
+        "200": { description: Case state updated with a metadata audit event }
+        "401": { description: Missing or expired session }
+        "403": { description: CSRF token rejected or required role missing }
+        "404": { description: Case does not exist in the authenticated tenant }
+        "409": { description: Status transition is not allowed }
+  /api/v1/enterprise/executive/city-health-score:
+    get:
+      tags: [Executive]
+      summary: Get aggregated city health score
+      parameters:
+        - in: query
+          name: city_id
+          schema: { type: string }
+      responses:
+        "200":
+          description: City KPI envelope
+  /api/v1/enterprise/executive/risk-radar:
+    get:
+      tags: [Executive]
+      summary: Get predictive 7/30/90-day risk radar nodes
+      parameters:
+        - in: query
+          name: city_id
+          schema: { type: string }
+      responses:
+        "200":
+          description: Radar node list for globe rendering
+  /api/v1/enterprise/executive/crisis-sandbox/simulate:
+    post:
+      tags: [Executive]
+      summary: Run crisis war-game simulation across 12 layers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CrisisSimulationRequest"
+      responses:
+        "200":
+          description: Simulation result
+  /api/v1/enterprise/executive/roi-calculate:
+    post:
+      tags: [Executive]
+      summary: Calculate prevented losses and ROI from investment portfolio
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ROIRequest"
+      responses:
+        "200":
+          description: ROI summary
+  /api/v1/enterprise/executive/sentiment-pulse:
+    get:
+      tags: [Executive]
+      summary: Aggregate district sentiment from social/call/survey channels
+      parameters:
+        - in: query
+          name: city_id
+          schema: { type: string }
+        - in: query
+          name: district
+          schema: { type: string }
+      responses:
+        "200":
+          description: Sentiment pulse data
+  /api/v1/enterprise/executive/briefings/generate:
+    post:
+      tags: [Executive]
+      summary: Generate daily executive briefing and queue email dispatch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BriefingRequest"
+      responses:
+        "200":
+          description: Briefing metadata and dispatch status
+  /api/v1/enterprise/integrations/connectors:
+    get:
+      tags: [Integration]
+      summary: List prebuilt enterprise connectors
+      parameters:
+        - in: query
+          name: suite
+          schema: { type: string }
+      responses:
+        "200":
+          description: Connector catalog
+  /api/v1/enterprise/integrations/connectors/{connector_id}/authorize:
+    post:
+      tags: [Integration]
+      summary: Start OAuth2/SSO connector authorization flow
+      parameters:
+        - in: path
+          name: connector_id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConnectorAuthRequest"
+      responses:
+        "200":
+          description: Authorization bootstrap payload
+        "404":
+          description: Connector not found
+  /api/v1/enterprise/ai/multimodal/capabilities:
+    get:
+      tags: [Automation]
+      summary: List multimodal AI and autonomous workflow capabilities
+      responses:
+        "200":
+          description: Capability matrix
+  /api/v1/enterprise/automation/workflow/route-issue:
+    post:
+      tags: [Automation]
+      summary: AI-driven issue routing, escalation prediction, and orchestration plan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkflowRouteRequest"
+      responses:
+        "200":
+          description: Routing decision
+  /api/v1/enterprise/legal/precedent-analysis:
+    post:
+      tags: [Automation]
+      summary: Legal precedent scan + judge analytics + compliance checks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LegalAnalysisRequest"
+      responses:
+        "200":
+          description: Legal analysis envelope
+  /api/v1/enterprise/blockchain/trust-layer/status:
+    get:
+      tags: [Platform]
+      summary: Enterprise trust layer posture and compliance alignment
+      responses:
+        "200":
+          description: Blockchain trust status
+  /api/v1/enterprise/security/kill-switch:
+    post:
+      tags: [Security]
+      summary: Isolate compromised nodes while preserving critical services
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KillSwitchRequest"
+      responses:
+        "200":
+          description: Kill switch activation result
+  /api/v1/enterprise/insights/policy-playground/simulate:
+    post:
+      tags: [Platform]
+      summary: A/B policy simulation on digital twin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PolicyPlaygroundRequest"
+      responses:
+        "200":
+          description: Policy simulation result
+  /api/v1/enterprise/operations/sla:
+    get:
+      tags: [Platform]
+      summary: Retrieve uptime, autoscaling, chaos engineering, and AIOps posture
+      responses:
+        "200":
+          description: Reliability status
+  /api/v1/enterprise/multi-tenant/templates:
+    get:
+      tags: [Platform]
+      summary: List city templates and white-label/federation capabilities
+      responses:
+        "200":
+          description: Multi-tenant template catalog
+  /api/v1/enterprise/revenue/model:
+    get:
+      tags: [Platform]
+      summary: Compute enterprise revenue model forecast
+      parameters:
+        - in: query
+          name: citizens
+          schema: { type: integer }
+        - in: query
+          name: cities
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Revenue model output
+components:
+  securitySchemes:
+    staffSession:
+      type: apiKey
+      in: cookie
+      name: scmirn_staff_session
+    staffCsrf:
+      type: apiKey
+      in: header
+      name: X-CSRF-Token
+  schemas:
+    RouteDecision:
+      type: object
+      required: [decision_id, outcome, issue_type, urgency, urgency_signal, urgent_human_help_required, explanation, route_rule_version, service_registry_version, submission_status, official_reference, sources]
+      properties:
+        decision_id: { type: string, format: uuid }
+        outcome:
+          type: string
+          enum: [OFFICIAL_HANDOFF_ONLY, ROUTE_UNCERTAIN, JURISDICTION_AMBIGUOUS, URGENT_HUMAN_HELP_REQUIRED]
+        issue_type: { type: string }
+        urgency:
+          type: string
+          enum: [LOW, NORMAL, HIGH, CRITICAL, UNASSESSED]
+          description: UNASSESSED unless a reviewed, effective severity policy supports a level.
+        urgency_signal:
+          type: string
+          enum: [NONE_DETECTED, POSSIBLE_IMMEDIATE_DANGER]
+          description: Phrase signal only; it is not an official severity determination.
+        urgent_human_help_required: { type: boolean }
+        explanation: { type: string }
+        route_rule_version: { type: string }
+        service_registry_version: { type: string }
+        model_version: { type: [string, "null"] }
+        submission_status: { type: string, const: NOT_SUBMITTED }
+        official_reference: { type: [string, "null"] }
+        sources:
+          type: array
+          items: { type: object }
+    CrisisEvent:
+      type: object
+      required: [event_type]
+      properties:
+        event_type: { type: string }
+        intensity: { type: number, minimum: 0.05, maximum: 1.0 }
+        duration_hours: { type: integer, minimum: 1 }
+    CrisisSimulationRequest:
+      type: object
+      required: [events]
+      properties:
+        city_id: { type: string, default: metro-demo }
+        population_exposed: { type: integer, minimum: 100 }
+        events:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/CrisisEvent"
+    Investment:
+      type: object
+      required: [initiative, capex, expected_loss_reduction_percent]
+      properties:
+        initiative: { type: string }
+        capex: { type: number, minimum: 0 }
+        opex_annual: { type: number, minimum: 0 }
+        expected_loss_reduction_percent: { type: number, minimum: 0, maximum: 100 }
+        implementation_months: { type: integer, minimum: 1 }
+    ROIRequest:
+      type: object
+      required: [baseline_losses, investments]
+      properties:
+        horizon_years: { type: integer, minimum: 1, default: 5 }
+        discount_rate: { type: number, minimum: 0, maximum: 0.3, default: 0.08 }
+        baseline_losses:
+          type: object
+          additionalProperties: { type: number }
+        investments:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/Investment"
+    BriefingRequest:
+      type: object
+      required: [recipients]
+      properties:
+        city_id: { type: string, default: metro-demo }
+        recipients:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            format: email
+        include_pdf: { type: boolean, default: true }
+        include_recommendations: { type: boolean, default: true }
+    ConnectorAuthRequest:
+      type: object
+      required: [tenant_id, redirect_uri]
+      properties:
+        tenant_id: { type: string }
+        redirect_uri: { type: string, format: uri }
+        scopes:
+          type: array
+          items: { type: string }
+    WorkflowRouteRequest:
+      type: object
+      required: [title, category]
+      properties:
+        issue_id: { type: string }
+        title: { type: string }
+        category: { type: string }
+        district: { type: string }
+        severity: { type: string }
+        affected_citizens: { type: integer, minimum: 1 }
+        legal_keywords:
+          type: array
+          items: { type: string }
+    LegalAnalysisRequest:
+      type: object
+      required: [legal_domain, case_facts]
+      properties:
+        legal_domain: { type: string }
+        case_facts: { type: string }
+        judge_name: { type: string }
+        jurisdiction: { type: string }
+    KillSwitchRequest:
+      type: object
+      required: [node_ids]
+      properties:
+        node_ids:
+          type: array
+          minItems: 1
+          items: { type: string }
+        compromise_type: { type: string }
+        preserve_services:
+          type: array
+          items: { type: string }
+    PolicyPlaygroundRequest:
+      type: object
+      required: [policy_name, target_districts]
+      properties:
+        policy_name: { type: string }
+        target_districts:
+          type: array
+          minItems: 1
+          items: { type: string }
+        horizon_months: { type: integer, minimum: 1, default: 24 }
+        variant_a:
+          type: object
+          additionalProperties: true
+        variant_b:
+          type: object
+          additionalProperties: true

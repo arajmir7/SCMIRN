@@ -1,0 +1,43 @@
+services:
+  backend:
+    build:
+      context: ../src/backend
+      dockerfile: Dockerfile
+    container_name: scmirn-backend
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    environment:
+      APP_CONFIG: development
+      FLASK_DEBUG: "0"
+      FLASK_HOST: 0.0.0.0
+      FLASK_PORT: "5000"
+      DATABASE_URL: sqlite:////app/instance/scmirn.db
+    expose:
+      - "5000"
+    volumes:
+      - backend_uploads:/app/app/infrastructure/uploads
+      - backend_instance:/app/instance
+    networks:
+      - scmirn-net
+
+  frontend:
+    build:
+      context: ../src/frontend
+      dockerfile: Dockerfile
+    container_name: scmirn-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+    networks:
+      - scmirn-net
+
+volumes:
+  backend_uploads:
+  backend_instance:
+
+networks:
+  scmirn-net:
+    driver: bridge

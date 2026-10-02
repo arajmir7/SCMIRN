@@ -1,0 +1,275 @@
+{
+  "catalog_version": 1,
+  "reviewed_on": "2026-10-02",
+  "review_scope": "Official-site provenance and bounded handoff facts only; not a legal opinion, agency approval, or assurance that an agency will accept or resolve a matter.",
+  "sources": [
+    {
+      "source_key": "mha-i4c-cybercrime-portal",
+      "version": 1,
+      "authority": "Ministry of Home Affairs, Indian Cyber Crime Coordination Centre",
+      "title": "MHA Cyber and Information Security division: I4C and National Cybercrime Reporting Portal",
+      "source_type": "DEPARTMENT_PAGE",
+      "jurisdiction": "INDIA",
+      "canonical_url": "https://www.mha.gov.in/en/divisionofmha/cyber-and-information-security-cis-division",
+      "document_hash": "3a9a4fecde1367c1b6c564561d39e4d3a4cea8303a3a144bcffe799729ee9411",
+      "verification_status": "VERIFIED",
+      "review_note": "Official MHA page identifies I4C and the National Cybercrime Reporting Portal. It does not by itself verify the current public portal TLS certificate."
+    },
+    {
+      "source_key": "national-cybercrime-portal-financial-fraud-1930",
+      "version": 2,
+      "authority": "National Cyber Crime Reporting Portal, Indian Cyber Crime Coordination Centre",
+      "title": "National Cyber Crime Reporting Portal public homepage",
+      "source_type": "OFFICIAL_PORTAL",
+      "jurisdiction": "INDIA",
+      "canonical_url": "https://www.cybercrime.gov.in/",
+      "document_hash": null,
+      "verification_status": "DRAFT",
+      "review_note": "Direct TLS validation failed because the portal certificate was reported expired on 2026-10-02. No TLS bypass was used. This source blocks activation of the direct portal handoff."
+    },
+    {
+      "source_key": "nch-portal-about",
+      "version": 1,
+      "authority": "Department of Consumer Affairs, National Consumer Helpline",
+      "title": "National Consumer Helpline portal: about, scope, and grievance process",
+      "source_type": "OFFICIAL_FAQ",
+      "jurisdiction": "INDIA",
+      "canonical_url": "https://consumerhelpline.gov.in/public/index.php/about",
+      "document_hash": "99fe655a24d754b30e770938b01919990afc687b2152caaa82051e17f6dcd327",
+      "verification_status": "VERIFIED",
+      "review_note": "The portal describes NCH as a pre-litigation consumer grievance mechanism and says an unsatisfied consumer may approach the appropriate Consumer Commission. No remedy is promised."
+    },
+    {
+      "source_key": "nch-portal-contact",
+      "version": 1,
+      "authority": "Department of Consumer Affairs, National Consumer Helpline",
+      "title": "National Consumer Helpline official contact channels",
+      "source_type": "OFFICIAL_CONTACT_PAGE",
+      "jurisdiction": "INDIA",
+      "canonical_url": "https://consumerhelpline.gov.in/public/index.php/contact",
+      "document_hash": "7b5fd492c492b0ea015dbd7176afc430a4784987273ccb4789564e57f01c39e4",
+      "verification_status": "VERIFIED",
+      "review_note": "Official portal contact channels and stated operating hours reviewed on 2026-10-02."
+    },
+    {
+      "source_key": "cpgrams-official-home",
+      "version": 1,
+      "authority": "Department of Administrative Reforms and Public Grievances, Government of India",
+      "title": "CPGRAMS official portal overview, coverage, exclusions, and appeal information",
+      "source_type": "OFFICIAL_PORTAL_PAGE",
+      "jurisdiction": "INDIA",
+      "canonical_url": "https://pgportal.gov.in/?lang=en",
+      "document_hash": "7bf66fe5a6d919a90da40e4bb403c545d51bd3b118a7a5a54065ef7e5409592d",
+      "verification_status": "VERIFIED",
+      "review_note": "Official page limits the portal to public-authority service-delivery grievances and lists RTI, court-related/sub judice, religious, and specified employee-service matters among exclusions."
+    },
+    {
+      "source_key": "rti-online-central-authority-faq",
+      "version": 1,
+      "authority": "Department of Personnel and Training, Government of India",
+      "title": "RTI Online FAQ: Central public authority scope and State exclusion",
+      "source_type": "OFFICIAL_FAQ",
+      "jurisdiction": "CENTRAL_GOVERNMENT_INDIA",
+      "canonical_url": "https://rtionline.gov.in/faq.php",
+      "document_hash": "dad93630d6468ab979a02aed85db001ffc4d0fef678efd2e6697a1d6fe374d5d",
+      "verification_status": "VERIFIED",
+      "review_note": "FAQ says the portal serves Central Ministries/Departments and Central Public Authorities in its form; State public authority requests, including NCT Delhi, are returned."
+    },
+    {
+      "source_key": "nalsa-legal-aid-faq",
+      "version": 1,
+      "authority": "National Legal Services Authority, Department of Justice",
+      "title": "NALSA FAQ: legal services, eligibility, application channels, and helpline",
+      "source_type": "OFFICIAL_FAQ",
+      "jurisdiction": "INDIA",
+      "canonical_url": "https://nalsa.gov.in/faqs/",
+      "document_hash": "456b6cd17ca1facda26359cae7bd0d8e1174e0f719c0841ad698f24daa8bc4d4",
+      "verification_status": "VERIFIED",
+      "review_note": "FAQ describes legal services institutions, Section 12 eligibility categories, application paths, and helpline 15100. The competent institution decides eligibility and action."
+    },
+    {
+      "source_key": "tele-law-official-overview",
+      "version": 1,
+      "authority": "Department of Justice, National Legal Services Authority, and CSC e-Governance Services India Limited",
+      "title": "Tele-Law scheme overview",
+      "source_type": "OFFICIAL_SCHEME_PAGE",
+      "jurisdiction": "INDIA",
+      "canonical_url": "https://www.tele-law.in/overview-of-tele-law.html",
+      "document_hash": "72fba644b3dd5f3c991d68c0860cd232224f4c12eaab6b8ab8dc3c8db75d19d0",
+      "verification_status": "VERIFIED",
+      "review_note": "Scheme page describes access to legal information/advice through panel lawyers using CSC video or telephone facilities. It does not establish SCMIRN eligibility or advice."
+    },
+    {
+      "source_key": "tele-law-official-terms",
+      "version": 1,
+      "authority": "Department of Justice, Government of India, and CSC e-Governance Services India Limited",
+      "title": "Tele-Law official terms and conditions",
+      "source_type": "OFFICIAL_TERMS",
+      "jurisdiction": "INDIA",
+      "canonical_url": "https://www.tele-law.in/terms-conditions.html",
+      "document_hash": "552f44849b47135dfce553273e0a2f768981dec18a67aa18bc406b961d8caa5b",
+      "verification_status": "VERIFIED",
+      "review_note": "Terms identify the scheme and explicitly caution that website information can change and that law and official instruments prevail."
+    },
+    {
+      "source_key": "tele-law-official-privacy-policy",
+      "version": 1,
+      "authority": "Department of Justice, Government of India, and CSC e-Governance Services India Limited",
+      "title": "Tele-Law privacy policy and applicant data collection",
+      "source_type": "OFFICIAL_PRIVACY_POLICY",
+      "jurisdiction": "INDIA",
+      "canonical_url": "https://www.tele-law.in/privacy-policy.html",
+      "document_hash": "cfb5f5d4ca881c05345012ea8f7f7439762b9c5359090a83b8561fc57c63a3b3",
+      "verification_status": "VERIFIED",
+      "review_note": "Policy describes applicant data collected by Tele-Law. SCMIRN does not collect or forward those application fields; users must review the destination policy before submitting."
+    }
+  ],
+  "authorities": [
+    {
+      "authority_key": "national-cybercrime-reporting-portal",
+      "version": 2,
+      "canonical_name": "National Cyber Crime Reporting Portal",
+      "authority_level": "CENTRAL",
+      "jurisdiction": {"country": "IN"},
+      "source_keys": ["mha-i4c-cybercrime-portal"]
+    },
+    {
+      "authority_key": "national-consumer-helpline",
+      "version": 1,
+      "canonical_name": "National Consumer Helpline, Department of Consumer Affairs",
+      "authority_level": "CENTRAL",
+      "jurisdiction": {"country": "IN"},
+      "source_keys": ["nch-portal-about", "nch-portal-contact"]
+    },
+    {
+      "authority_key": "cpgrams-darpg",
+      "version": 1,
+      "canonical_name": "Centralized Public Grievance Redress and Monitoring System",
+      "authority_level": "CENTRAL",
+      "jurisdiction": {"country": "IN", "coverage": ["CENTRAL", "STATE"]},
+      "source_keys": ["cpgrams-official-home"]
+    },
+    {
+      "authority_key": "rti-online-dopt",
+      "version": 1,
+      "canonical_name": "RTI Online, Department of Personnel and Training",
+      "authority_level": "CENTRAL",
+      "jurisdiction": {"country": "IN", "coverage": "CENTRAL_PUBLIC_AUTHORITIES_ONLY"},
+      "source_keys": ["rti-online-central-authority-faq"]
+    },
+    {
+      "authority_key": "nalsa-telelaw-legal-services",
+      "version": 1,
+      "canonical_name": "National Legal Services Authority and Tele-Law scheme channels",
+      "authority_level": "CENTRAL",
+      "jurisdiction": {"country": "IN"},
+      "source_keys": ["nalsa-legal-aid-faq", "tele-law-official-overview", "tele-law-official-terms", "tele-law-official-privacy-policy"]
+    }
+  ],
+  "services": [
+    {
+      "service_key": "online-financial-cyber-fraud-reporting",
+      "version": 2,
+      "canonical_name": "Report online financial cyber fraud",
+      "description": "The MHA identifies the National Cybercrime Reporting Portal. The public portal source could not be TLS-verified on 2026-10-02, so this handoff remains unavailable until that source is reviewed again.",
+      "authority_key": "national-cybercrime-reporting-portal",
+      "authority_version": 2,
+      "department": "Ministry of Home Affairs, Indian Cyber Crime Coordination Centre",
+      "authority_level": "CENTRAL",
+      "jurisdiction": {"country": "IN"},
+      "geography": {"scope": "national"},
+      "eligibility": "Only online financial cyber fraud wording is in scope. The official portal and law-enforcement agency determine complaint handling.",
+      "exclusions": ["This route does not submit a complaint or determine criminal liability."],
+      "issue_types": ["ONLINE_FINANCIAL_CYBER_FRAUD"],
+      "application_channel": "https://www.cybercrime.gov.in/",
+      "grievance_channel": "tel:1930",
+      "official_url": "https://www.cybercrime.gov.in/",
+      "source_keys": ["mha-i4c-cybercrime-portal", "national-cybercrime-portal-financial-fraud-1930"],
+      "rules": [
+        {"rule_key": "online-financial-cyber-fraud", "issue_type": "ONLINE_FINANCIAL_CYBER_FRAUD", "match_terms": ["online financial fraud", "financial cyber fraud", "online payment fraud", "cyber financial fraud", "upi fraud", "unauthorised online transaction", "unauthorized online transaction", "money stolen online"], "exclusion_terms": [], "priority": 100}
+      ]
+    },
+    {
+      "service_key": "national-consumer-helpline",
+      "version": 1,
+      "canonical_name": "National Consumer Helpline consumer grievance handoff",
+      "description": "Official consumer grievance portal described by the Department of Consumer Affairs as a pre-litigation mechanism. Registration does not guarantee a remedy.",
+      "authority_key": "national-consumer-helpline",
+      "department": "Department of Consumer Affairs",
+      "authority_level": "CENTRAL",
+      "jurisdiction": {"country": "IN"},
+      "geography": {"scope": "national"},
+      "eligibility": "Consumer issues can be lodged through the official NCH channels. The portal forwards matters to the concerned company, agency, regulator, or ombudsman as applicable.",
+      "exclusions": ["NCH describes this as pre-litigation redress; it is not a court filing or guaranteed remedy."],
+      "issue_types": ["CONSUMER_GRIEVANCE"],
+      "application_channel": "https://consumerhelpline.gov.in/",
+      "grievance_channel": "tel:1915",
+      "official_url": "https://consumerhelpline.gov.in/public/index.php/about",
+      "source_keys": ["nch-portal-about", "nch-portal-contact"],
+      "rules": [
+        {"rule_key": "national-consumer-grievance", "issue_type": "CONSUMER_GRIEVANCE", "match_terms": ["consumer complaint", "consumer grievance", "national consumer helpline"], "exclusion_terms": ["online financial fraud"], "priority": 100}
+      ]
+    },
+    {
+      "service_key": "cpgrams-public-service-grievance",
+      "version": 1,
+      "canonical_name": "CPGRAMS public service-delivery grievance handoff",
+      "description": "Government of India portal for public-authority service-delivery grievances, with tracking and an appeal facility described on the official page.",
+      "authority_key": "cpgrams-darpg",
+      "department": "Department of Administrative Reforms and Public Grievances",
+      "authority_level": "CENTRAL",
+      "jurisdiction": {"country": "IN", "coverage": ["CENTRAL", "STATE"]},
+      "geography": {"scope": "national"},
+      "eligibility": "This handoff is limited to grievances concerning public-authority service delivery, subject to the official portal's own rules.",
+      "exclusions": ["RTI matters", "Court-related or sub judice matters", "Religious matters", "Government employee service matters except where official prior-channel conditions are met"],
+      "issue_types": ["PUBLIC_SERVICE_DELIVERY_GRIEVANCE"],
+      "application_channel": "https://pgportal.gov.in/",
+      "official_url": "https://pgportal.gov.in/?lang=en",
+      "source_keys": ["cpgrams-official-home"],
+      "rules": [
+        {"rule_key": "cpgrams-service-delivery", "issue_type": "PUBLIC_SERVICE_DELIVERY_GRIEVANCE", "match_terms": ["cpgrams", "central public grievance", "public grievance for government service delivery", "public grievance against a government department"], "exclusion_terms": ["rti matter", "right to information", "court related", "sub judice", "religious matter"], "priority": 100}
+      ]
+    },
+    {
+      "service_key": "rti-online-central-public-authority",
+      "version": 1,
+      "canonical_name": "RTI Online request for Central public authorities",
+      "description": "DoPT's RTI Online portal serves Central Ministries, Departments, and Central Public Authorities listed in its form. It does not accept State public authority requests, including NCT Delhi.",
+      "authority_key": "rti-online-dopt",
+      "department": "Department of Personnel and Training",
+      "authority_level": "CENTRAL",
+      "jurisdiction": {"country": "IN", "coverage": "CENTRAL_PUBLIC_AUTHORITIES_ONLY"},
+      "geography": {"scope": "national"},
+      "eligibility": "The requested authority must be a Central Ministry, Department, or Central Public Authority available in the official RTI Online request form.",
+      "exclusions": ["State and Union Territory public authorities, including NCT Delhi, are outside this portal's stated scope."],
+      "issue_types": ["CENTRAL_AUTHORITY_RTI_REQUEST"],
+      "application_channel": "https://rtionline.gov.in/",
+      "official_url": "https://rtionline.gov.in/faq.php",
+      "source_keys": ["rti-online-central-authority-faq"],
+      "rules": [
+        {"rule_key": "rti-central-authority-only", "issue_type": "CENTRAL_AUTHORITY_RTI_REQUEST", "match_terms": ["rti request to a central ministry", "rti application to a central ministry", "rti request to central government", "central public authority rti request"], "exclusion_terms": ["state public authority", "nct delhi", "state department rti"], "priority": 100}
+      ]
+    },
+    {
+      "service_key": "nalsa-telelaw-legal-help",
+      "version": 1,
+      "canonical_name": "Legal aid and Tele-Law information handoff",
+      "description": "Official NALSA and Tele-Law channels for information about legal services and access to legal advice. SCMIRN does not assess eligibility or provide legal advice.",
+      "authority_key": "nalsa-telelaw-legal-services",
+      "department": "Department of Justice, National Legal Services Authority, and CSC e-Governance Services India Limited",
+      "authority_level": "CENTRAL",
+      "jurisdiction": {"country": "IN"},
+      "geography": {"scope": "national"},
+      "eligibility": "NALSA/Legal Services Institutions decide legal-aid eligibility and the action on an application. Tele-Law describes access to legal advice through its own official channels.",
+      "exclusions": ["SCMIRN does not decide legal-aid eligibility, provide legal advice, submit an application, or collect application documents."],
+      "issue_types": ["LEGAL_AID_OR_LEGAL_ADVICE_ACCESS"],
+      "application_channel": "https://www.tele-law.in/",
+      "grievance_channel": "tel:15100",
+      "official_url": "https://nalsa.gov.in/faqs/",
+      "source_keys": ["nalsa-legal-aid-faq", "tele-law-official-overview", "tele-law-official-terms", "tele-law-official-privacy-policy"],
+      "rules": [
+        {"rule_key": "nalsa-telelaw-access", "issue_type": "LEGAL_AID_OR_LEGAL_ADVICE_ACCESS", "match_terms": ["nalsa legal aid", "free legal services from nalsa", "tele-law legal advice", "tele law legal advice"], "exclusion_terms": [], "priority": 100}
+      ]
+    }
+  ]
+}

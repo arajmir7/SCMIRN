@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SCMIRN Street-Level Civic Intelligence</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Google Maps API for Street View (optional enhancement) -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+        
+        /* Header */
+        .app-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 16px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            background: #3b82f6;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+        }
+        
+        .brand-title {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        
+        .brand-subtitle {
+            font-size: 12px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+        
+        /* Controls Bar */
+        .controls-bar {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 20px;
+            position: sticky;
+            top: 72px;
+            z-index: 999;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .controls-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        .control-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 10px 16px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn:hover {
+            background: #f1f5f9;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn.active {
+            background: #0f172a;
+            color: white;
+            border-color: #0f172a;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+        
+        /* Map Container */
+        .map-wrapper {
+            position: relative;
+            height: calc(100vh - 140px);
+            min-height: 600px;
+        }
+        
+        #civicMap {
+            width: 100%;
+            height: 100%;
+            background: #f1f5f9;
+        }
+        
+        /* Floating Panels */
+        .floating-panel {
+            position: absolute;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            z-index: 500;
+            overflow: hidden;
+        }
+        
+        .layer-panel {
+            top: 20px;
+            right: 20px;
+            width: 280px;
+            padding: 16px;
+        }
+        
+        .panel-header {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .layer-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 8px;
+            border: 2px solid transparent;
+        }
+        
+        .layer-option:hover {
+            background: #f8fafc;
+        }
+        
+        .layer-option.active {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        
+        .layer-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .layer-icon.street { background: #dbeafe; }
+        .layer-icon.satellite { background: #dcfce7; }
+        .layer-icon.terrain { background: #fef3c7; }
+        .layer-icon.google { background: #fce7f3; }
+        
+        .layer-info {
+            flex: 1;
+        }
+        
+        .layer-name {
+            font-weight: 600;
+            font-size: 13px;
+            color: #1e293b;
+        }
+        
+        .layer-desc {
+            font-size: 11px;
+            color: #64748b;
+        }
+        
+        /* Legend Panel */
+        .legend-panel {
+            bottom: 30px;
+            left: 20px;
+            padding: 16px;
+            min-width: 220px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        
+        .legend-marker {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .legend-marker.critical { background: #ef4444; }
+        .legend-marker.high { background: #f59e0b; }
+        .legend-marker.medium { background: #3b82f6; }
+        .legend-marker.low { background: #10b981; }
+        .legend-marker.user { background: #8b5cf6; }
+        
+        /* Location Badge */
+        .location-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: white;
+            padding: 12px 16px;
+            border-radius: 50px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 500;
+        }
+        
+        .loc-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+        
+        .loc-indicator.accurate { background: #10b981; }
+        .loc-indicator.approximate { background: #f59e0b; }
+        .loc-indicator.none { background: #94a3b8; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        
+        /* Search Box */
+        .search-container {
+            position: absolute;
+            top: 80px;
+            left: 20px;
+            z-index: 500;
+            width: 400px;
+            max-width: calc(100% - 40px);
+        }
+        
+        .search-box {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .search-box:focus-within {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 25px rgba(59,130,246,0.2);
+        }
+        
+        .search-input {
+            flex: 1;
+            border: none;
+            padding: 12px 16px;
+            font-size: 14px;
+            outline: none;
+            background: transparent;
+        }
+        
+        .search-btn {
+            padding: 10px 16px;
+            background: #f1f5f9;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        /* Street View Panel */
+        .streetview-panel {
+            position: absolute;
+            bottom: 30px;
+            right: 20px;
+            width: 350px;
+            height: 250px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+            z-index: 500;
+            display: none;
+        }
+        
+        .streetview-header {
+            background: #0f172a;
+            color: white;
+            padding: 12px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .streetview-content {
+            height: calc(100% - 40px);
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 13px;
+        }
+        
+        /* Custom Markers */
+        .custom-div-icon {
+            background: transparent;
+            border: none;
+        }
+        
+        .marker-pin {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            border: 3px solid white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        
+        .marker-pin::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 10px solid currentColor;
+        }
+        
+        .marker-pin.critical {
+            background: #ef4444;
+            color: #ef4444;
+        }
+        .marker-pin.critical::after {
+            border-top-color: #ef4444;
+        }
+        
+        .marker-pin.high {
+            background: #f59e0b;
+            color: #f59e0b;
+        }
+        .marker-pin.high::after {
+            border-top-color: #f59e0b;
+        }
+        
+        .marker-pin.medium {
+            background: #3b82f6;
+            color: #3b82f6;
+        }
+        .marker-pin.medium::after {
+            border-top-color: #3b82f6;
+        }
+        
+        .marker-content {
+            color: white;
+            font-size: 14px;
+            z-index: 2;
+        }
+        
+        /* Popup Styling */
+        .custom-popup .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .custom-popup .leaflet-popup-content {
+            margin: 0;
+            width: 320px !important;
+        }
+        
+        .popup-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+        
+        .popup-content {
+            padding: 16px;
+        }
+        
+        .popup-header {
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            color: #1e293b;
+        }
+        
+        .popup-meta {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-critical {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .badge-high {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        
+        .badge-medium {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+        
+        .badge-category {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+        
+        .popup-location {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+        
+        .popup-funding {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .funding-bar {
+            height: 6px;
+            background: #bbf7d0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        
+        .funding-progress {
+            height: 100%;
+            background: #22c55e;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        
+        .popup-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        
+        .btn-full {
+            grid-column: 1 / -1;
+        }
+        
+        /* Detail Panel */
+        .detail-panel {
+            position: fixed;
+            top: 0;
+            right: -450px;
+            width: 450px;
+            max-width: 100%;
+            height: 100vh;
+            background: white;
+            z-index: 2000;
+            box-shadow: -5px 0 30px rgba(0,0,0,0.2);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+        
+        .detail-panel.open {
+            right: 0;
+        }
+        
+        .detail-header {
+            position: relative;
+            height: 250px;
+            background: #1e293b;
+            overflow: hidden;
+        }
+        
+        .detail-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.9;
+        }
+        
+        .detail-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .detail-close:hover {
+            background: white;
+            transform: rotate(90deg);
+        }
+        
+        .detail-body {
+            padding: 24px;
+        }
+        
+        .detail-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.3;
+        }
+        
+        .detail-section {
+            margin-bottom: 24px;
+        }
+        
+        .section-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            margin-bottom: 12px;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .detail-item {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 10px;
+        }
+        
+        .detail-label {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+        
+        .detail-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        
+        /* Distance Calculator */
+        .distance-calc {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+        }
+        
+        .distance-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .map-wrapper {
+                height: calc(100vh - 120px);
+            }
+            
+            .search-container {
+                width: calc(100% - 40px);
+                top: 20px;
+            }
+            
+            .layer-panel {
+                top: auto;
+                bottom: 100px;
+                right: 10px;
+                left: 10px;
+                width: auto;
+            }
+            
+            .detail-panel {
+                width: 100%;
+                right: -100%;
+            }
+            
+            .controls-bar {
+                top: 60px;
+                padding: 8px 12px;
+            }
+            
+            .btn {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+        }
+        
+        /* Loading States */
+        .skeleton {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="brand">
+                <div class="brand-logo">S</div>
+                <div>
+                    <div class="brand-title">SCMIRN Civic Intelligence</div>
+                    <div class="brand-subtitle">Street-Level Issue Mapping & Resolution</div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <span style="font-size: 13px; color: #94a3b8;">Delhi NCR Region</span>
+                <button class="btn btn-primary btn-sm" onclick="reportIssue()">
+                    <span>📍</span> Report Issue
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Controls Bar -->
+    <div class="controls-bar">
+        <div class="controls-content">
+            <div class="control-group">
+                <button class="btn active" onclick="filterIssues('all')">All Issues</button>
+                <button class="btn" onclick="filterIssues('critical')">🔴 Critical</button>
+                <button class="btn" onclick="filterIssues('high')">🟠 High</button>
+                <button class="btn" onclick="filterIssues('medium')">🔵 Medium</button>
+            </div>
+            <div class="control-group">
+                <button class="btn btn-primary" onclick="locateMe()">
+                    <span>📡</span> My Location
+                </button>
+                <button class="btn" onclick="toggleTraffic()">
+                    <span>🚦</span> Traffic
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Container -->
+    <div class="map-wrapper">
+        <div id="civicMap"></div>
+        
+        <!-- Search Box -->
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search for roads, landmarks, or issues..." autocomplete="off">
+                <button class="search-btn" onclick="performSearch()">🔍</button>
+            </div>
+        </div>
+        
+        <!-- Location Badge -->
+        <div class="location-badge" id="locationBadge">
+            <div class="loc-indicator none" id="locIndicator"></div>
+            <span id="locText">Location not set</span>
+        </div>
+        
+        <!-- Layer Panel -->
+        <div class="floating-panel layer-panel">
+            <div class="panel-header">
+                <span>Map Layers</span>
+                <button onclick="resetView()" style="background: none; border: none; cursor: pointer; font-size: 16px;">🎯</button>
+            </div>
+            
+            <div class="layer-option active" onclick="switchLayer('googleStreets')" id="layer-googleStreets">
+                <div class="layer-icon google">🗺️</div>
+                <div class="layer-info">
+                    <div class="layer-name">Google Roads</div>
+                    <div class="layer-desc">Precise street names & landmarks</div>
+                </div>
+            </div>
+            
+            <div class="layer-option" onclick="switchLayer('googleHybrid')" id="layer-googleHybrid">
+                <div class="layer-icon satellite">🛰️</div>
+                <div class="layer-info">
+                    <div class="layer-name">Google Satellite</div>
+                    <div class="layer-desc">High-res aerial imagery</div>
+                </div>
+            </div>
+            
+            <div class="layer-option" onclick="switchLayer('osm')" id="layer-osm">
+                <div class="layer-icon street">🗾</div>
+                <div class="layer-info">
+                    <div class="layer-name">OpenStreetMap</div>
+                    <div class="layer-desc">Community mapped details</div>
+                </div>
+            </div>
+            
+            <div class="layer-option" onclick="switchLayer('terrain')" id="layer-terrain">
+                <div class="layer-icon terrain">⛰️</div>
+                <div class="layer-info">
+                    <div class="layer-name">Terrain View</div>
+                    <div class="layer-desc">Elevation & topography</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Legend Panel -->
+        <div class="floating-panel legend-panel">
+            <div class="panel-header">Issue Priority</div>
+            <div class="legend-item">
+                <div class="legend-marker critical"></div>
+                <span>Critical (Immediate Action)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-marker high"></div>
+                <span>High Priority (This Week)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-marker medium"></div>
+                <span>Medium (Planned)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-marker low"></div>
+                <span>Low (Monitoring)</span>
+            </div>
+            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e2e8f0;">
+                <div class="legend-item">
+                    <div class="legend-marker user"></div>
+                    <span>Your Location</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Street View Panel -->
+        <div class="streetview-panel" id="streetViewPanel">
+            <div class="streetview-header">
+                <span>📷 Street View</span>
+                <button onclick="closeStreetView()" style="background: none; border: none; color: white; cursor: pointer; font-size: 18px;">×</button>
+            </div>
+            <div class="streetview-content" id="streetViewContent">
+                Click on a road to view street-level imagery
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Side Panel -->
+    <div class="detail-panel" id="detailPanel">
+        <div class="detail-header">
+            <img src="" alt="Issue" class="detail-image" id="detailImage">
+            <button class="detail-close" onclick="closeDetail()">×</button>
+        </div>
+        <div class="detail-body">
+            <div class="detail-title" id="detailTitle">Issue Title</div>
+            
+            <div class="popup-meta" id="detailBadges">
+                <span class="badge badge-critical">Critical</span>
+                <span class="badge badge-category">Road Safety</span>
+            </div>
+            
+            <div class="detail-section">
+                <div class="section-title">Description</div>
+                <p id="detailDescription" style="font-size: 15px; line-height: 1.6; color: #475569;">
+                    Detailed description goes here...
+                </p>
+            </div>
+            
+            <div class="distance-calc">
+                <div class="distance-row">
+                    <span>Straight-line Distance</span>
+                    <strong id="distStraight">0 m</strong>
+                </div>
+                <div class="distance-row">
+                    <span>Road Distance (Est.)</span>
+                    <strong id="distRoad">0 m</strong>
+                </div>
+                <div class="distance-row" style="margin-bottom: 0;">
+                    <span>Walking Time</span>
+                    <strong id="distTime">0 min</strong>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="section-title">Location Details</div>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">Road Name</div>
+                        <div class="detail-value" id="detailRoad">Unknown</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Pincode</div>
+                        <div class="detail-value" id="detailPincode">110000</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Coordinates</div>
+                        <div class="detail-value" id="detailCoords">28.61, 77.21</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Landmarks</div>
+                        <div class="detail-value" id="detailLandmarks">Nearby</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="section-title">Funding Status</div>
+                <div class="popup-funding">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;">
+                        <span>Raised: <strong id="detailRaised">₹0</strong></span>
+                        <span style="color: #64748b;">Goal: <span id="detailGoal">₹0</span></span>
+                    </div>
+                    <div class="funding-bar">
+                        <div class="funding-progress" id="detailProgress" style="width: 0%"></div>
+                    </div>
+                    <div style="text-align: center; margin-top: 8px; font-size: 13px; color: #64748b;" id="detailPercent">
+                        0% funded
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="section-title">Actions</div>
+                <div class="popup-actions">
+                    <button class="btn btn-primary btn-full" onclick="donateCurrent()">
+                        💰 Contribute to Fix
+                    </button>
+                    <button class="btn" onclick="getDirectionsCurrent()">
+                        🧭 Directions
+                    </button>
+                    <button class="btn" onclick="shareCurrent()">
+                        📤 Share
+                    </button>
+                    <button class="btn" onclick="viewStreetCurrent()">
+                        📷 Street View
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let map;
+        let markers = [];
+        let userMarker = null;
+        let userCircle = null;
+        let userPosition = null;
+        let activeLayer = 'googleStreets';
+        let currentIssue = null;
+        let layers = {};
+        
+        // Sample Data (In production, this comes from your backend)
+        const issues = [
+            {
+                id: 1,
+                title: "Critical: Deep Pothole on Ring Road near AIIMS Flyover",
+                description: "Dangerous 4-foot wide pothole on AIIMS Flyover, Ring Road. Daily accidents reported. Exact location: 200m before Safdarjung Hospital crossing towards Dhaula Kuan.",
+                category: "Road Safety",
+                priority_tier: "critical",
+                lat: 28.5672,
+                lon: 77.2100,
+                fund_collected: 32000,
+                fund_target: 75000,
+                status: "verified",
+                photo: "https://images.unsplash.com/photo-1565130054090-5b9231d55db7?w=800&q=80",
+                road_name: "Ring Road (NH-48)",
+                pincode: "110029",
+                landmarks: "AIIMS, Safdarjung Hospital, Ring Road Flyover",
+                ai_confidence: 0.97
+            },
+            {
+                id: 2,
+                title: "Severe Water Logging at ITO Crossing",
+                description: "Chronic flooding at ITO intersection during monsoon. Water depth 2-3 feet. Affects Vikas Marg, Bahadur Shah Zafar Marg, and Ring Road.",
+                category: "Water & Drainage",
+                priority_tier: "critical",
+                lat: 28.6280,
+                lon: 77.2410,
+                fund_collected: 45000,
+                fund_target: 120000,
+                status: "in_progress",
+                photo: "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?w=800&q=80",
+                road_name: "ITO Crossing",
+                pincode: "110002",
+                landmarks: "ITO Metro, Vikas Marg, Delhi Secretariat",
+                ai_confidence: 0.96
+            },
+            {
+                id: 3,
+                title: "Broken Street Lights on Lodhi Road",
+                description: "Complete darkness on Lodhi Road from Aga Khan Hall to India Habitat Centre. 15+ lights non-functional. High security zone with embassies.",
+                category: "Public Safety",
+                priority_tier: "critical",
+                lat: 28.5916,
+                lon: 77.2197,
+                fund_collected: 45000,
+                fund_target: 45000,
+                status: "funded",
+                photo: "https://images.unsplash.com/photo-1516455590571-18256e5bb9ff?w=800&q=80",
+                road_name: "Lodhi Road",
+                pincode: "110003",
+                landmarks: "Lodhi Garden, India Habitat Centre, Khan Market",
+                ai_confidence: 0.95
+            },
+            {
+                id: 4,
+                title: "Open Manhole on Outer Ring Road",
+                description: "Uncovered sewer manhole on Outer Ring Road, 100m from Batra Cinema towards Model Town. Multiple vehicle incidents.",
+                category: "Road Safety",
+                priority_tier: "critical",
+                lat: 28.7021,
+                lon: 77.2020,
+                fund_collected: 8000,
+                fund_target: 25000,
+                status: "reported",
+                photo: "https://images.unsplash.com/photo-1621905252507-b35492b9c75e?w=800&q=80",
+                road_name: "Outer Ring Road (NH-44)",
+                pincode: "110009",
+                landmarks: "Batra Cinema, Mukherjee Nagar",
+                ai_confidence: 0.96
+            },
+            {
+                id: 5,
+                title: "Illegal Encroachment - Lajpat Nagar Market",
+                description: "Permanent shop extensions blocking 40% of road width on Lajpat Nagar Central Market main road. Fire hazard and traffic congestion.",
+                category: "Urban Planning",
+                priority_tier: "high",
+                lat: 28.5639,
+                lon: 77.2421,
+                fund_collected: 15000,
+                fund_target: 60000,
+                status: "verified",
+                photo: "https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=800&q=80",
+                road_name: "Lajpat Nagar Main Road",
+                pincode: "110024",
+                landmarks: "Lajpat Nagar Metro, Central Market",
+                ai_confidence: 0.93
+            }
+        ];
+        
+        // Initialize Map
+        function initMap() {
+            // Create map centered on Delhi
+            map = L.map('civicMap', {
+                zoomControl: false,
+                attributionControl: false,
+                minZoom: 10,
+                maxZoom: 22
+            }).setView([28.6139, 77.2090], 15);
+            
+            // Define tile layers - Using Google Maps-like layers for street precision
+            layers.googleStreets = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+                maxZoom: 22,
+                subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+                attribution: 'Google Maps'
+            });
+            
+            layers.googleHybrid = L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
+                maxZoom: 22,
+                subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+                attribution: 'Google Maps'
+            });
+            
+            layers.googleSatellite = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+                maxZoom: 22,
+                subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+                attribution: 'Google Maps'
+            });
+            
+            layers.osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: 'OpenStreetMap'
+            });
+            
+            layers.terrain = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                maxZoom: 17,
+                attribution: 'OpenTopoMap'
+            });
+            
+            // Add default layer
+            layers.googleStreets.addTo(map);
+            
+            // Add zoom control
+            L.control.zoom({
+                position: 'bottomright'
+            }).addTo(map);
+            
+            // Add scale control
+            L.control.scale({
+                imperial: false,
+                metric: true,
+                position: 'bottomleft'
+            }).addTo(map);
+            
+            // Add markers
+            addMarkers();
+            
+            // Try to get user location
+            locateMe();
+        }
+        
+        // Add markers to map
+        function addMarkers(filter = 'all') {
+            // Clear existing markers
+            markers.forEach(m => map.removeLayer(m.marker));
+            markers = [];
+            
+            const filtered = filter === 'all' ? issues : issues.filter(i => i.priority_tier === filter);
+            
+            filtered.forEach(issue => {
+                const color = issue.priority_tier === 'critical' ? '#ef4444' : 
+                             issue.priority_tier === 'high' ? '#f59e0b' : '#3b82f6';
+                
+                const icon = L.divIcon({
+                    className: 'custom-div-icon',
+                    html: `<div class="marker-pin ${issue.priority_tier}">
+                            <div class="marker-content">${issue.priority_tier === 'critical' ? '!' : issue.priority_tier === 'high' ? 'H' : 'M'}</div>
+                           </div>`,
+                    iconSize: [40, 40],
+                    iconAnchor: [20, 40]
+                });
+                
+                const marker = L.marker([issue.lat, issue.lon], { icon: icon })
+                    .addTo(map)
+                    .bindPopup(createPopup(issue), {
+                        maxWidth: 350,
+                        className: 'custom-popup',
+                        closeButton: false
+                    });
+                
+                marker.on('click', () => {
+                    openDetail(issue);
+                });
+                
+                markers.push({ marker, issue });
+            });
+        }
+        
+        // Create popup content
+        function createPopup(issue) {
+            const percent = Math.round((issue.fund_collected / issue.fund_target) * 100);
+            
+            return `
+                <img src="${issue.photo}" class="popup-image" alt="${issue.title}">
+                <div class="popup-content">
+                    <div class="popup-header">${issue.title}</div>
+                    <div class="popup-meta">
+                        <span class="badge badge-${issue.priority_tier}">${issue.priority_tier.toUpperCase()}</span>
+                        <span class="badge badge-category">${issue.category}</span>
+                    </div>
+                    <div class="popup-location">
+                        <span>📍</span>
+                        <span>${issue.road_name}, ${issue.pincode}</span>
+                    </div>
+                    <div class="popup-funding">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;">
+                            <span>Raised: <strong>₹${issue.fund_collected.toLocaleString()}</strong></span>
+                            <span style="color: #64748b;">of ₹${issue.fund_target.toLocaleString()}</span>
+                        </div>
+                        <div class="funding-bar">
+                            <div class="funding-progress" style="width: ${percent}%"></div>
+                        </div>
+                    </div>
+                    <div class="popup-actions">
+                        <button class="btn btn-primary" onclick="donateIssue(${issue.id})">💰 Fund</button>
+                        <button class="btn" onclick="getDirections(${issue.lat}, ${issue.lon})">🧭 Go</button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Filter issues
+        function filterIssues(tier) {
+            // Update button states
+            document.querySelectorAll('.controls-bar .btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase().includes(tier) || (tier === 'all' && btn.textContent.includes('All'))) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            addMarkers(tier);
+        }
+        
+        // Switch map layers
+        function switchLayer(layerName) {
+            // Update UI
+            document.querySelectorAll('.layer-option').forEach(opt => opt.classList.remove('active'));
+            document.getElementById(`layer-${layerName}`).classList.add('active');
+            
+            // Remove current layer
+            Object.values(layers).forEach(layer => {
+                if (map.hasLayer(layer)) map.removeLayer(layer);
+            });
+            
+            // Add new layer
+            layers[layerName].addTo(map);
+            activeLayer = layerName;
+        }
+        
+        // Locate user with high precision
+        function locateMe() {
+            if (!navigator.geolocation) {
+                alert("Geolocation is not supported by your browser");
+                return;
+            }
+            
+            const badge = document.getElementById('locationBadge');
+            const indicator = document.getElementById('locIndicator');
+            const text = document.getElementById('locText');
+            
+            text.textContent = "Locating...";
+            indicator.className = "loc-indicator";
+            
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    const accuracy = position.coords.accuracy;
+                    
+                    userPosition = { lat, lon, accuracy };
+                    
+                    // Update badge
+                    if (accuracy < 30) {
+                        indicator.className = "loc-indicator accurate";
+                        text.textContent = `GPS: ${Math.round(accuracy)}m accuracy`;
+                    } else {
+                        indicator.className = "loc-indicator approximate";
+                        text.textContent = `Approx: ${Math.round(accuracy)}m`;
+                    }
+                    
+                    // Add/update user marker
+                    if (userMarker) {
+                        userMarker.setLatLng([lat, lon]);
+                        userCircle.setLatLng([lat, lon]);
+                        userCircle.setRadius(accuracy);
+                    } else {
+                        const userIcon = L.divIcon({
+                            className: 'custom-div-icon',
+                            html: '<div style="background: #8b5cf6; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 10px rgba(139,92,246,0.5); animation: pulse 2s infinite;"></div>',
+                            iconSize: [20, 20],
+                            iconAnchor: [10, 10]
+                        });
+                        
+                        userMarker = L.marker([lat, lon], { icon: userIcon }).addTo(map)
+                            .bindPopup("You are here<br>Accuracy: ~" + Math.round(accuracy) + "m");
+                        
+                        userCircle = L.circle([lat, lon], {
+                            radius: accuracy,
+                            color: '#8b5cf6',
+                            fillColor: '#8b5cf6',
+                            fillOpacity: 0.1,
+                            weight: 1
+                        }).addTo(map);
+                    }
+                    
+                    // Center map
+                    map.setView([lat, lon], 17);
+                    
+                    // Calculate distances to nearby issues
+                    updateDistances(lat, lon);
+                },
+                (error) => {
+                    indicator.className = "loc-indicator none";
+                    text.textContent = "Location denied";
+                    console.error("Geolocation error:", error);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        }
+        
+        // Calculate distances from user to all issues
+        function updateDistances(userLat, userLon) {
+            if (!userLat || !userLon) return;
+            
+            markers.forEach(({ issue }) => {
+                const dist = calculateDistance(userLat, userLon, issue.lat, issue.lon);
+                issue.distance = dist;
+            });
+            
+            // Sort by distance
+            markers.sort((a, b) => (a.issue.distance || 0) - (b.issue.distance || 0));
+        }
+        
+        // Haversine formula for accurate distance
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371000; // Earth radius in meters
+            const φ1 = lat1 * Math.PI / 180;
+            const φ2 = lat2 * Math.PI / 180;
+            const Δφ = (lat2 - lat1) * Math.PI / 180;
+            const Δλ = (lon2 - lon1) * Math.PI / 180;
+            
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                      Math.cos(φ1) * Math.cos(φ2) *
+                      Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            
+            return R * c; // Distance in meters
+        }
+        
+        // Open detail panel
+        function openDetail(issue) {
+            currentIssue = issue;
+            const panel = document.getElementById('detailPanel');
+            
+            // Populate data
+            document.getElementById('detailImage').src = issue.photo;
+            document.getElementById('detailTitle').textContent = issue.title;
+            document.getElementById('detailDescription').textContent = issue.description;
+            document.getElementById('detailRoad').textContent = issue.road_name;
+            document.getElementById('detailPincode').textContent = issue.pincode;
+            document.getElementById('detailCoords').textContent = `${issue.lat.toFixed(4)}, ${issue.lon.toFixed(4)}`;
+            document.getElementById('detailLandmarks').textContent = issue.landmarks;
+            
+            // Update badges
+            const badgesHtml = `
+                <span class="badge badge-${issue.priority_tier}">${issue.priority_tier.toUpperCase()}</span>
+                <span class="badge badge-category">${issue.category}</span>
+            `;
+            document.getElementById('detailBadges').innerHTML = badgesHtml;
+            
+            // Funding
+            const percent = Math.round((issue.fund_collected / issue.fund_target) * 100);
+            document.getElementById('detailRaised').textContent = `₹${issue.fund_collected.toLocaleString()}`;
+            document.getElementById('detailGoal').textContent = `₹${issue.fund_target.toLocaleString()}`;
+            document.getElementById('detailProgress').style.width = `${percent}%`;
+            document.getElementById('detailPercent').textContent = `${percent}% funded by community`;
+            
+            // Calculate distances if user location available
+            if (userPosition) {
+                const straight = calculateDistance(userPosition.lat, userPosition.lon, issue.lat, issue.lon);
+                const road = straight * 1.3; // Estimate road distance
+                const walkTime = Math.ceil(road / 83); // 5km/h walking
+                
+                document.getElementById('distStraight').textContent = formatDistance(straight);
+                document.getElementById('distRoad').textContent = formatDistance(road);
+                document.getElementById('distTime').textContent = `${walkTime} min`;
+            }
+            
+            // Show panel
+            panel.classList.add('open');
+            
+            // Center map on issue
+            map.setView([issue.lat, issue.lon], 18);
+        }
+        
+        function formatDistance(meters) {
+            if (meters < 1000) return `${Math.round(meters)} m`;
+            return `${(meters/1000).toFixed(1)} km`;
+        }
+        
+        function closeDetail() {
+            document.getElementById('detailPanel').classList.remove('open');
+        }
+        
+        // Action functions
+        function donateIssue(id) {
+            const issue = issues.find(i => i.id === id);
+            if (issue) openDetail(issue);
+        }
+        
+        function donateCurrent() {
+            if (currentIssue) {
+                alert(`Contributing to: ${currentIssue.title}\nGoal: ₹${currentIssue.fund_target - currentIssue.fund_collected} more needed`);
+            }
+        }
+        
+        function getDirections(lat, lon) {
+            window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}&travelmode=driving`, '_blank');
+        }
+        
+        function getDirectionsCurrent() {
+            if (currentIssue) {
+                getDirections(currentIssue.lat, currentIssue.lon);
+            }
+        }
+        
+        function shareCurrent() {
+            if (currentIssue) {
+                const text = `Check this civic issue: ${currentIssue.title} at ${currentIssue.road_name}`;
+                if (navigator.share) {
+                    navigator.share({
+                        title: currentIssue.title,
+                        text: text,
+                        url: window.location.href
+                    });
+                } else {
+                    alert("Share: " + text);
+                }
+            }
+        }
+        
+        function viewStreetCurrent() {
+            if (currentIssue) {
+                openStreetView(currentIssue.lat, currentIssue.lon);
+            }
+        }
+        
+        function openStreetView(lat, lon) {
+            const panel = document.getElementById('streetViewPanel');
+            const content = document.getElementById('streetViewContent');
+            
+            // In a real implementation, you'd embed Google Street View here
+            // For now, show a placeholder with coordinates
+            content.innerHTML = `
+                <div style="text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 12px;">🚧</div>
+                    <div>Street View at</div>
+                    <div style="font-family: monospace; background: #e2e8f0; padding: 8px; border-radius: 6px; margin-top: 8px;">
+                        ${lat.toFixed(5)}, ${lon.toFixed(5)}
+                    </div>
+                    <button onclick="window.open('https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lon}', '_blank')" 
+                            style="margin-top: 12px; padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                        Open in Google Maps
+                    </button>
+                </div>
+            `;
+            
+            panel.style.display = 'block';
+        }
+        
+        function closeStreetView() {
+            document.getElementById('streetViewPanel').style.display = 'none';
+        }
+        
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            if (!query) return;
+            
+            // Search in issues
+            const found = issues.find(i => 
+                i.title.toLowerCase().includes(query) || 
+                i.road_name.toLowerCase().includes(query) ||
+                i.landmarks.toLowerCase().includes(query)
+            );
+            
+            if (found) {
+                map.setView([found.lat, found.lon], 18);
+                openDetail(found);
+            } else {
+                alert("No issues found. Try searching for: Ring Road, AIIMS, ITO, Lodhi Road, etc.");
+            }
+        }
+        
+        function resetView() {
+            map.setView([28.6139, 77.2090], 15);
+        }
+        
+        function reportIssue() {
+            alert("Report issue form would open here. Click on the map to set exact location.");
+            
+            // Enable map click to set location
+            map.once('click', function(e) {
+                const lat = e.latlng.lat;
+                const lon = e.latlng.lng;
+                alert(`Selected location: ${lat.toFixed(5)}, ${lon.toFixed(5)}\nNow opening report form...`);
+            });
+        }
+        
+        function toggleTraffic() {
+            alert("Traffic layer would toggle here. Requires Google Maps API premium.");
+        }
+        
+        // Initialize on load
+        window.onload = initMap;
+        
+        // Handle Enter key in search
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') performSearch();
+        });
+        
+        // Close detail panel on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeDetail();
+                closeStreetView();
+            }
+        });
+    </script>
+</body>
+</html>

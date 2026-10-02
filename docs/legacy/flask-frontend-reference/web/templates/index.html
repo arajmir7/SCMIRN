@@ -1,0 +1,585 @@
+{% extends "base.html" %}
+
+{% block title %}SCMIRN{% endblock %}
+
+{% block content %}
+    <!-- Hero Section: The Future of Democracy -->
+    <section class="hero-civic text-white pt-5">
+        <div class="hero-grid"></div>
+        <div class="container position-relative pt-5 mt-5">
+            <div class="row align-items-center min-vh-100">
+                <div class="col-lg-7">
+                    <div class="badge bg-white bg-opacity-10 text-white mb-4 px-3 py-2 rounded-pill border border-white border-opacity-20">
+                        🚀 World's First AI-Driven Civic Intelligence System
+                    </div>
+                    <h1 class="display-2 fw-bold mb-4 glow-text" style="line-height: 1.1;">
+                        The Future of<br>
+                        <span style="color: var(--accent);">Democratic</span> Participation
+                    </h1>
+                    <p class="lead mb-4 opacity-90" style="font-size: 1.25rem; max-width: 600px;">
+                        <strong>SCMIRN</strong> combines ChatGPT, Google Maps, Legal AI, and Government Data to help every citizen understand, access, and fix real-life problems in seconds.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3 mb-5">
+                        <button class="btn btn-light btn-lg px-4 fw-bold" onclick="toggleChat()">
+                            <i class="fas fa-robot me-2 text-primary"></i>Ask AI Assistant
+                        </button>
+                        <button class="btn btn-outline-light btn-lg px-4" onclick="document.getElementById('features').scrollIntoView({behavior: 'smooth'})">
+                            Explore Features
+                        </button>
+                    </div>
+                    
+                    <div class="row g-4 mt-2">
+                        <div class="col-md-4">
+                            <div class="floating-card">
+                                <div class="h3 fw-bold text-info mb-1">500,000+</div>
+                                <small class="opacity-75">Citizens Helped</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="floating-card" style="animation-delay: 1s;">
+                                <div class="h3 fw-bold text-warning mb-1">78%</div>
+                                <small class="opacity-75">Resolution Rate</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="floating-card" style="animation-delay: 2s;">
+                                <div class="h3 fw-bold text-success mb-1">24/7</div>
+                                <small class="opacity-75">AI Legal Aid</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="position-relative">
+                        <img src="https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?w=800&q=80 " 
+                             alt="Civic Technology" 
+                             class="img-fluid rounded-4 shadow-lg" 
+                             style="border: 1px solid rgba(255,255,255,0.2);">
+                        <div class="position-absolute bottom-0 start-0 m-3 p-3 bg-white rounded-3 shadow-lg text-dark" style="max-width: 250px;">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <div class="bg-success rounded-circle" style="width: 10px; height: 10px;"></div>
+                                <small class="fw-bold text-success">Live System Active</small>
+                            </div>
+                            <small class="text-muted">Processing civic queries across 28 states</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What is SCMIRN -->
+    <section class="py-5 bg-white">
+        <div class="container py-5">
+            <div class="row justify-content-center text-center mb-5">
+                <div class="col-lg-8">
+                    <h2 class="display-5 fw-bold mb-4">What is SCMIRN?</h2>
+                    <p class="lead text-muted">
+                        <strong>Smart Civic Micro-Infrastructure Resilience Network</strong> is an AI-powered civic companion that transforms how citizens interact with democracy.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="row g-4 mb-5">
+                <div class="col-md-4 text-center">
+                    <div class="bg-primary bg-opacity-10 rounded-4 p-4 mb-3 d-inline-block">
+                        <i class="fas fa-brain fa-2x text-primary"></i>
+                    </div>
+                    <h4>AI Problem Solver</h4>
+                    <p class="text-muted">Natural language understanding for complex civic issues</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="bg-warning bg-opacity-10 rounded-4 p-4 mb-3 d-inline-block">
+                        <i class="fas fa-balance-scale fa-2x text-warning"></i>
+                    </div>
+                    <h4>Legal Rights Engine</h4>
+                    <p class="text-muted">Instant access to laws, acts, and constitutional rights</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="bg-success bg-opacity-10 rounded-4 p-4 mb-3 d-inline-block">
+                        <i class="fas fa-file-signature fa-2x text-success"></i>
+                    </div>
+                    <h4>Auto Document Gen</h4>
+                    <p class="text-muted">RTI, FIR, Complaints drafted by AI in seconds</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rights Engine Section -->
+    <section id="rights" class="py-5 bg-light">
+        <div class="container py-5">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-6">
+                    <h2 class="display-5 fw-bold mb-3">Rights Engine</h2>
+                    <p class="lead text-muted mb-4">
+                        Convert civic problems into legal rights, timeline expectations, and escalation-ready actions.
+                    </p>
+                    <div class="d-flex flex-column gap-3">
+                        <div class="p-3 rounded-3 bg-white border">
+                            <div class="fw-semibold mb-1">Legal Mapping</div>
+                            <small class="text-muted">Identifies relevant acts and sections from plain-language input.</small>
+                        </div>
+                        <div class="p-3 rounded-3 bg-white border">
+                            <div class="fw-semibold mb-1">Timeline Intelligence</div>
+                            <small class="text-muted">Shows expected response windows and escalation points.</small>
+                        </div>
+                        <div class="p-3 rounded-3 bg-white border">
+                            <div class="fw-semibold mb-1">Actionable Next Steps</div>
+                            <small class="text-muted">Generates practical next actions and document-ready pathways.</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="bg-white border rounded-4 p-4 shadow-sm">
+                        <h5 class="fw-bold mb-3">Analyze My Rights</h5>
+                        <p class="small text-muted mb-3">Example: "Police refused to file FIR for theft in my area."</p>
+                        <textarea id="rightsQuery" class="form-control mb-3" rows="4" placeholder="Describe your issue to analyze your rights..."></textarea>
+                        <button class="btn btn-dark w-100 mb-3" onclick="analyzeRights()">
+                            <i class="fas fa-scale-balanced me-2"></i>Analyze Rights
+                        </button>
+                        <div id="rightsResult" class="small text-muted">Your analysis will appear here.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Major Features Grid -->
+    <section id="features" class="py-5 bg-light">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold">7 Pillars of Civic Intelligence</h2>
+                <p class="text-muted lead">Comprehensive tools for modern democratic participation</p>
+            </div>
+            
+            <div class="row g-4">
+                <!-- 1. Smart Problem Solver -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-civic">
+                        <div class="icon-circle bg-primary bg-opacity-10 text-primary">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h4>🧠 Smart Problem Solver</h4>
+                        <p class="text-muted">Describe any issue in plain language. AI converts it into legal cases, government requests, or formal complaints with step-by-step resolution pathways.</p>
+                        <ul class="list-unstyled mt-3 small text-muted">
+                            <li><i class="fas fa-check text-success me-2"></i>Natural Language Processing</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Multi-step Action Plans</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Success Prediction</li>
+                        </ul>
+                        <button class="btn btn-sm btn-dark mt-2" onclick="launchPillar('problem_solver')">Open Workspace</button>
+                    </div>
+                </div>
+                
+                <!-- 2. Office Finder -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-civic">
+                        <div class="icon-circle bg-info bg-opacity-10 text-info">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <h4>🏛️ Office Locator</h4>
+                        <p class="text-muted">GPS-enabled finder for government offices with Live officer names, contact numbers, office timings, and optimal visit strategies.</p>
+                        <ul class="list-unstyled mt-3 small text-muted">
+                            <li><i class="fas fa-check text-success me-2"></i>Live Officer Database</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Best Visit Times</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Required Documents List</li>
+                        </ul>
+                        <button class="btn btn-sm btn-dark mt-2" onclick="launchPillar('office_locator')">Open Workspace</button>
+                    </div>
+                </div>
+                
+                <!-- 3. Rights Engine -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-civic">
+                        <div class="icon-circle bg-warning bg-opacity-10 text-warning">
+                            <i class="fas fa-gavel"></i>
+                        </div>
+                        <h4>⚖️ Rights & Law Engine</h4>
+                        <p class="text-muted">Instant legal analysis: Which law applies, your specific rights, government obligations, deadlines, and remedies without lawyer fees.</p>
+                        <ul class="list-unstyled mt-3 small text-muted">
+                            <li><i class="fas fa-check text-success me-2"></i>RTI, Consumer, Labor Acts</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Constitutional Rights</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Penalty Provisions</li>
+                        </ul>
+                        <button class="btn btn-sm btn-dark mt-2" onclick="launchPillar('rights_engine')">Open Workspace</button>
+                    </div>
+                </div>
+                
+                <!-- 4. Document Generator -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-civic">
+                        <div class="icon-circle bg-success bg-opacity-10 text-success">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <h4>📝 Auto Document Gen</h4>
+                        <p class="text-muted">One-click generation of legally valid documents: RTI applications, FIR drafts, Consumer complaints, Appeal letters, Grievance filings.</p>
+                        <ul class="list-unstyled mt-3 small text-muted">
+                            <li><i class="fas fa-check text-success me-2"></i>Legally Compliant Formats</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Auto-filled Details</li>
+                            <li><i class="fas fa-check text-success me-2"></i>PDF Download</li>
+                        </ul>
+                        <button class="btn btn-sm btn-dark mt-2" onclick="launchPillar('document_gen')">Open Workspace</button>
+                    </div>
+                </div>
+                
+                <!-- 5. Civic Heatmap -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-civic">
+                        <div class="icon-circle bg-danger bg-opacity-10 text-danger">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <h4>📊 Civic Issues Heatmap</h4>
+                        <p class="text-muted">Live visualization of city problems: Potholes, garbage, water, electricity, corruption reports with AI-predicted resolution times.</p>
+                        <ul class="list-unstyled mt-3 small text-muted">
+                            <li><i class="fas fa-check text-success me-2"></i>Real-time Data</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Priority Clustering</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Department Accountability</li>
+                        </ul>
+                        <button class="btn btn-sm btn-dark mt-2" onclick="launchPillar('heatmap')">Open Workspace</button>
+                    </div>
+                </div>
+                
+                <!-- 6. Government Tracker -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-civic">
+                        <div class="icon-circle bg-secondary bg-opacity-10 text-secondary">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <h4>🔔 Government Tracker</h4>
+                        <p class="text-muted">Track complaints, applications, and cases. AI reminds you when to follow up, when officials are late, and when to escalate.</p>
+                        <ul class="list-unstyled mt-3 small text-muted">
+                            <li><i class="fas fa-check text-success me-2"></i>Deadline Alerts</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Escalation Timelines</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Progress History</li>
+                        </ul>
+                        <button class="btn btn-sm btn-dark mt-2" onclick="launchPillar('tracker')">Open Workspace</button>
+                    </div>
+                </div>
+                
+                <!-- 7. Predictive AI -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-civic">
+                        <div class="icon-circle" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4>🧠 Predictive Intelligence</h4>
+                        <p class="text-muted">AI predicts which departments delay most, corruption hotspots, rising issues, and optimal filing strategies for maximum success.</p>
+                        <ul class="list-unstyled mt-3 small text-muted">
+                            <li><i class="fas fa-check text-success me-2"></i>Success Rate Prediction</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Department Analytics</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Strategic Advice</li>
+                        </ul>
+                        <button class="btn btn-sm btn-dark mt-2" onclick="launchPillar('predictive')">Open Workspace</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Chatbot Section -->
+    <section class="py-5 bg-white">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-5 mb-4 mb-lg-0">
+                    <h2 class="display-5 fw-bold mb-4">Your Personal<br>Civic Assistant</h2>
+                    <p class="lead text-muted mb-4">
+                        Not just a chatbot—A <strong>problem-solving engine</strong> that understands government, law, and ground reality.
+                    </p>
+                    
+                    <div class="d-flex flex-column gap-3">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="bg-primary bg-opacity-10 p-2 rounded">
+                                <i class="fas fa-comments text-primary"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Conversational AI</h6>
+                                <small class="text-muted">Ask naturally: "My landlord is evicting me" or "Police won't file FIR"</small>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="bg-success bg-opacity-10 p-2 rounded">
+                                <i class="fas fa-map-marker-alt text-success"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Location Aware</h6>
+                                <small class="text-muted">Auto-detects your state laws and nearest offices</small>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="bg-warning bg-opacity-10 p-2 rounded">
+                                <i class="fas fa-file-word text-warning"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Document Generation</h6>
+                                <small class="text-muted">Instantly creates RTI, complaints, legal notices</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-primary-civic mt-4" onclick="toggleChat()">
+                        <i class="fas fa-paper-plane me-2"></i>Start Conversation
+                    </button>
+                </div>
+                <div class="col-lg-7">
+                    <div class="bg-dark rounded-4 p-4 shadow-lg">
+                        <div class="d-flex align-items-center gap-2 mb-3 border-bottom border-secondary pb-2">
+                            <div class="bg-success rounded-circle" style="width: 10px; height: 10px;"></div>
+                            <small class="text-light">SCMIRN Intelligence Online</small>
+                        </div>
+                        
+                        <div class="bg-secondary bg-opacity-25 rounded-3 p-3 mb-3">
+                            <div class="text-info small mb-1"><i class="fas fa-robot me-1"></i>SCMIRN AI</div>
+                            <div class="text-light">"My landlord is threatening to evict me without notice. What are my rights?"</div>
+                        </div>
+                        
+                        <div class="bg-primary bg-opacity-25 rounded-3 p-3 mb-3 ms-4">
+                            <div class="text-primary small mb-1 text-end">You</div>
+                            <div class="text-light text-end">I live in Delhi, rented house for 2 years</div>
+                        </div>
+                        
+                        <div class="bg-secondary bg-opacity-25 rounded-3 p-3">
+                            <div class="text-info small mb-1"><i class="fas fa-robot me-1"></i>SCMIRN AI</div>
+                            <div class="text-light small">
+                                <strong>⚖️ Your Rights under Delhi Rent Control Act:</strong><br>
+                                • 3-month mandatory notice required<br>
+                                • Eviction only through court order<br>
+                                • Illegal eviction = FIR under Section 441 IPC<br><br>
+                                <strong>📝 I'm generating a Legal Notice draft for you...</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Issues with Photos -->
+    <section id="map-section" class="py-5 bg-light">
+        <div class="container py-5">
+            <div class="row align-items-end mb-5">
+                <div class="col-lg-8">
+                    <h2 class="display-5 fw-bold">Live Civic Intelligence Map</h2>
+                    <p class="lead text-muted">Real-time visualization of infrastructure issues across your city</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <div class="btn-group">
+                        <button class="btn btn-outline-dark active" onclick="filterMap('all')">All Issues</button>
+                        <button class="btn btn-outline-danger" onclick="filterMap('critical')">Critical</button>
+                        <button class="btn btn-outline-warning" onclick="filterMap('high')">High Priority</button>
+                    </div>
+                    <div class="map-search mt-3">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input
+                                type="text"
+                                id="mapSearchInput"
+                                class="form-control"
+                                placeholder="Search area, landmark, or issue..."
+                                onkeypress="handleMapSearchKey(event)"
+                            >
+                            <button class="btn btn-dark" type="button" onclick="searchMapLocation()">
+                                Search
+                            </button>
+                        </div>
+                        <small id="mapSearchStatus" class="text-muted d-block mt-2"></small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div id="civicMap"></div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="bg-white rounded-4 p-4 shadow-sm h-100">
+                        <h5 class="fw-bold mb-4">Recent Reports</h5>
+                        <div id="issuesList" style="max-height: 400px; overflow-y: auto;">
+                            {% for issue in issues %}
+                            {% set photos = issue.media_files|fromjson %}
+                            <div class="d-flex gap-3 mb-3 p-3 bg-light rounded-3 issue-item" data-tier="{{ issue.priority_tier }}">
+                                <img src="{{ photos[0] if photos else 'https://via.placeholder.com/100 ' }}" 
+                                     class="rounded-2" style="width: 80px; height: 60px; object-fit: cover;">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h6 class="fw-bold mb-1 small">{{ issue.title | truncate(40, True, '...') }}</h6>
+                                        <span class="badge bg-{{ 'danger' if issue.priority_tier == 'critical' else 'warning' if issue.priority_tier == 'high' else 'info' }}">
+                                            {{ issue.priority_tier }}
+                                        </span>
+                                    </div>
+                                    <p class="text-muted small mb-1">{{ issue.description | truncate(60, True, '...') }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-success">₹{{ issue.fund_collected|int }} raised</small>
+                                        <button class="btn btn-sm btn-primary" onclick="donate('{{ issue.id }}')">Fund</button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Document Generator Showcase -->
+    <section id="docs" class="py-5 bg-white">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold">Auto-Generated Legal Documents</h2>
+                <p class="lead text-muted">Court-ready paperwork in seconds, not days</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="bg-info bg-opacity-10 p-3 rounded-3">
+                                    <i class="fas fa-file-alt text-info fa-lg"></i>
+                                </div>
+                                <h5 class="fw-bold mb-0">RTI Application</h5>
+                            </div>
+                            <p class="text-muted small">Perfectly formatted Right to Information requests with mandatory fee structure and appeal clauses.</p>
+                            <button class="btn btn-outline-info btn-sm w-100" onclick="openDocumentModal('rti')">Open Generator</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="bg-danger bg-opacity-10 p-3 rounded-3">
+                                    <i class="fas fa-exclamation-triangle text-danger fa-lg"></i>
+                                </div>
+                                <h5 class="fw-bold mb-0">FIR Complaint</h5>
+                            </div>
+                            <p class="text-muted small">Formal complaint to Superintendent of Police when local station refuses to register your FIR.</p>
+                            <button class="btn btn-outline-danger btn-sm w-100" onclick="openDocumentModal('fir')">Open Generator</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="bg-success bg-opacity-10 p-3 rounded-3">
+                                    <i class="fas fa-balance-scale text-success fa-lg"></i>
+                                </div>
+                                <h5 class="fw-bold mb-0">Consumer Complaint</h5>
+                            </div>
+                            <p class="text-muted small">District/State/National Consumer Commission complaints with legal sections and compensation claims.</p>
+                            <button class="btn btn-outline-success btn-sm w-100" onclick="openDocumentModal('consumer')">Open Generator</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="bg-warning bg-opacity-10 p-3 rounded-3">
+                                    <i class="fas fa-wallet text-warning fa-lg"></i>
+                                </div>
+                                <h5 class="fw-bold mb-0">Pension Grievance</h5>
+                            </div>
+                            <p class="text-muted small">Escalate delayed pension disbursement with a structured authority-facing complaint.</p>
+                            <button class="btn btn-outline-warning btn-sm w-100" onclick="openDocumentModal('pension')">Open Generator</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="bg-primary bg-opacity-10 p-3 rounded-3">
+                                    <i class="fas fa-shield-halved text-primary fa-lg"></i>
+                                </div>
+                                <h5 class="fw-bold mb-0">Cybercrime Complaint</h5>
+                            </div>
+                            <p class="text-muted small">Generate complaint draft for payment fraud, impersonation, and online financial scams.</p>
+                            <button class="btn btn-outline-primary btn-sm w-100" onclick="openDocumentModal('cybercrime')">Open Generator</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="bg-secondary bg-opacity-10 p-3 rounded-3">
+                                    <i class="fas fa-bolt text-secondary fa-lg"></i>
+                                </div>
+                                <h5 class="fw-bold mb-0">Electricity Grievance</h5>
+                            </div>
+                            <p class="text-muted small">For wrong billing, repeated outages, and pending service restoration issues.</p>
+                            <button class="btn btn-outline-secondary btn-sm w-100" onclick="openDocumentModal('electricity')">Open Generator</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact & Investors Section -->
+    <section class="py-5 bg-dark text-white">
+        <div class="container py-5">
+            <div class="row">
+                <div class="col-lg-8 mb-5">
+                    <h2 class="display-4 fw-bold mb-4">Building the Infrastructure<br>of Democracy 2.0</h2>
+                    <p class="lead opacity-75">
+                        SCMIRN represents a fundamental shift in civic engagement—using AI to bridge the gap between citizens and governance, making democracy truly participatory and accessible.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="impact-grid mb-5">
+                <div class="impact-item bg-white text-dark">
+                    <h4 class="fw-bold text-primary mb-2">For Citizens</h4>
+                    <p class="text-muted mb-0">Transform "I don't know what to do" into "Here is exactly what to do" with step-by-step legal and administrative guidance.</p>
+                </div>
+                <div class="impact-item bg-white text-dark">
+                    <h4 class="fw-bold text-success mb-2">For Government</h4>
+                    <p class="text-muted mb-0">Data-driven insights into civic pain points, predictive maintenance, and transparent issue resolution tracking.</p>
+                </div>
+                <div class="impact-item bg-white text-dark">
+                    <h4 class="fw-bold text-info mb-2">For Media</h4>
+                    <p class="text-muted mb-0">Real-time civic heatmaps and corruption tracking with verifiable citizen reports and documentation.</p>
+                </div>
+                <div class="impact-item bg-white text-dark">
+                    <h4 class="fw-bold text-warning mb-2">For Investors</h4>
+                    <p class="text-muted mb-0">Scalable SaaS platform with B2G (Business-to-Government) potential and massive social impact ROI.</p>
+                </div>
+            </div>
+            
+            <div class="row g-4 text-center">
+                <div class="col-md-3">
+                    <div class="stat-number">40%</div>
+                    <p class="opacity-75">Faster Resolution than Traditional Channels</p>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-number">100%</div>
+                    <p class="opacity-75">Fund Transparency (Zero Corruption)</p>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-number">28</div>
+                    <p class="opacity-75">States Covered</p>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-number">24/7</div>
+                    <p class="opacity-75">AI Legal Aid Available</p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="application/json" id="scmirn-issues-data">
+        {{ map_issues | tojson }}
+    </script>
+{% endblock %}

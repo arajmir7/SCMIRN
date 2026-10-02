@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: scmirn-executive-briefing
+spec:
+  # 06:00 UTC daily
+  schedule: "0 6 * * *"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: briefing-worker
+              image: ghcr.io/example/scmirn-backend:enterprise-latest
+              imagePullPolicy: IfNotPresent
+              command:
+                - python
+                - -c
+                - |
+                  import requests
+                  payload = {
+                      "city_id": "metro-demo",
+                      "recipients": ["ceo@scmirn.local", "ciso@scmirn.local"],
+                      "include_pdf": True,
+                      "include_recommendations": True
+                  }
+                  requests.post("http://scmirn-enterprise-api:5000/api/v1/enterprise/executive/briefings/generate", json=payload, timeout=30)

@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "assessment_date": "2026-10-01",
+  "overall_release_verdict": "NOT PRODUCTION READY",
+  "overall_maturity": "L3 — LOCAL PRODUCTION REHEARSAL VERIFIED",
+  "maturity_scope": "Earlier disposable Compose rehearsal plus current local build and automated tests; the latest source was not deployed to the rehearsal services. Product security and operational gates remain open.",
+  "capabilities": {
+    "government_integrations": {"state": "BLOCKED_EXTERNAL", "evidence": "No authorized government connector or production credentials; see docs/government/INTEGRATION_CATALOG.md."},
+    "ai_models": {"state": "DEMO_ONLY", "evidence": "Production routing is deterministic and does not invoke an LLM; legacy AI endpoints are gated."},
+    "analytics": {"state": "SIMULATED", "evidence": "Local/sample aggregates only; no representative production dataset."},
+    "iot": {"state": "SIMULATED", "evidence": "No verified device identity or production feed."},
+    "blockchain": {"state": "SIMULATED", "evidence": "Hashing demonstration only; no chain/network transaction."},
+    "digital_twin": {"state": "SIMULATED", "evidence": "Scenario simulation only; no verified city model or live feed."},
+    "funding": {"state": "NOT_IMPLEMENTED", "evidence": "Payment and donation APIs are disabled in production."},
+    "notifications": {"state": "NOT_IMPLEMENTED", "evidence": "No production delivery provider or outbox."},
+    "identity_federation": {"state": "BLOCKED_EXTERNAL", "evidence": "No approved OIDC/SAML provider, MFA or role mapping."},
+    "document_submission": {"state": "NOT_IMPLEMENTED", "evidence": "No authorized filing connector; route outcomes remain NOT_SUBMITTED."},
+    "legal_workflows": {"state": "DEMO_ONLY", "evidence": "No reviewed source-grounded legal workflow in the production allowlist."},
+    "maps": {"state": "LOCAL_ONLY", "evidence": "Map UI uses local/demo records and third-party tiles; no official civic data feed."},
+    "officer_tooling": {"state": "NOT_IMPLEMENTED", "evidence": "No authenticated officer workflow or tenant boundary."},
+    "enterprise_dashboard": {"state": "SIMULATED", "evidence": "Prototype UI and sample metrics; no production tenancy or business feed."},
+    "source_gated_triage": {"state": "LOCAL_ONLY", "evidence": "Deterministic, consent-gated, idempotent local PostgreSQL/TLS Compose rehearsal; route abstains while source catalog is empty."},
+    "production_compose_deployment": {"state": "LOCAL_ONLY", "evidence": "Disposable PostgreSQL/Redis TLS and hostname verification, migrations, health checks, proxy smoke and safe abstention; no live environment."}
+  }
+}
