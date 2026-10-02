@@ -226,7 +226,7 @@
 .platform-workspace .risk-globe-meta { display: grid; gap: 0.2rem; padding: 0.65rem 0.75rem; border-radius: 10px; border: 1px solid #dbeafe; background: #eff6ff; font-size: 0.82rem; color: #0f172a; }
 
 .platform-route-heading {
-  border-left: 4px solid var(--accent);
+  border-left: 1px solid var(--accent);
   padding-left: 1.25rem;
 }
 
