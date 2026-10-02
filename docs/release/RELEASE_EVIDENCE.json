@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "git_sha": null,
-  "working_tree": "UNAVAILABLE_NO_GIT_METADATA",
+  "git_sha": "9725a52dd59b1ebef90b5e31724e2800ea26a473",
+  "working_tree": "CLEAN_AT_RECORDED_BASELINE_COMMIT",
   "timestamp": "2026-10-02T03:26:08+05:30",
   "migration_head": {
     "revision": "20261001_01",
@@ -127,7 +127,7 @@
     "status": "PARTIAL",
     "sast": "NOT_RUN",
     "sca": "PASS_DEPENDENCY_LOCK_SCOPE_ONLY; Python pip-audit reports 0 known issues (43 components); npm audit reports 0 known issues (152 components)",
-    "secret_scan": "NOT_RUN",
+    "secret_scan": "Gitleaks 8.30.1 staged-source scan; no confirmed secrets; 1 manually reviewed false positive at infrastructure/kubernetes/enterprise-briefing-cronjob.yaml:30 (internal service port); no suppression.",
     "dast": "NOT_RUN",
     "container_scan": "NOT_RUN",
     "scan_date": "2026-10-02"
@@ -256,7 +256,8 @@
       "docs/security/DEPENDENCY_SCAN_2026-10-02.md",
       "docs/security/SECURITY_ARCHITECTURE.md",
       "docs/security/THREAT_MODEL.md",
-      "docs/scmirn/EXECUTION_STATE.md"
+      "docs/scmirn/EXECUTION_STATE.md",
+      "docs/security/SECRET_SCAN_2026-10-02.md"
     ],
     "still_open_internal": [
       "production validation of PostgreSQL runtime role/configuration and CI repetition of the local RLS test",
@@ -277,5 +278,10 @@
       "evidence_doc": "docs/security/DEPENDENCY_SCAN_2026-10-02.md"
     },
     "updated_at": "2026-10-02T03:26:08+05:30"
-  }
+  },
+  "git_branch": "main",
+  "commit_timestamp": "2026-10-02T12:24:49+05:30",
+  "commit_message": "Baseline government transformation state",
+  "origin": "https://github.com/arajmir7/SCMIRN.git",
+  "traceability_note": "The active DSA/SCMIRN source tree had no Git metadata; inspected adjacent SCMIRN copies had no committed history or usable remote. The target GitHub repository was empty. This initial root commit records the current source snapshot without inventing prior history."
 }
