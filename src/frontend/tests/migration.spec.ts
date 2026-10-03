@@ -110,7 +110,7 @@ test('homepage, sticky navigation, feature anchor, and consented source route ch
 
 test('rights route handoff and consented issue demo record work', async ({ page }) => {
   await page.goto('/');
-  await page.getByLabel('Describe an issue to check for a verified route').fill('Police refused to register a theft FIR');
+  await page.getByLabel('Describe an issue to check for a source-reviewed route').fill('Police refused to register a theft FIR');
   await page.getByRole('button', { name: 'Continue to Route Check' }).click();
   const assistant = page.getByRole('region', { name: 'SCMIRN source-linked problem solver' });
   await expect(assistant.getByLabel('Problem description')).toHaveValue('Police refused to register a theft FIR');
@@ -204,7 +204,7 @@ test('source route and document API errors are shown to users', async ({ page })
     await route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ error: { message: 'Route service unavailable.' } }) });
   });
   await page.goto('/');
-  await page.getByLabel('Describe an issue to check for a verified route').fill('Synthetic test issue without personal details.');
+  await page.getByLabel('Describe an issue to check for a source-reviewed route').fill('Synthetic test issue without personal details.');
   await page.getByRole('button', { name: 'Continue to Route Check' }).click();
   const assistant = page.getByRole('region', { name: 'SCMIRN source-linked problem solver' });
   await assistant.getByLabel(/I agree to process this description/).check();
