@@ -39,7 +39,7 @@ scheduled drift/reviewer lifecycle yet.
 
 - [Typed production blocker ledger](../release/production-blockers.yaml)
 - [Release-gate evidence history](../release/RELEASE_EVIDENCE.json)
-- [Exact-commit candidate gate record](evidence/candidate-gate-20261003-8c9863f.json)
+- [Exact-commit candidate gate record](evidence/candidate-gate-20261003-b363605.json)
 - [Test evidence matrix](../merge/TEST_EVIDENCE_MATRIX.md)
 - [Evidence artifact policy and historical snapshots](../release/evidence/README.md)
 - [Privacy field/table/profile decisions](external/README.md)

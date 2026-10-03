@@ -168,9 +168,9 @@ authorization requirements.
 ## Exact-commit candidate gate — 2026-10-03
 
 The latest local candidate gate ran against clean commit
-`8c9863f87ba4f045002b66b9b6c42f9b3b26bea6`, using a disposable PostgreSQL 16
+`b363605f5c47db2d794d4c596d09f808745ad0ae`, using a disposable PostgreSQL 16
 instance. A machine-readable record is available at
-[`candidate-gate-20261003-8c9863f.json`](../assurance/evidence/candidate-gate-20261003-8c9863f.json).
+[`candidate-gate-20261003-b363605.json`](../assurance/evidence/candidate-gate-20261003-b363605.json).
 
 | System / gate | Result | Limits |
 |---|---|---|

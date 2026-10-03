@@ -14,7 +14,7 @@ manifest to satisfy the checker.
 | Accessibility | Selected responsive/keyboard browser flows | Route-wide automated coverage and manual keyboard, screen reader, zoom/reflow, map/chart/document review |
 | Resilience | Disposable PostgreSQL migration/RLS tests and local image build | Encrypted backup, destructive restore/DR, object checksum recovery, rollback rehearsal, measured durations |
 | Service resolution | Dated reviewed official sources; four handoff-only candidates; deterministic, source-gated resolver | Source drift/review lifecycle, complete eligibility/evidence/fee/SLA/escalation/appeal graph, citizen cases, official connectors/receipts/status |
-| Exact candidate gate | [Commit-bound local gate record](candidate-gate-20261003-8c9863f.json): 117 backend passes with disposable PostgreSQL 16, 15 browser passes, build/typecheck, governance and OpenAPI parity | Gate remains nonzero for 12 engineering controls and eight external dependencies; no production deployment or exact-commit security scan |
+| Exact candidate gate | [Commit-bound local gate record](candidate-gate-20261003-b363605.json): 117 backend passes with disposable PostgreSQL 16, 15 browser passes, build/typecheck, governance and OpenAPI parity | Gate remains nonzero for 12 engineering controls and eight external dependencies; no production deployment or exact-commit security scan |
 
 Retain raw scanner reports privately if they may contain source snippets or
 secret matches. Publish only redacted reports with tool version, commit/image

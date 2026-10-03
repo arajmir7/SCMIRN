@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "assessment": {
+    "date": "2026-10-03",
+    "recorded_at_local": "2026-10-03T13:10:26+05:30",
+    "branch": "main",
+    "tested_commit": "b363605f5c47db2d794d4c596d09f808745ad0ae",
+    "working_tree_at_start": "CLEAN",
+    "production_deployment_performed": false,
+    "verdict": "NOT PRODUCTION READY"
+  },
+  "execution": {
+    "command": "SCMIRN_PYTHON=.venv-evidence/bin/python PYTHONPATH=src/backend SCMIRN_POSTGRES_RLS_TEST_URL=postgresql+psycopg://<disposable-test-credentials>@127.0.0.1:62410/postgres bash scripts/release_gate.sh --mode candidate",
+    "exit_code": 1,
+    "exit_is_expected": true,
+    "runtime": "Python 3.13; disposable PostgreSQL 16 container on loopback; container stopped after the run",
+    "production_environment_file_supplied": false,
+    "deployment_secrets_or_production_ca_supplied": false,
+    "deployment_started": false
+  },
+  "checks": {
+    "backend_tests": {
+      "status": "PASS",
+      "passed": 117,
+      "warnings": 118,
+      "scope": "src/backend/tests; disposable PostgreSQL 16 RLS integration enabled"
+    },
+    "data_governance_parity": {
+      "status": "PASS",
+      "mapped_tables": 35,
+      "columns": 474,
+      "candidate_fields_registered_or_exempted": 294
+    },
+    "frontend_typecheck": "PASS",
+    "frontend_production_build": "PASS",
+    "frontend_browser_flows": {
+      "status": "PASS",
+      "passed": 15,
+      "scope_limit": "Browser API responses are mocked; no production backend or identity provider was exercised."
+    },
+    "feature_parity": {
+      "status": "PASS",
+      "source_features": 9,
+      "integrated": 9,
+      "superseded": 0,
+      "explicitly_rejected": 0,
+      "unexplained": 0
+    },
+    "openapi_route_parity": {
+      "status": "PASS",
+      "openapi_version": "3.1.0",
+      "allowlisted_route_patterns": 15,
+      "other_registered_api_operations_rejected_with_503": 99,
+      "scope_limit": "Synthetic production-mode route check; no deployed service was tested."
+    },
+    "typed_blocker_and_governance_gate": {
+      "status": "BLOCKED",
+      "open_engineering_controls": 12,
+      "blocked_external_dependencies": 8,
+      "external_dependency_breakdown": {
+        "privacy_legal": 3,
+        "government_authorization": 2,
+        "infrastructure": 1,
+        "independent_security_review": 1,
+        "operational_security_operations": 1
+      },
+      "pending_personal_field_approvals": 273,
+      "pending_table_governance_decisions": 35,
+      "pending_governance_profile_approvals": 1
+    },
+    "production_configuration_and_image_build": {
+      "status": "BLOCKED_EXTERNAL_DEPENDENCY",
+      "reason": "No authorized SCMIRN_ENV_FILE, deployment secrets, or production CA files were supplied."
+    }
+  },
+  "security_scan": {
+    "exact_tested_commit_scan": "NOT RUN",
+    "latest_existing_partial_scan_commit": "51260c1c58bc7beb7a562d1ea87ac75ed0ae9c03",
+    "latest_existing_partial_scan": "docs/assurance/evidence/security-release.json",
+    "clearance_inferred": false
+  },
+  "limits": [
+    "The application-set tenant GUC is not an independent tenant credential.",
+    "Worker, signed-URL, and quarantined legacy-record isolation gaps remain open.",
+    "The service directory uses static catalog evidence and does not fetch government pages or establish live freshness.",
+    "No official filing, receipt, or case-status connector was exercised.",
+    "No legal approval, government authorization, certification, independent assessment, or production operation is claimed."
+  ]
+}
