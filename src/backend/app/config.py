@@ -16,6 +16,17 @@ DATA_DIR = os.path.join(BASE_DIR, 'infrastructure', 'database', 'instance')
 UPLOADS_DIR = os.path.join(BASE_DIR, 'infrastructure', 'uploads')
 
 
+def _positive_int_env(name, default=None):
+    raw = os.getenv(name, '')
+    if not raw:
+        return default
+    try:
+        value = int(raw)
+    except ValueError:
+        return None
+    return value if value > 0 else None
+
+
 class Config:
     """Base configuration shared across all environments."""
     
@@ -39,6 +50,26 @@ class Config:
     STAFF_MFA_ENCRYPTION_KEY = os.getenv('STAFF_MFA_ENCRYPTION_KEY', '')
     STAFF_SESSION_IDLE_MINUTES = 30
     STAFF_SESSION_ABSOLUTE_HOURS = 12
+
+    # Evidence remains unavailable unless a deployment explicitly configures
+    # the store, scanner, and authority retention policy.
+    EVIDENCE_VAULT_ENABLED = os.getenv('EVIDENCE_VAULT_ENABLED', 'false').lower() == 'true'
+    EVIDENCE_STORAGE_BACKEND = os.getenv('EVIDENCE_STORAGE_BACKEND', 'local')
+    EVIDENCE_LOCAL_ROOT = os.getenv(
+        'EVIDENCE_LOCAL_ROOT', os.path.join(DATA_DIR, 'private-evidence')
+    )
+    EVIDENCE_S3_BUCKET = os.getenv('EVIDENCE_S3_BUCKET', '')
+    EVIDENCE_S3_REGION = os.getenv('EVIDENCE_S3_REGION', '')
+    EVIDENCE_S3_ENDPOINT_URL = os.getenv('EVIDENCE_S3_ENDPOINT_URL', '')
+    EVIDENCE_S3_KMS_KEY_ID = os.getenv('EVIDENCE_S3_KMS_KEY_ID', '')
+    EVIDENCE_CLAMAV_UNIX_SOCKET = os.getenv('EVIDENCE_CLAMAV_UNIX_SOCKET', '')
+    EVIDENCE_CLAMAV_HOST = os.getenv('EVIDENCE_CLAMAV_HOST', '')
+    EVIDENCE_CLAMAV_PORT = _positive_int_env('EVIDENCE_CLAMAV_PORT', 3310)
+    EVIDENCE_CLAMAV_TIMEOUT_SECONDS = _positive_int_env('EVIDENCE_CLAMAV_TIMEOUT_SECONDS', 5)
+    EVIDENCE_MAX_BYTES = _positive_int_env('EVIDENCE_MAX_BYTES', 15 * 1024 * 1024)
+    EVIDENCE_RETRIEVAL_URL_TTL_SECONDS = _positive_int_env('EVIDENCE_RETRIEVAL_URL_TTL_SECONDS', 60)
+    EVIDENCE_DEFAULT_RETENTION_DAYS = _positive_int_env('EVIDENCE_DEFAULT_RETENTION_DAYS')
+    EVIDENCE_RETENTION_POLICY_ID = os.getenv('EVIDENCE_RETENTION_POLICY_ID', '')
     
     # File uploads
     MAX_CONTENT_LENGTH = 32 * 1024 * 1024  # 32MB
@@ -79,6 +110,7 @@ class DevelopmentConfig(Config):
     ENV = 'development'
     AUTO_SEED_ROUTING_REGISTRY = True
     DEMO_MODE = os.getenv('DEMO_MODE', 'true').lower() == 'true'
+    EVIDENCE_STORAGE_BACKEND = os.getenv('EVIDENCE_STORAGE_BACKEND', 'local')
     
     SQLALCHEMY_DATABASE_URI = os.getenv(
         'DATABASE_URL',
@@ -103,6 +135,8 @@ class ProductionConfig(Config):
         'STAFF_API_ENABLED', os.getenv('STAFF_AUTH_ENABLED', 'false')
     ).lower() == 'true'
     STAFF_AUTH_ENABLED = STAFF_API_ENABLED
+    EVIDENCE_VAULT_ENABLED = os.getenv('EVIDENCE_VAULT_ENABLED', 'false').lower() == 'true'
+    EVIDENCE_STORAGE_BACKEND = os.getenv('EVIDENCE_STORAGE_BACKEND', 's3')
     SCMIRN_APP_DB_ROLE = os.getenv('SCMIRN_APP_DB_ROLE', 'scmirn_app')
     SCMIRN_MIGRATOR_DB_ROLE = os.getenv('SCMIRN_MIGRATOR_DB_ROLE', 'scmirn_migrator')
     MIGRATION_MODE = os.getenv('SCMIRN_MIGRATION_MODE', 'false').lower() == 'true'
@@ -174,6 +208,26 @@ def validate_production_config(config):
             decoded_key = b''
         if len(decoded_key) != 32:
             errors.append('STAFF_MFA_ENCRYPTION_KEY must be URL-safe base64 for exactly 32 key bytes when staff APIs are enabled')
+    if config.get('EVIDENCE_VAULT_ENABLED', False):
+        if config.get('EVIDENCE_STORAGE_BACKEND') != 's3':
+            errors.append('Evidence vault requires the configured private S3-compatible backend in production')
+        for name in ('EVIDENCE_S3_BUCKET', 'EVIDENCE_S3_REGION', 'EVIDENCE_S3_KMS_KEY_ID'):
+            if not isinstance(config.get(name), str) or not config[name].strip():
+                errors.append(f'{name} must be configured when the evidence vault is enabled')
+        endpoint = config.get('EVIDENCE_S3_ENDPOINT_URL', '')
+        if endpoint and not endpoint.startswith('https://'):
+            errors.append('EVIDENCE_S3_ENDPOINT_URL must use HTTPS in production')
+        scanner_socket = config.get('EVIDENCE_CLAMAV_UNIX_SOCKET', '')
+        if not isinstance(scanner_socket, str) or not os.path.isabs(scanner_socket):
+            errors.append('EVIDENCE_CLAMAV_UNIX_SOCKET must name the configured private scanner socket')
+        if not isinstance(config.get('EVIDENCE_DEFAULT_RETENTION_DAYS'), int) or config['EVIDENCE_DEFAULT_RETENTION_DAYS'] <= 0:
+            errors.append('EVIDENCE_DEFAULT_RETENTION_DAYS must come from the approved authority retention policy')
+        if not isinstance(config.get('EVIDENCE_RETENTION_POLICY_ID'), str) or not config['EVIDENCE_RETENTION_POLICY_ID'].strip():
+            errors.append('EVIDENCE_RETENTION_POLICY_ID must identify an approved authority policy')
+        if not isinstance(config.get('EVIDENCE_MAX_BYTES'), int) or not 1 <= config['EVIDENCE_MAX_BYTES'] <= 25 * 1024 * 1024:
+            errors.append('EVIDENCE_MAX_BYTES must be between 1 and 26214400')
+        if not isinstance(config.get('EVIDENCE_RETRIEVAL_URL_TTL_SECONDS'), int) or not 1 <= config['EVIDENCE_RETRIEVAL_URL_TTL_SECONDS'] <= 300:
+            errors.append('EVIDENCE_RETRIEVAL_URL_TTL_SECONDS must be between 1 and 300')
     database_url = config.get('SQLALCHEMY_DATABASE_URI')
     if not isinstance(database_url, str) or not database_url.startswith(('postgresql+psycopg://',)):
         errors.append('DATABASE_URL must use the installed PostgreSQL psycopg 3 driver in production')

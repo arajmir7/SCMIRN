@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "src/frontend/src/styles/platform.css"
+        ],
+        "createdAt": "2026-10-02T20:21:02.034Z",
+        "reason": "Agent: platform-route-heading is a 1px tokenized section divider, not a card side-tab."
+      }
+    ]
+  }
+}

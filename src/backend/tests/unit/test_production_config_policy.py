@@ -4,6 +4,7 @@ import importlib.util
 from pathlib import Path
 
 import pytest
+from app.config import validate_production_config
 
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
@@ -70,3 +71,32 @@ def test_env_parser_rejects_duplicate_keys(tmp_path):
     env_file.write_text("SCMIRN_SECRET_KEY=a\nSCMIRN_SECRET_KEY=b\n", encoding="utf-8")
     with pytest.raises(ValueError, match="duplicate setting"):
         policy.parse_env_file(env_file)
+
+
+def test_production_evidence_vault_requires_private_store_scanner_and_approved_retention(secure_settings):
+    runtime = {
+        "SECRET_KEY": "s" * 48,
+        "JWT_SECRET_KEY": "j" * 48,
+        "SQLALCHEMY_DATABASE_URI": secure_settings["DATABASE_URL"],
+        "STAFF_API_ENABLED": False,
+        "REDIS_URL": secure_settings["REDIS_URL"],
+        "CORS_ORIGINS": secure_settings["CORS_ORIGINS"],
+        "EVIDENCE_VAULT_ENABLED": True,
+        "EVIDENCE_STORAGE_BACKEND": "local",
+        "EVIDENCE_DEFAULT_RETENTION_DAYS": None,
+        "EVIDENCE_RETENTION_POLICY_ID": "",
+    }
+
+    with pytest.raises(RuntimeError, match="evidence"):
+        validate_production_config(runtime)
+
+
+def test_release_environment_rejects_enabled_evidence_vault_without_approved_store_and_policy(secure_settings):
+    secure_settings.update({
+        "EVIDENCE_VAULT_ENABLED": "true",
+        "EVIDENCE_STORAGE_BACKEND": "local",
+    })
+
+    errors = policy.validate(secure_settings)
+    assert any("private S3-compatible" in error for error in errors)
+    assert any("EVIDENCE_RETENTION_POLICY_ID" in error for error in errors)

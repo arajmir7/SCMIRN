@@ -61,10 +61,10 @@ Release IDs distinguish built images, so an operator can select a retained prior
 
 ## Operational gaps
 
-- No production identity provider, role enforcement or row-level tenant policy is verified.
+- No production identity provider or deployed tenant policy is verified. Forced RLS for staff and evidence metadata passed the disposable PostgreSQL 16 test, but its transaction-local tenant GUC is application-set and is not an independent tenant credential.
 - The routing migration is not the full schema baseline for legacy model tables.
 - The retention purge is an operator CLI command; this Compose file has no scheduler or lag alert.
-- No production metrics, tracing, actionable alert routing, backup service, DR site, or object storage is configured.
+- No production metrics, tracing, actionable alert routing, backup service, DR site, or approved evidence object store/scanner is configured. Evidence routes remain disabled.
 - The TLS reverse proxy, WAF, public DNS, and host/network boundary controls are external to this repository.
 - Government connectors, file upload, payment/funding, and official document submission are disabled or unimplemented.
 

@@ -31,6 +31,8 @@ class PolicyAttributes:
     department_id: str | None = None
     jurisdiction_id: str | None = None
     source_state: str | None = None
+    case_id: str | None = None
+    legal_hold: bool = False
 
 
 _CASE_READ_ROLES = frozenset({"TENANT_ADMIN", "CASE_OFFICER", "AUDITOR"})
@@ -91,6 +93,22 @@ def authorize(
             return False
         if "TENANT_ADMIN" in principal.roles:
             return True
+        return principal.user_id in {
+            attributes.created_by_id,
+            attributes.owner_id,
+            attributes.assigned_user_id,
+        }
+
+    if action in {"evidence:upload", "evidence:read", "evidence:delete"}:
+        if (
+            attributes.purpose != "CASE_EVIDENCE"
+            or attributes.sensitivity != "RESTRICTED"
+            or not attributes.case_id
+            or "CASE_OFFICER" not in principal.roles
+        ):
+            return False
+        if action == "evidence:delete" and attributes.legal_hold:
+            return False
         return principal.user_id in {
             attributes.created_by_id,
             attributes.owner_id,

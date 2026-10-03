@@ -20,7 +20,7 @@ from pathlib import Path
 import pytest
 from alembic import command
 from alembic.config import Config
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.engine import make_url
 from sqlalchemy.exc import DBAPIError
 
@@ -90,8 +90,14 @@ def test_forced_staff_rls_with_non_owner_runtime_role(monkeypatch):
         username=role_names["SCMIRN_AUDITOR_DB_ROLE"],
         password=role_passwords["SCMIRN_AUDITOR_DB_PASSWORD"],
     )
+    worker_url = test_url.set(
+        username=role_names["SCMIRN_WORKER_DB_ROLE"],
+        password=role_passwords["SCMIRN_WORKER_DB_PASSWORD"],
+    )
     runtime_engine = None
     auditor_engine = None
+    worker_engine = None
+    migrator_engine = None
     overprivileged_engine = None
     overprivileged_password = f"test-only-{uuid.uuid4().hex}"
     test_admin_engine = create_engine(test_url)
@@ -116,12 +122,16 @@ def test_forced_staff_rls_with_non_owner_runtime_role(monkeypatch):
             alembic_config = Config(str(migrations / "alembic.ini"))
             alembic_config.set_main_option("script_location", str(migrations))
             command.upgrade(alembic_config, "head")
+            command.downgrade(alembic_config, "20261002_04")
+            with test_admin_engine.connect() as connection:
+                assert not inspect(connection).has_table("evidence_objects")
+            command.upgrade(alembic_config, "head")
         provision()
 
         tenant_scoped_tables = (
             "tenants", "staff_users", "staff_mfa_factors", "staff_mfa_challenges",
             "staff_role_grants", "staff_sessions", "staff_cases",
-            "staff_case_events", "staff_audit_events",
+            "staff_case_events", "staff_audit_events", "evidence_objects",
         )
         staff_tables = (
             "staff_users", "staff_mfa_factors", "staff_mfa_challenges",
@@ -132,6 +142,7 @@ def test_forced_staff_rls_with_non_owner_runtime_role(monkeypatch):
         tenant_a, tenant_b = str(uuid.uuid4()), str(uuid.uuid4())
         user_a, user_b = str(uuid.uuid4()), str(uuid.uuid4())
         session_hash_a, session_hash_b, session_hash_a2 = "a" * 64, "b" * 64, "e" * 64
+        case_a, case_b = str(uuid.uuid4()), str(uuid.uuid4())
         with test_admin_engine.begin() as connection:
             connection.execute(text("INSERT INTO tenants (id, slug, display_name, active, created_at) VALUES (:id, :slug, :name, true, :now)"), [
                 {"id": tenant_a, "slug": "tenant-a", "name": "Tenant A", "now": now},
@@ -146,13 +157,54 @@ def test_forced_staff_rls_with_non_owner_runtime_role(monkeypatch):
                 {"hash": session_hash_b, "tenant": tenant_b, "user": user_b, "csrf": "d" * 64, "now": now, "idle": now + timedelta(minutes=30), "absolute": now + timedelta(hours=12)},
                 {"hash": session_hash_a2, "tenant": tenant_a, "user": user_a, "csrf": "e" * 64, "now": now, "idle": now + timedelta(minutes=30), "absolute": now + timedelta(hours=12)},
             ])
+            connection.execute(text("INSERT INTO staff_cases (id, tenant_id, case_ref, case_type, title, status, priority, created_by, created_at, updated_at) VALUES (:id, :tenant, :ref, 'WATER', 'Water service case', 'OPEN', 'NORMAL', :user, :now, :now)"), [
+                {"id": case_a, "tenant": tenant_a, "ref": "CASE-A", "user": user_a, "now": now},
+                {"id": case_b, "tenant": tenant_b, "ref": "CASE-B", "user": user_b, "now": now},
+            ])
+            connection.execute(text("INSERT INTO evidence_objects (id, tenant_id, case_id, created_by, object_key, content_type, size_bytes, checksum_sha256, scan_status, scanner_version, retention_policy_id, retention_until, legal_hold, lifecycle_status, deletion_attempts, created_at) VALUES (:id, :tenant, :case, :user, :key, 'application/pdf', 128, :checksum, 'CLEAN', 'ClamAV 1.4.0', 'test-policy-v1', :retention, false, 'ACTIVE', 0, :now)"), [
+                {"id": str(uuid.uuid4()), "tenant": tenant_a, "case": case_a, "user": user_a, "key": "1" * 64, "checksum": "a" * 64, "retention": now + timedelta(days=30), "now": now},
+                {"id": str(uuid.uuid4()), "tenant": tenant_b, "case": case_b, "user": user_b, "key": "2" * 64, "checksum": "b" * 64, "retention": now + timedelta(days=30), "now": now},
+            ])
 
         runtime_engine = create_engine(runtime_url)
         auditor_engine = create_engine(auditor_url)
+        worker_engine = create_engine(worker_url)
+        migrator_engine = create_engine(migrator_url)
         role_name = role_names["SCMIRN_APP_DB_ROLE"]
         from app.infrastructure.database.security import validate_production_runtime_role
         with runtime_engine.connect() as connection:
             assert validate_production_runtime_role(connection, expected_role=role_name) == role_name
+            assert validate_production_runtime_role(
+                connection, expected_role=role_name, staff_api_enabled=True
+            ) == role_name
+            evidence_privileges = connection.execute(text(
+                "SELECT has_table_privilege(current_user, 'public.evidence_objects', 'SELECT') AS can_select, "
+                "has_table_privilege(current_user, 'public.evidence_objects', 'INSERT') AS can_insert, "
+                "has_table_privilege(current_user, 'public.evidence_objects', 'UPDATE') AS can_update, "
+                "has_table_privilege(current_user, 'public.evidence_objects', 'DELETE') AS can_delete"
+            )).mappings().one()
+            assert dict(evidence_privileges) == {
+                "can_select": True, "can_insert": True, "can_update": True, "can_delete": True,
+            }
+        with worker_engine.connect() as connection:
+            assert connection.execute(text(
+                "SELECT has_table_privilege(current_user, 'public.evidence_objects', 'SELECT'), "
+                "has_table_privilege(current_user, 'public.evidence_objects', 'INSERT')"
+            )).one() == (False, False)
+        with auditor_engine.connect() as connection:
+            assert connection.execute(text(
+                "SELECT has_table_privilege(current_user, 'public.evidence_objects', 'SELECT')"
+            )).scalar_one() is False
+        with migrator_engine.connect() as connection:
+            assert connection.execute(text(
+                "SELECT has_table_privilege(current_user, 'public.evidence_objects', 'SELECT') "
+                "AND has_table_privilege(current_user, 'public.evidence_objects', 'INSERT') "
+                "AND has_table_privilege(current_user, 'public.evidence_objects', 'UPDATE') "
+                "AND has_table_privilege(current_user, 'public.evidence_objects', 'DELETE')"
+            )).scalar_one() is True
+            assert connection.execute(text(
+                "SELECT pg_get_userbyid(relowner) FROM pg_class WHERE relname = 'evidence_objects'"
+            )).scalar_one() == role_names["SCMIRN_MIGRATOR_DB_ROLE"]
         with root_engine.connect().execution_options(isolation_level="AUTOCOMMIT") as connection:
             connection.execute(text(f"CREATE ROLE {overprivileged_role} LOGIN CREATEDB PASSWORD '{overprivileged_password}'"))
             connection.execute(text(f"GRANT CONNECT ON DATABASE {database_name} TO {overprivileged_role}"))
@@ -174,6 +226,7 @@ def test_forced_staff_rls_with_non_owner_runtime_role(monkeypatch):
             policies = connection.execute(text("SELECT tablename, policyname FROM pg_policies WHERE schemaname = 'public' AND tablename = ANY(:tables)"), {"tables": list(tenant_scoped_tables)}).all()
             assert {row.tablename for row in policies} == set(tenant_scoped_tables)
             assert connection.execute(text("SELECT count(*) FROM staff_users")).scalar_one() == 0
+            assert connection.execute(text("SELECT count(*) FROM evidence_objects")).scalar_one() == 0
             tenant_directory = connection.execute(text("SELECT count(*) FROM tenants")).scalar_one()
             assert tenant_directory == 2
 
@@ -186,7 +239,26 @@ def test_forced_staff_rls_with_non_owner_runtime_role(monkeypatch):
             visible_users = connection.execute(text("SELECT id FROM staff_users")).scalars().all()
             assert visible_users == [user_a]
             visible_cases = connection.execute(text("SELECT count(*) FROM staff_cases")).scalar_one()
-            assert visible_cases == 0
+            assert visible_cases == 1
+            visible_evidence = connection.execute(text("SELECT case_id FROM evidence_objects")).scalars().all()
+            assert visible_evidence == [case_a]
+
+        with runtime_engine.begin() as connection:
+            with pytest.raises(DBAPIError):
+                with connection.begin_nested():
+                    connection.execute(text("INSERT INTO evidence_objects (id, tenant_id, case_id, created_by, object_key, content_type, size_bytes, checksum_sha256, scan_status, scanner_version, retention_policy_id, retention_until, legal_hold, lifecycle_status, deletion_attempts, created_at) VALUES (:id, :tenant, :case, :user, :key, 'application/pdf', 128, :checksum, 'CLEAN', 'ClamAV 1.4.0', 'test-policy-v1', :retention, false, 'ACTIVE', 0, :now)"), {
+                        "id": str(uuid.uuid4()), "tenant": tenant_a, "case": case_a, "user": user_a,
+                        "key": "3" * 64, "checksum": "c" * 64, "retention": now + timedelta(days=30), "now": now,
+                    })
+
+        with runtime_engine.begin() as connection:
+            connection.execute(text("SELECT set_config('scmirn.tenant_id', :tenant, true)"), {"tenant": tenant_a})
+            with pytest.raises(DBAPIError):
+                with connection.begin_nested():
+                    connection.execute(text("INSERT INTO evidence_objects (id, tenant_id, case_id, created_by, object_key, content_type, size_bytes, checksum_sha256, scan_status, scanner_version, retention_policy_id, retention_until, legal_hold, lifecycle_status, deletion_attempts, created_at) VALUES (:id, :tenant, :case, :user, :key, 'application/pdf', 128, :checksum, 'CLEAN', 'ClamAV 1.4.0', 'test-policy-v1', :retention, false, 'ACTIVE', 0, :now)"), {
+                        "id": str(uuid.uuid4()), "tenant": tenant_a, "case": case_b, "user": user_a,
+                        "key": "4" * 64, "checksum": "d" * 64, "retention": now + timedelta(days=30), "now": now,
+                    })
 
         with runtime_engine.begin() as connection:
             connection.execute(text("SELECT set_config('scmirn.tenant_id', :tenant, true)"), {"tenant": tenant_a})
@@ -272,7 +344,9 @@ def test_forced_staff_rls_with_non_owner_runtime_role(monkeypatch):
             connection.execute(text("INSERT INTO staff_cases (id, tenant_id, case_ref, case_type, title, status, priority, created_by, created_at, updated_at) VALUES (:id, :tenant, 'FOREIGN', 'WATER', 'Water service case', 'OPEN', 'NORMAL', :user, :now, :now)"), {
                 "id": str(uuid.uuid4()), "tenant": tenant_b, "user": user_b, "now": now,
             })
-            foreign_case_id = connection.execute(text("SELECT id FROM staff_cases WHERE tenant_id = :tenant"), {"tenant": tenant_b}).scalar_one()
+            foreign_case_id = connection.execute(text(
+                "SELECT id FROM staff_cases WHERE tenant_id = :tenant AND case_ref = 'FOREIGN'"
+            ), {"tenant": tenant_b}).scalar_one()
 
         # The runtime role cannot use DDL, disable forced RLS, or read audit
         # tables directly. SET row_security=off must error on protected rows.
@@ -296,6 +370,11 @@ def test_forced_staff_rls_with_non_owner_runtime_role(monkeypatch):
             connection.execute(text("SET LOCAL row_security = off"))
             with pytest.raises(DBAPIError):
                 connection.execute(text("SELECT id FROM staff_users")).all()
+        with runtime_engine.begin() as connection:
+            connection.execute(text("SELECT set_config('scmirn.tenant_id', :tenant, true)"), {"tenant": tenant_a})
+            connection.execute(text("SET LOCAL row_security = off"))
+            with pytest.raises(DBAPIError):
+                connection.execute(text("SELECT id FROM evidence_objects")).all()
 
         client = runtime_app.test_client()
         challenge_response = client.post("/api/v1/staff/auth/login", json={
@@ -341,6 +420,10 @@ def test_forced_staff_rls_with_non_owner_runtime_role(monkeypatch):
             runtime_engine.dispose()
         if auditor_engine is not None:
             auditor_engine.dispose()
+        if worker_engine is not None:
+            worker_engine.dispose()
+        if migrator_engine is not None:
+            migrator_engine.dispose()
         if overprivileged_engine is not None:
             overprivileged_engine.dispose()
         test_admin_engine.dispose()

@@ -1,5 +1,5 @@
-# Machine-generated schema inventory plus field classification.
-# Personal-field records are engineering inventoried, not legally approved.
+# Generated inventory. New personal-data candidates start UNREVIEWED.
+# This registry is not a legal basis or DPDP compliance claim.
 version: 1
 status: ENGINEERING_INVENTORY_ONLY_NOT_A_LEGAL_BASIS_OR_DPDP_COMPLIANCE_CLAIM
 tables:
@@ -88,6 +88,32 @@ tables:
     scope: quarantined_legacy
     sensitivity: LEGACY_UNCLASSIFIED
     retention_class: legacy_retention_not_configured
+  evidence_objects:
+    columns:
+    - case_id
+    - checksum_sha256
+    - content_type
+    - created_at
+    - created_by
+    - deleted_at
+    - deletion_attempts
+    - deletion_last_error
+    - deletion_verified_at
+    - id
+    - legal_hold
+    - lifecycle_status
+    - object_key
+    - retention_policy_id
+    - retention_until
+    - scan_status
+    - scanner_version
+    - size_bytes
+    - tenant_id
+    data_boundary_classification: TENANT_SCOPED
+    owner: SCMIRN_PLATFORM_SCHEMA; authority_data_owner_unassigned
+    scope: tenant_and_case_scoped
+    sensitivity: RESTRICTED_CITIZEN_EVIDENCE
+    retention_class: per_authority_policy_required_owner_unassigned
   government_service_sources:
     columns:
     - service_version_id
@@ -892,6 +918,119 @@ personal_fields:
     classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
     purpose: Legacy draft generation metadata and file reference; private vault and lifecycle are not
       implemented.
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  evidence_objects.case_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Private case evidence storage and access audit; authority-specific processing basis and retention
+      remain unapproved
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  evidence_objects.checksum_sha256:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Private case evidence storage and access audit; authority-specific processing basis and retention
+      remain unapproved
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  evidence_objects.content_type:
+    classification: USER_SUPPLIED_OR_DOCUMENT_CONTENT
+    purpose: Private case evidence storage and access audit; authority-specific processing basis and retention
+      remain unapproved
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  evidence_objects.created_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Private case evidence storage and access audit; authority-specific processing basis and retention
+      remain unapproved
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  evidence_objects.created_by:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Private case evidence storage and access audit; authority-specific processing basis and retention
+      remain unapproved
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  evidence_objects.deleted_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Private case evidence storage and access audit; authority-specific processing basis and retention
+      remain unapproved
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  evidence_objects.deletion_attempts:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Private case evidence storage and access audit; authority-specific processing basis and retention
+      remain unapproved
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  evidence_objects.deletion_last_error:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Private case evidence storage and access audit; authority-specific processing basis and retention
+      remain unapproved
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  evidence_objects.deletion_verified_at:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Private case evidence storage and access audit; authority-specific processing basis and retention
+      remain unapproved
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  evidence_objects.id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Private case evidence storage and access audit; authority-specific processing basis and retention
+      remain unapproved
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  evidence_objects.legal_hold:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Private case evidence storage and access audit; authority-specific processing basis and retention
+      remain unapproved
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  evidence_objects.lifecycle_status:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Private case evidence storage and access audit; authority-specific processing basis and retention
+      remain unapproved
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  evidence_objects.object_key:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Private case evidence storage and access audit; authority-specific processing basis and retention
+      remain unapproved
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  evidence_objects.retention_policy_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Identifies the configured retention rule for private case evidence; authority-specific retention remains unapproved
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  evidence_objects.retention_until:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Private case evidence storage and access audit; authority-specific processing basis and retention
+      remain unapproved
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  evidence_objects.scan_status:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Private case evidence storage and access audit; authority-specific processing basis and retention
+      remain unapproved
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  evidence_objects.scanner_version:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Private case evidence storage and access audit; authority-specific processing basis and retention
+      remain unapproved
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  evidence_objects.size_bytes:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Private case evidence storage and access audit; authority-specific processing basis and retention
+      remain unapproved
+    profile: unreviewed_personal_data
+    status: INVENTORIED
+  evidence_objects.tenant_id:
+    classification: LINKED_PERSONAL_OR_OPERATIONAL_DATA
+    purpose: Private case evidence storage and access audit; authority-specific processing basis and retention
+      remain unapproved
     profile: unreviewed_personal_data
     status: INVENTORIED
   issues.ai_confidence:

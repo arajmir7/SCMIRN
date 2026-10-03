@@ -8,6 +8,7 @@ from app.infrastructure.database.security import (
     AUDIT_TABLES_HIDDEN_FROM_APP,
     TENANT_RLS_TABLES,
 )
+from scripts.provision_postgres_roles import APP_TENANT_TABLE_GRANTS
 from app.infrastructure.database.models import (  # noqa: F401
     BlockchainTransactionORM,
     ChatLogORM,
@@ -41,6 +42,7 @@ from app.staff_auth.models import (  # noqa: F401
     StaffAuditEvent,
     StaffCase,
     StaffCaseEvent,
+    EvidenceObject,
     StaffMfaChallenge,
     StaffMfaFactor,
     StaffRoleGrant,
@@ -57,7 +59,7 @@ def test_data_boundary_matrix_covers_every_mapped_table_once():
     matrix = (REPO_ROOT / "docs/security/DATA_BOUNDARY_MATRIX.md").read_text(encoding="utf-8")
     inventory = re.findall(r"^\| `([a-z_]+)` \| `([A-Z_]+)` \|", matrix, re.MULTILINE)
     names = [name for name, _classification in inventory]
-    assert len(names) == 34
+    assert len(names) == 35
     assert len(names) == len(set(names))
     assert set(names) == set(db.metadata.tables)
     assert {classification for _name, classification in inventory} <= {
@@ -71,7 +73,30 @@ def test_runtime_rls_and_audit_hidden_table_contract_is_explicit():
         "tenants", "staff_users", "staff_mfa_factors", "staff_mfa_challenges",
         "staff_role_grants", "staff_sessions", "staff_cases",
         "staff_case_events", "staff_audit_events",
+        "evidence_objects",
     }
     assert set(AUDIT_TABLES_HIDDEN_FROM_APP) == {
         "audit_events", "staff_audit_events", "srs_audit_logs",
     }
+    assert APP_TENANT_TABLE_GRANTS["evidence_objects"] == "SELECT, INSERT, UPDATE, DELETE"
+
+
+def test_evidence_rows_require_tenant_case_owner_checksum_and_retention_state():
+    assert EvidenceObject.__table__.c.tenant_id.nullable is False
+    assert EvidenceObject.__table__.c.case_id.nullable is False
+    assert EvidenceObject.__table__.c.created_by.nullable is False
+    assert EvidenceObject.__table__.c.object_key.nullable is False
+    assert EvidenceObject.__table__.c.checksum_sha256.nullable is False
+    assert EvidenceObject.__table__.c.retention_until.nullable is False
+    assert EvidenceObject.__table__.c.retention_policy_id.nullable is False
+    assert any(
+        constraint.name == "ck_evidence_retention_policy_id"
+        for constraint in EvidenceObject.__table__.constraints
+    )
+    assert any(
+        {element.parent.name for element in constraint.elements}
+        == {"tenant_id", "case_id"}
+        and str(constraint.elements[0].target_fullname) == "staff_cases.tenant_id"
+        for constraint in EvidenceObject.__table__.constraints
+        if getattr(constraint, "elements", None)
+    )

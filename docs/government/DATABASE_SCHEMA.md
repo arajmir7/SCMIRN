@@ -8,7 +8,9 @@ Purpose: generated inventory of ORM-managed tables, columns, foreign keys, index
 - 20261002_01 creates the legacy ORM tables. Its downgrade is blocked because dropping canonical application tables is destructive.
 - 20261002_02 translates legacy source states to the explicit DRAFT, VERIFIED, SUPERSEDED, or REVOKED lifecycle.
 - 20261002_03 adds tenant/staff identity, MFA/session, role, metadata-only case workflow and audit tables; it defines PostgreSQL RLS policies and append-only staff-history triggers.
-- 20261002_04 adds the narrowly scoped PostgreSQL audit-chain-head function used by app writes and verifies runtime database-role boundaries at startup. All 34 mapped tables are inventoried in the [data-boundary matrix](../security/DATA_BOUNDARY_MATRIX.md); nine legacy tables are explicitly quarantined without app/worker grants.
+- 20261002_04 adds the narrowly scoped PostgreSQL audit-chain-head function used by app writes and verifies runtime database-role boundaries at startup.
+- 20261003_01 adds restricted evidence metadata, tenant/case/creator composite references, forced tenant RLS, and retention lifecycle constraints. Its downgrade removes only the evidence table and was exercised against disposable PostgreSQL 16.
+- All 35 mapped tables are inventoried in the [data-boundary matrix](../security/DATA_BOUNDARY_MATRIX.md); nine legacy tables are explicitly quarantined without app/worker grants.
 - An empty database upgrades to head. Existing exact ORM schemas are preserved and upgraded; legacy-only schemas are preflighted; unknown tables or structural drift fail before DDL.
 - Production keeps AUTO_CREATE_DB=False; migration is an explicit operator action. Development and test profiles still allow ORM auto-creation.
 
@@ -17,6 +19,14 @@ Purpose: generated inventory of ORM-managed tables, columns, foreign keys, index
 The new staff identity and case tables carry tenant_id. The PostgreSQL revision enables and forces RLS on these tables, scopes staff-table policies to transaction-local scmirn.tenant_id, and scopes staff_sessions to its exact SHA-256 token hash in scmirn.staff_session_hash. Tenant-consistent composite foreign keys protect staff, MFA, case creator and case-event relationships. The tenant directory has a read-only lookup policy for the slug-to-ID step required at login; it contains no user or case details.
 
 The full migration chain and RLS policies were executed against a disposable PostgreSQL 16 database. An integration test used a non-owner, non-BYPASSRLS runtime role and verified forced RLS, tenant-scoped reads and writes, session-hash access and user-scoped session revocation, the staff password/TOTP and case APIs, and append-only history triggers. This is local test evidence, not a production deployment. Before enabling staff routes in a deployment, verify its migration/runtime role configuration and repeat the checks against the approved deployment setup. Legacy issue, document, chat, routing, and other non-staff records do not have a complete tenant model and remain outside this shared-tenant boundary.
+
+Evidence rows are forced tenant-RLS and include composite `(tenant_id, case_id)`
+and `(tenant_id, created_by)` foreign keys. Runtime CRUD is currently granted
+to the web role, while the worker and auditor have no evidence-table grants.
+The RLS policy uses an application-set transaction-local tenant GUC. It limits
+accidental unscoped queries under the trusted application, but it is not an
+independent tenant credential and does not contain arbitrary SQL executed with
+the shared application role. Production evidence routes remain disabled.
 
 Staff MFA secrets are AES-GCM encrypted with the configured 32-byte STAFF_MFA_ENCRYPTION_KEY; production configuration validates the key only when STAFF_API_ENABLED=true. Session tokens are opaque and only their SHA-256 hashes are stored. Cases accept a bounded type and priority, not arbitrary citizen text or uploads. Staff and case history append-only triggers are present only in PostgreSQL. The web role cannot read audit content; a separate read-only auditor connection verifies the chain.
 
@@ -771,3 +781,40 @@ Staff MFA secrets are AES-GCM encrypted with the configured 32-byte STAFF_MFA_EN
 | last_login | DATETIME | yes | — |
 
 **Unique constraints:** unnamed (public_id); unnamed (phone); unnamed (email).
+
+### evidence_objects (added by 20261003_01)
+
+| Column | Type | Null | Default |
+|---|---|---:|---|
+| id (PK) | VARCHAR(36) | no | <callable default> |
+| tenant_id | VARCHAR(36) | no | — |
+| case_id | VARCHAR(36) | no | — |
+| created_by | VARCHAR(36) | no | — |
+| object_key | VARCHAR(64) | no | — |
+| content_type | VARCHAR(64) | no | — |
+| size_bytes | BIGINT | no | — |
+| checksum_sha256 | VARCHAR(64) | no | — |
+| scan_status | VARCHAR(16) | no | CLEAN |
+| scanner_version | VARCHAR(120) | no | — |
+| retention_policy_id | VARCHAR(120) | no | — |
+| retention_until | DATETIME | no | — |
+| legal_hold | BOOLEAN | no | False |
+| lifecycle_status | VARCHAR(24) | no | ACTIVE |
+| deletion_attempts | INTEGER | no | 0 |
+| deletion_last_error | VARCHAR(64) | yes | — |
+| deleted_at | DATETIME | yes | — |
+| deletion_verified_at | DATETIME | yes | — |
+| created_at | DATETIME | no | <callable default> |
+
+**Foreign keys:** tenant_id -> tenants.id; (tenant_id, case_id) ->
+staff_cases.(tenant_id, id); (tenant_id, created_by) ->
+staff_users.(tenant_id, id).
+
+**Indexes:** ix_evidence_objects_tenant_id; ix_evidence_objects_case_id;
+ix_evidence_tenant_case_created; ix_evidence_retention.
+
+**Unique constraints:** uq_evidence_object_key.
+
+**Check constraints:** positive size; 64-character object key and checksum;
+allowed MIME type; clean-only scan state; non-empty retention-policy ID;
+bounded lifecycle status; non-negative deletion attempts.

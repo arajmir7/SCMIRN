@@ -40,7 +40,7 @@ PERSONAL_NAME_TOKENS = frozenset({
 PERSONAL_CONTEXT_TABLES = frozenset({
     "audit_events", "chat_logs", "documents", "issues", "route_decisions",
     "srs_audit_logs", "srs_issue_events", "srs_issues", "srs_work_orders",
-    "staff_audit_events", "staff_case_events", "staff_cases",
+    "evidence_objects", "staff_audit_events", "staff_case_events", "staff_cases",
     "staff_mfa_challenges", "staff_mfa_factors", "staff_role_grants",
     "staff_sessions", "staff_users", "user_gamification", "users",
 })
@@ -326,6 +326,9 @@ def refresh_registry(schema: dict[str, set[str]], existing: dict[str, Any] | Non
             "profile": profile_name,
             "status": "UNREVIEWED",
         })
+        existing_nonpersonal = nonpersonal_fields.get(field)
+        if isinstance(existing_nonpersonal, dict) and existing_nonpersonal.get("status") == "UNREVIEWED":
+            nonpersonal_fields.pop(field, None)
     mapped_fields = {f"{table}.{column}" for table, columns in schema.items() for column in columns}
     for field in sorted(mapped_fields - set(personal_fields) - set(nonpersonal_fields)):
         nonpersonal_fields[field] = {

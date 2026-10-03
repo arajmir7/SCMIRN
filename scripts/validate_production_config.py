@@ -81,6 +81,42 @@ def validate(values: dict[str, str]) -> list[str]:
     if staff_api_enabled not in {"true", "false"}:
         errors.append("STAFF_API_ENABLED must be exactly true or false")
 
+    evidence_enabled = values.get("EVIDENCE_VAULT_ENABLED", "false").lower()
+    if evidence_enabled not in {"true", "false"}:
+        errors.append("EVIDENCE_VAULT_ENABLED must be exactly true or false")
+    if evidence_enabled == "true":
+        if values.get("EVIDENCE_STORAGE_BACKEND") != "s3":
+            errors.append("Evidence vault requires the private S3-compatible storage backend")
+        for name in ("EVIDENCE_S3_BUCKET", "EVIDENCE_S3_REGION", "EVIDENCE_S3_KMS_KEY_ID"):
+            value = values.get(name, "")
+            if not value or _is_placeholder(value):
+                errors.append(f"{name} must identify configured private encrypted storage")
+        endpoint = values.get("EVIDENCE_S3_ENDPOINT_URL", "")
+        if endpoint and not endpoint.startswith("https://"):
+            errors.append("EVIDENCE_S3_ENDPOINT_URL must use HTTPS")
+        scanner_socket = values.get("EVIDENCE_CLAMAV_UNIX_SOCKET", "")
+        if not scanner_socket.startswith("/"):
+            errors.append("EVIDENCE_CLAMAV_UNIX_SOCKET must be an absolute configured socket path")
+        retention_days = values.get("EVIDENCE_DEFAULT_RETENTION_DAYS", "")
+        try:
+            if int(retention_days) <= 0:
+                raise ValueError
+        except ValueError:
+            errors.append("EVIDENCE_DEFAULT_RETENTION_DAYS must come from an approved authority policy")
+        retention_policy = values.get("EVIDENCE_RETENTION_POLICY_ID", "")
+        if not retention_policy or _is_placeholder(retention_policy):
+            errors.append("EVIDENCE_RETENTION_POLICY_ID must identify an approved authority policy")
+        for name, default, maximum in (
+            ("EVIDENCE_MAX_BYTES", "15728640", 26214400),
+            ("EVIDENCE_RETRIEVAL_URL_TTL_SECONDS", "60", 300),
+        ):
+            try:
+                number = int(values.get(name, default))
+                if number <= 0 or number > maximum:
+                    raise ValueError
+            except ValueError:
+                errors.append(f"{name} must be between 1 and {maximum}")
+
     for variable, default_role in (
         ("DATABASE_URL", "scmirn_app"),
         ("SCMIRN_MIGRATION_DATABASE_URL", "scmirn_migrator"),

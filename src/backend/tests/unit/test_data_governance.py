@@ -1,5 +1,5 @@
 from scripts.check_data_governance import (
-    load_registry, load_schema, refresh_registry, validate_registry,
+    _candidate_personal_fields, load_registry, load_schema, refresh_registry, validate_registry,
 )
 
 
@@ -103,3 +103,10 @@ def test_checked_in_registry_covers_every_mapped_column():
     schema = load_schema()
     issues = validate_registry(schema, registry)
     assert issues == []
+
+
+def test_evidence_metadata_is_treated_as_personal_or_linkable_context():
+    schema = load_schema()
+    evidence_fields = {f"evidence_objects.{column}" for column in schema["evidence_objects"]}
+
+    assert evidence_fields <= _candidate_personal_fields(schema)

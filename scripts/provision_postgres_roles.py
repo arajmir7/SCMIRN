@@ -44,6 +44,7 @@ APP_TENANT_TABLE_GRANTS = {
     # Application writes metadata audit rows; reads go through the protected
     # verification/head paths and are granted to the separate auditor role.
     "staff_audit_events": "INSERT",
+    "evidence_objects": "SELECT, INSERT, UPDATE, DELETE",
 }
 AUDIT_TABLES = ("audit_events", "staff_audit_events", "srs_audit_logs")
 

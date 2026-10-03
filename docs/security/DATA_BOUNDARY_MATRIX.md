@@ -1,10 +1,10 @@
 # PostgreSQL data boundary matrix
 
-Current Phase 3 implementation/test status: see
+Current implementation/test status: see
 [`PHASE3_IMPLEMENTATION_STATUS.md`](PHASE3_IMPLEMENTATION_STATUS.md).
 
-Inventory date: 2026-10-02. The inventory is generated from the 34 mapped
-SQLAlchemy tables at Alembic head `20261002_04`. Every mapped table appears
+Inventory date: 2026-10-03. The inventory is generated from the 35 mapped
+SQLAlchemy tables at Alembic head `20261003_01`. Every mapped table appears
 below. `LEGACY_UNCLASSIFIED` is an explicit quarantine classification: the
 table is known, its data sensitivity is recorded, and production app/worker
 grants are withheld until a usable subject, tenant, or jurisdiction boundary
@@ -15,12 +15,12 @@ has been migrated and tested.
 | Classification | Tables | Runtime treatment |
 | --- | ---: | --- |
 | `GLOBAL_REFERENCE` | 5 | App can read; only migration role can modify. |
-| `TENANT_SCOPED` | 3 | Forced PostgreSQL RLS; app workflow grants only. |
+| `TENANT_SCOPED` | 4 | Forced PostgreSQL RLS; app workflow grants only. |
 | `SUBJECT_SCOPED` | 0 | No legacy table currently has a complete, enforced subject boundary. |
 | `SECURITY_SCOPED` | 14 | Staff secrets use forced RLS; other tables have no app/worker grants. |
 | `AUDIT_SCOPED` | 3 | App cannot read audit rows; auditor is read-only; scoped staff audit writes remain tenant-filtered. |
 | `LEGACY_UNCLASSIFIED` | 9 | Quarantined; no application or worker table grants. |
-| **Total** | **34** | No mapped table is omitted. |
+| **Total** | **35** | No mapped table is omitted. |
 
 ## Table inventory
 
@@ -34,6 +34,7 @@ has been migrated and tested.
 | `tenants` | `TENANT_SCOPED` | Staff organization directory | Forced RLS; tenant lookup policy deliberately exposes only tenant IDs/slugs/display names for login. App may select and create through the operator path. |
 | `staff_cases` | `TENANT_SCOPED` | Bounded metadata-only staff cases | Forced tenant RLS, composite tenant/user references; app `SELECT/INSERT/UPDATE`. |
 | `staff_case_events` | `TENANT_SCOPED` | Case status history | Forced tenant RLS and append-only trigger; app `SELECT/INSERT`, auditor `SELECT`. |
+| `evidence_objects` | `TENANT_SCOPED` | Checksummed metadata for restricted evidence; bytes live in a private object store | Forced tenant RLS; composite tenant/case and tenant/creator foreign keys; only clean scanned records can be inserted. Evidence routes remain outside the production API allowlist. |
 | `staff_users` | `SECURITY_SCOPED` | Staff identities and password hashes | Forced tenant RLS; app `SELECT/INSERT/UPDATE`; no app delete. |
 | `staff_mfa_factors` | `SECURITY_SCOPED` | Encrypted TOTP factors and enrollment state | Forced tenant RLS; app `SELECT/INSERT/UPDATE`. |
 | `staff_mfa_challenges` | `SECURITY_SCOPED` | Short-lived login challenges | Forced tenant RLS; app `SELECT/INSERT/UPDATE/DELETE`. |
@@ -90,3 +91,13 @@ read/write/inference denial before any API or worker receives grants. The
 current `tenants` login directory policy allows directory lookup across
 tenants; it must be replaced by an independently reviewed identity discovery
 design before treating tenant names as confidential.
+
+Evidence isolation depends on both forced tenant RLS and request-level case
+assignment ABAC. The tenant RLS policy trusts a transaction-local GUC set by
+the application role; it is not an independent tenant credential and does not
+withstand arbitrary SQL execution under the shared app role. Local and
+S3-compatible storage adapters, ClamAV scanning, signed session-bound API
+retrieval, and verified deletion handling are implemented. No approved
+production bucket, ClamAV deployment, authority retention policy, or scheduled
+worker has been configured or exercised. Evidence routes remain disabled in
+production.

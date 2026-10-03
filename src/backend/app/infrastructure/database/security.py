@@ -13,6 +13,7 @@ TENANT_RLS_TABLES = (
     "staff_cases",
     "staff_case_events",
     "staff_audit_events",
+    "evidence_objects",
 )
 
 AUDIT_TABLES_HIDDEN_FROM_APP = (
@@ -124,6 +125,7 @@ def validate_production_runtime_role(
             "staff_cases": ("SELECT", "INSERT", "UPDATE"),
             "staff_case_events": ("SELECT", "INSERT"),
             "staff_audit_events": ("INSERT",),
+            "evidence_objects": ("SELECT", "INSERT", "UPDATE", "DELETE"),
         }
         missing_privileges = []
         for table, privileges in required_privileges.items():

@@ -3,10 +3,10 @@
 **Scope:** code and configuration inventory; production traffic and processor locations were not inspected.
 
 The machine-readable [data-governance registry](data-governance-registry.yaml)
-tracks the 34 mapped SQLAlchemy tables and all 452 fields. The CI checker
+tracks the 35 mapped SQLAlchemy tables and all 471 fields. The CI checker
 compares that inventory to live ORM metadata and requires each field to be
 recorded as potentially personal/linkable or explicitly classified otherwise.
-The 254 personal/linkable entries are engineering-inventoried only; the
+The 294 personal/linkable entries are engineering-inventoried only; the
 release approval mode blocks them until an accountable privacy owner approves
 the processing metadata.
 
@@ -22,6 +22,25 @@ the processing metadata.
 ## Legacy and demo flows
 
 Legacy issue, assistant, document, upload, analytics, map, and tracking paths may collect or return personal or sensitive-context data, depending on the route and configuration. Several are disabled by the production API gate; their complete retention, authorization, external-provider, and deletion behavior is not verified. Do not load real citizen information into demo paths. The detailed field inventory is in [`../compliance/DPDP_READINESS_MATRIX.md`](../compliance/DPDP_READINESS_MATRIX.md).
+
+## Private case evidence
+
+Evidence intake is implemented behind the staff MFA and case authorization
+middleware, but `EVIDENCE_VAULT_ENABLED` defaults to false and the evidence
+routes remain outside the production API allowlist. Uploads are size-capped,
+restricted to PDF/PNG/JPEG signatures, hashed, staged privately, scanned with
+ClamAV INSTREAM, and promoted only after a clean result. Only metadata enters
+the tenant-RLS table; the object key and client filename are not returned in
+the response or audit event. Retrieval URLs are signed, short-lived, bound to
+the current staff session and case, and return through the API for reauthorization
+and access audit on every download. Expired deletion respects legal hold and
+records failure unless the store confirms removal.
+
+Local development uses a private filesystem store. Production requires a
+private S3-compatible bucket with KMS encryption, a configured scanner socket,
+and an authority-owned retention policy, none of which is configured or
+verified for this candidate. No scheduled retention worker, orphan cleanup,
+deletion-lag alert, or restore drill has been verified.
 
 ## External systems
 

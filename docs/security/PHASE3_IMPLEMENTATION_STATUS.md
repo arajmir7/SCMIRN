@@ -39,8 +39,8 @@ database, identity provider, object store, host, or government service was used.
   legacy citizen, issue, document, chat, route, infrastructure and other
   quarantined records. The current role grants are a containment boundary,
   not completed data isolation.
-- A production worker contract, scheduled retention purge, private evidence
-  object store, malware scanning, signed downloads, and verifiable deletion.
+- A production worker contract, scheduled retention purge, authority-approved
+  private evidence store/scanner configuration, and deletion-lag monitoring.
 - Fresh candidate SAST/SCA/secret/container/IaC scans, image SBOMs, and signed
   provenance. Dependency-lock scans and source scans alone are not sufficient.
 - Structured JSON logs and redaction review, production metrics/tracing,
@@ -52,3 +52,30 @@ database, identity provider, object store, host, or government service was used.
 The release gate exits nonzero while these controls remain open. See the
 [release evidence](../release/RELEASE_EVIDENCE.json) for the bounded test
 record and the [Phase 2 historical control record](../government/INTERNAL_CONTROLS_CLOSED.md).
+
+## 2026-10-03 continuation: private evidence controls
+
+The current schema head is `20261003_01` with 35 mapped tables. This
+continuation adds a private evidence lifecycle: restrictive local-development
+storage, KMS-encrypted S3-compatible storage, ClamAV INSTREAM scanning,
+checksummed metadata, tenant/case foreign keys and forced RLS, session-bound
+retrieval tickets that reauthorize and audit downloads, and hold-aware
+deletion that records unverified failures. The evidence feature defaults off
+and its routes remain outside the production API allowlist.
+
+Disposable PostgreSQL 16 now exercises evidence RLS, runtime-role grants,
+cross-tenant/cross-case denial, `row_security=off` denial, migration upgrade
+and downgrade, in addition to the existing staff-role contract. The full
+backend suite passed: **102 passed**, with 118 existing deprecation warnings.
+These are local test results, not evidence from a deployed authority environment.
+
+The source and adapter code exists, but this candidate has no approved private
+production bucket, KMS policy, live scanner, authority-owned retention
+decision, scheduled retention worker, deletion-lag alert, or recovery drill.
+RLS uses an application-set tenant GUC; it limits accidental unscoped access
+under the trusted app but does not establish an independent database tenant
+identity. The 35-table registry passes schema parity, while strict approval
+continues to block on accountable data-owner/privacy review. The strict gate
+currently reports 309 issues, including 273 unapproved personal-data records,
+35 unresolved table owner/retention records, and one unresolved governance
+profile. The verdict remains `NOT PRODUCTION READY`.

@@ -44,7 +44,7 @@ fi
 blockers=(
   "Nine legacy tables and additional infrastructure/audit data remain quarantined without app/worker access; ownership-aware RLS and subject isolation are incomplete."
   "Staff MFA recovery, approved identity/federation, complete seven-role RBAC/ABAC review, reviewer separation, and deployment authorization remain open; staff APIs default off."
-  "No scheduled retention purge, private object store/evidence lifecycle, production metrics/SLOs, SIEM alert owner, or synthetic production monitoring is configured."
+  "No authority-approved production object store/KMS policy, live malware scanner, scheduled retention purge, deletion-lag alert, production metrics/SLOs, SIEM alert owner, or synthetic monitoring is configured; evidence routes remain disabled."
   "Fresh SAST, SCA, container/OS and IaC scans, image SBOM, and signed build provenance are not complete for this candidate."
   "Backup/restore, disaster recovery, performance/capacity, rollback rehearsal, and multi-region resilience are not verified."
   "Accessibility requires route-wide automated and manual keyboard/screen-reader/reflow evidence."

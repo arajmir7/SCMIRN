@@ -74,3 +74,35 @@ def test_source_approval_requires_separate_reviewer_and_complete_scope():
     assert not authorize(principal, "source:approve", replace(ready, created_by_id="staff-a"))
     assert not authorize(principal, "source:approve", replace(ready, jurisdiction_id=None))
     assert not authorize(principal, "source:approve", replace(ready, source_state="DRAFT"))
+
+
+def test_restricted_evidence_requires_assigned_case_officer_and_case_scope():
+    principal = _principal()
+    evidence = _attributes(
+        purpose="CASE_EVIDENCE", sensitivity="RESTRICTED", case_id="case-a",
+    )
+    assert authorize(principal, "evidence:read", evidence)
+    assert authorize(principal, "evidence:upload", evidence)
+    assert not authorize(
+        _principal(roles=frozenset({"TENANT_ADMIN"})), "evidence:read",
+        replace(evidence, created_by_id="staff-b", owner_id="staff-b"),
+    )
+    assert not authorize(
+        _principal(roles=frozenset({"AUDITOR"})), "evidence:read",
+        replace(evidence, created_by_id="staff-b", owner_id="staff-b"),
+    )
+    assert not authorize(
+        _principal(), "evidence:read",
+        replace(evidence, created_by_id="staff-b", owner_id="staff-b", assigned_user_id="staff-b"),
+    )
+    assert not authorize(principal, "evidence:read", replace(evidence, case_id=None))
+    assert not authorize(principal, "evidence:read", replace(evidence, tenant_id="tenant-b"))
+
+
+def test_legal_hold_blocks_evidence_deletion_even_for_assigned_officer():
+    attributes = _attributes(
+        purpose="CASE_EVIDENCE", sensitivity="RESTRICTED", case_id="case-a",
+        legal_hold=True,
+    )
+    assert not authorize(_principal(), "evidence:delete", attributes)
+    assert authorize(_principal(), "evidence:delete", replace(attributes, legal_hold=False))

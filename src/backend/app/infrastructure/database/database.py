@@ -48,6 +48,7 @@ def init_database(app: Flask) -> None:
             Tenant, StaffUser, StaffMfaFactor, StaffMfaChallenge,
             StaffRoleGrant, StaffSession, StaffCase, StaffCaseEvent,
             StaffAuditEvent,
+            EvidenceObject,
         )
         
         # Development/test databases may be initialized automatically. A

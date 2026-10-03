@@ -347,6 +347,8 @@ def _register_blueprints(app):
     app.register_blueprint(source_routing_bp, url_prefix='/api/v1')
     from app.staff_auth.api import bp as staff_auth_bp
     app.register_blueprint(staff_auth_bp, url_prefix='/api/v1/staff')
+    from app.evidence_vault.api import bp as staff_evidence_bp
+    app.register_blueprint(staff_evidence_bp, url_prefix='/api/v1/staff')
 
 
 def _register_error_handlers(app):
