@@ -2,6 +2,7 @@ schema_version: 1
 policy: DEFAULT_DENY
 assessment_date: '2026-10-03'
 scope: Current staff and evidence endpoints only; not a complete government RBAC approval.
+route_contract_version: 1
 tenant_context:
   source: Authenticated StaffSession loaded by its hashed HttpOnly cookie; tenant_id is read from that database row.
   transaction_scope: PostgreSQL transaction-local GUC set server-side after session validation.
@@ -43,48 +44,115 @@ roles:
 routes:
   - path: /api/v1/staff/auth/login
     methods: [POST]
+    authentication: PUBLIC_CREDENTIALS
+    required_roles: []
+    policy_actions: []
+    csrf_required: false
     rule: Password verification, account lockout, throttling; no session exists until MFA completes.
   - path: /api/v1/staff/auth/mfa
     methods: [POST]
+    authentication: SIGNED_MFA_CHALLENGE
+    required_roles: []
+    policy_actions: []
+    csrf_required: false
     rule: Signed short-lived challenge binds server-issued user and tenant; one-time TOTP step.
   - path: /api/v1/staff/auth/mfa/enroll/confirm
     methods: [POST]
+    authentication: ONE_TIME_ENROLLMENT_TOKEN
+    required_roles: []
+    policy_actions: []
+    csrf_required: false
     rule: One-time enrollment token, expiry, TOTP verification and attempt lockout.
   - path: /api/v1/staff/auth/me
     methods: [GET]
+    authentication: MFA_SESSION
+    required_roles: []
+    policy_actions: []
+    csrf_required: false
     rule: staff_required; authenticated active MFA session.
   - path: /api/v1/staff/auth/logout
     methods: [POST]
+    authentication: MFA_SESSION
+    required_roles: []
+    policy_actions: []
+    csrf_required: true
     rule: staff_required; revoke current session; CSRF required.
   - path: /api/v1/staff/auth/password/change
     methods: [POST]
+    authentication: MFA_SESSION
+    required_roles: []
+    policy_actions: []
+    csrf_required: true
     rule: staff_required; verify current secret, rotate password, revoke sessions; CSRF required.
   - path: /api/v1/staff/cases
     methods: [GET]
+    authentication: MFA_SESSION
+    required_roles: [TENANT_ADMIN, CASE_OFFICER, AUDITOR]
+    policy_actions: [case:list]
+    csrf_required: false
     rule: staff_required TENANT_ADMIN|CASE_OFFICER|AUDITOR; tenant filter plus case:list; officers see creator/assignment records.
   - path: /api/v1/staff/cases
     methods: [POST]
+    authentication: MFA_SESSION
+    required_roles: [TENANT_ADMIN, CASE_OFFICER]
+    policy_actions: [case:create]
+    csrf_required: true
     rule: staff_required TENANT_ADMIN|CASE_OFFICER plus case:create; tenant_id is set from authenticated session, never body.
   - path: /api/v1/staff/cases/<case_id>
     methods: [GET]
+    authentication: MFA_SESSION
+    required_roles: [TENANT_ADMIN, CASE_OFFICER, AUDITOR]
+    policy_actions: [case:read]
+    csrf_required: false
     rule: staff_required TENANT_ADMIN|CASE_OFFICER|AUDITOR plus tenant-scoped lookup and case:read.
   - path: /api/v1/staff/cases/<case_id>/status
     methods: [POST]
+    authentication: MFA_SESSION
+    required_roles: [TENANT_ADMIN, CASE_OFFICER]
+    policy_actions: [case:update_status]
+    csrf_required: true
     rule: staff_required TENANT_ADMIN|CASE_OFFICER plus case:update_status; ownership/assignment and transition checks.
   - path: /api/v1/staff/cases/<case_id>/evidence
-    methods: [GET, POST]
+    methods: [GET]
+    authentication: MFA_SESSION
+    required_roles: [CASE_OFFICER]
+    policy_actions: [case:read, evidence:read]
+    csrf_required: false
     rule: staff_required CASE_OFFICER plus evidence:read or evidence:upload; case assignment required.
+  - path: /api/v1/staff/cases/<case_id>/evidence
+    methods: [POST]
+    authentication: MFA_SESSION
+    required_roles: [CASE_OFFICER]
+    policy_actions: [case:read, evidence:upload]
+    csrf_required: true
+    rule: staff_required CASE_OFFICER plus evidence:upload; case assignment required.
   - path: /api/v1/staff/evidence/<evidence_id>
     methods: [GET]
+    authentication: MFA_SESSION
+    required_roles: [CASE_OFFICER]
+    policy_actions: [case:read, evidence:read]
+    csrf_required: false
     rule: staff_required CASE_OFFICER; tenant/case lookup plus evidence:read.
   - path: /api/v1/staff/evidence/<evidence_id>/retrieval
     methods: [GET]
+    authentication: MFA_SESSION
+    required_roles: [CASE_OFFICER]
+    policy_actions: [case:read, evidence:read]
+    csrf_required: false
     rule: Reauthorize session, MFA, case assignment, retention, tenant, evidence, and short-lived signed ticket.
   - path: /api/v1/staff/evidence/<evidence_id>/content
     methods: [GET]
+    authentication: MFA_SESSION
+    required_roles: [CASE_OFFICER]
+    policy_actions: [case:read, evidence:read]
+    csrf_required: false
     rule: Reauthorize current session and case assignment; ticket bound to user/session/tenant/case/evidence; metadata-only audit.
   - path: /api/v1/staff/evidence/<evidence_id>
     methods: [DELETE]
+    authentication: MFA_SESSION
+    required_roles: [CASE_OFFICER]
+    policy_actions: [case:read, evidence:delete]
+    csrf_required: true
     rule: staff_required CASE_OFFICER plus evidence:delete; expiry and legal hold enforced.
 policy_cases:
   - id: officer-reads-owned-case

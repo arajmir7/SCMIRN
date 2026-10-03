@@ -3,7 +3,8 @@ from pathlib import Path
 
 import yaml
 
-from app.staff_auth.authorization import PolicyAttributes, StaffPrincipal, authorize
+from app.staff_auth.authorization import PolicyAttributes, StaffPrincipal, SUPPORTED_ACTIONS, authorize
+from app.staff_auth.security import ROLES
 
 
 def _principal(**overrides):
@@ -112,6 +113,67 @@ def test_machine_readable_authorization_matrix_generates_policy_expectations():
         assert authorize(StaffPrincipal(**principal_data), case["action"], attributes) is expected, case["id"]
 
 
+def test_staff_route_registry_matches_machine_readable_authorization_contract():
+    from flask import Flask
+    from app.staff_auth.api import bp as staff_auth_bp
+    from app.evidence_vault.api import bp as staff_evidence_bp
+
+    repository = Path(__file__).resolve().parents[4]
+    matrix = yaml.safe_load((repository / "docs/security/authorization-matrix.yaml").read_text(encoding="utf-8"))
+    assert matrix["route_contract_version"] == 1
+    assert matrix["scope"] == "Current staff and evidence endpoints only; not a complete government RBAC approval."
+
+    app = Flask("staff_route_contract")
+    app.register_blueprint(staff_auth_bp, url_prefix="/api/v1/staff")
+    app.register_blueprint(staff_evidence_bp, url_prefix="/api/v1/staff")
+
+    actual = {}
+    for rule in app.url_map.iter_rules():
+        if not rule.rule.startswith("/api/v1/staff/"):
+            continue
+        view = app.view_functions[rule.endpoint]
+        for method in set(rule.methods or ()) - {"HEAD", "OPTIONS"}:
+            key = (rule.rule, method)
+            assert key not in actual, f"duplicate runtime route method: {key}"
+            actual[key] = view
+
+    expected = {}
+    authentication_modes = {
+        "PUBLIC_CREDENTIALS",
+        "SIGNED_MFA_CHALLENGE",
+        "ONE_TIME_ENROLLMENT_TOKEN",
+        "MFA_SESSION",
+    }
+    for route in matrix["routes"]:
+        assert route["path"].startswith("/api/v1/staff/")
+        assert route["authentication"] in authentication_modes
+        assert isinstance(route["required_roles"], list)
+        assert set(route["required_roles"]).issubset(ROLES)
+        assert isinstance(route["policy_actions"], list)
+        assert set(route["policy_actions"]).issubset(SUPPORTED_ACTIONS)
+        for method in route["methods"]:
+            key = (route["path"], method)
+            assert key not in expected, f"duplicate matrix route method: {key}"
+            session_protected = route["authentication"] == "MFA_SESSION"
+            assert route["csrf_required"] is (session_protected and method not in {"GET", "HEAD", "OPTIONS"})
+            expected[key] = route
+
+    assert set(actual) == set(expected), {
+        "missing_from_matrix": sorted(set(actual) - set(expected)),
+        "stale_matrix_entries": sorted(set(expected) - set(actual)),
+    }
+    for key, view in actual.items():
+        route = expected[key]
+        runtime_policy = getattr(view, "__scmirn_staff_route_policy__", None)
+        if route["authentication"] == "MFA_SESSION":
+            assert runtime_policy is not None, f"{key} lost staff session enforcement"
+            assert runtime_policy["authentication"] == route["authentication"]
+            assert list(runtime_policy["required_roles"]) == sorted(route["required_roles"])
+            assert list(runtime_policy["policy_actions"]) == sorted(route["policy_actions"])
+        else:
+            assert runtime_policy is None, f"{key} has undocumented staff session enforcement"
+
+
 def test_restricted_evidence_requires_assigned_case_officer_and_case_scope():
     principal = _principal()
     evidence = _attributes(
@@ -142,3 +204,13 @@ def test_legal_hold_blocks_evidence_deletion_even_for_assigned_officer():
     )
     assert not authorize(_principal(), "evidence:delete", attributes)
     assert authorize(_principal(), "evidence:delete", replace(attributes, legal_hold=False))
+
+
+def test_request_policy_cannot_evaluate_actions_outside_the_route_declaration():
+    from flask import Flask, g
+
+    app = Flask("staff_policy_action_guard")
+    with app.test_request_context("/api/v1/staff/cases/example"):
+        g.staff_route_policy_actions = frozenset({"case:read"})
+        assert authorize(_principal(), "case:read", _attributes())
+        assert not authorize(_principal(), "case:update_status", _attributes())

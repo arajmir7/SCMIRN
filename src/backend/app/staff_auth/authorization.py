@@ -44,6 +44,10 @@ class PolicyAttributes:
 _CASE_READ_ROLES = frozenset({"TENANT_ADMIN", "CASE_OFFICER", "AUDITOR"})
 _CASE_WRITE_ROLES = frozenset({"TENANT_ADMIN", "CASE_OFFICER"})
 _KNOWN_ROLES = frozenset({"TENANT_ADMIN", "CASE_OFFICER", "SOURCE_REVIEWER", "AUDITOR"})
+SUPPORTED_ACTIONS = frozenset({
+    "case:list", "case:read", "case:create", "case:update_status",
+    "evidence:upload", "evidence:read", "evidence:delete", "source:approve",
+})
 
 
 def authorize(
@@ -69,6 +73,14 @@ def authorize(
         or not attributes.purpose
     ):
         return False
+
+    # Session-protected routes declare their policy actions at the decorator.
+    # A view cannot broaden its reachable policy checks without updating that
+    # route contract, which is also parity-tested against the YAML matrix.
+    from flask import g, has_request_context
+    if has_request_context() and hasattr(g, "staff_route_policy_actions"):
+        if action not in g.staff_route_policy_actions:
+            return False
 
     if action in {"case:list", "case:read"}:
         if attributes.purpose != "CASE_OPERATIONS" or attributes.sensitivity not in {"INTERNAL", "RESTRICTED"}:

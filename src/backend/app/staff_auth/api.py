@@ -328,7 +328,7 @@ def _case_json(case):
 
 
 @bp.get("/cases")
-@staff_required("TENANT_ADMIN", "CASE_OFFICER", "AUDITOR")
+@staff_required("TENANT_ADMIN", "CASE_OFFICER", "AUDITOR", policy_actions=("case:list",))
 def list_cases():
     query = StaffCase.query.filter_by(tenant_id=g.staff_tenant_id)
     if not g.staff_roles.intersection({"TENANT_ADMIN", "AUDITOR"}):
@@ -345,7 +345,7 @@ def list_cases():
 
 
 @bp.post("/cases")
-@staff_required("TENANT_ADMIN", "CASE_OFFICER")
+@staff_required("TENANT_ADMIN", "CASE_OFFICER", policy_actions=("case:create",))
 def create_case():
     if not authorize(_policy_principal(), "case:create", _case_policy_attributes()):
         return jsonify({"success": False, "error": "Staff attributes do not authorize this action.", "code": "ATTRIBUTE_FORBIDDEN"}), 403
@@ -376,7 +376,7 @@ def create_case():
 
 
 @bp.get("/cases/<case_id>")
-@staff_required("TENANT_ADMIN", "CASE_OFFICER", "AUDITOR")
+@staff_required("TENANT_ADMIN", "CASE_OFFICER", "AUDITOR", policy_actions=("case:read",))
 def get_case(case_id):
     case = StaffCase.query.filter_by(id=case_id, tenant_id=g.staff_tenant_id).with_for_update().first()
     if not case:
@@ -391,7 +391,7 @@ def get_case(case_id):
 
 
 @bp.post("/cases/<case_id>/status")
-@staff_required("TENANT_ADMIN", "CASE_OFFICER")
+@staff_required("TENANT_ADMIN", "CASE_OFFICER", policy_actions=("case:update_status",))
 def change_case_status(case_id):
     data = _json_body()
     next_status = data.get("status")

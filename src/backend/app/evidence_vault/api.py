@@ -168,7 +168,7 @@ def _retrieval_url(evidence, ttl: int) -> str:
 
 
 @bp.post("/cases/<case_id>/evidence")
-@staff_required("CASE_OFFICER")
+@staff_required("CASE_OFFICER", policy_actions=("case:read", "evidence:upload"))
 def upload_case_evidence(case_id):
     disabled = _disabled()
     if disabled:
@@ -241,7 +241,7 @@ def upload_case_evidence(case_id):
 
 
 @bp.get("/cases/<case_id>/evidence")
-@staff_required("CASE_OFFICER")
+@staff_required("CASE_OFFICER", policy_actions=("case:read", "evidence:read"))
 def list_case_evidence(case_id):
     disabled = _disabled()
     if disabled:
@@ -258,7 +258,7 @@ def list_case_evidence(case_id):
 
 
 @bp.get("/evidence/<evidence_id>")
-@staff_required("CASE_OFFICER")
+@staff_required("CASE_OFFICER", policy_actions=("case:read", "evidence:read"))
 def get_case_evidence(evidence_id):
     disabled = _disabled()
     if disabled:
@@ -272,7 +272,7 @@ def get_case_evidence(evidence_id):
 
 
 @bp.get("/evidence/<evidence_id>/retrieval")
-@staff_required("CASE_OFFICER")
+@staff_required("CASE_OFFICER", policy_actions=("case:read", "evidence:read"))
 def get_evidence_retrieval_url(evidence_id):
     disabled = _disabled()
     if disabled:
@@ -301,7 +301,7 @@ def get_evidence_retrieval_url(evidence_id):
 
 
 @bp.get("/evidence/<evidence_id>/content")
-@staff_required("CASE_OFFICER")
+@staff_required("CASE_OFFICER", policy_actions=("case:read", "evidence:read"))
 def read_evidence_content(evidence_id):
     disabled = _disabled()
     if disabled:
@@ -333,7 +333,7 @@ def read_evidence_content(evidence_id):
 
 
 @bp.delete("/evidence/<evidence_id>")
-@staff_required("CASE_OFFICER")
+@staff_required("CASE_OFFICER", policy_actions=("case:read", "evidence:delete"))
 def delete_expired_evidence(evidence_id):
     disabled = _disabled()
     if disabled:

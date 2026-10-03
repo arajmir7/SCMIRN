@@ -128,10 +128,14 @@ def _auth_error(status: int = 401, code: str = "AUTHENTICATION_REQUIRED"):
     return jsonify({"success": False, "error": "Authentication is required.", "code": code}), status
 
 
-def staff_required(*required_roles: str):
+def staff_required(*required_roles: str, policy_actions: tuple[str, ...] = ()):
     unknown = set(required_roles) - ROLES
     if unknown:
         raise ValueError(f"Unknown staff roles: {', '.join(sorted(unknown))}")
+    from app.staff_auth.authorization import SUPPORTED_ACTIONS
+    unknown_actions = set(policy_actions) - SUPPORTED_ACTIONS
+    if unknown_actions:
+        raise ValueError(f"Unknown staff policy actions: {', '.join(sorted(unknown_actions))}")
 
     def decorate(view):
         @wraps(view)
@@ -177,9 +181,15 @@ def staff_required(*required_roles: str):
             g.staff_user = user
             g.staff_roles = roles
             g.staff_tenant_id = session_row.tenant_id
+            g.staff_route_policy_actions = frozenset(policy_actions)
             response = view(*args, **kwargs)
             db.session.commit()
             return response
+        wrapped.__scmirn_staff_route_policy__ = {
+            "authentication": "MFA_SESSION",
+            "required_roles": tuple(sorted(set(required_roles))),
+            "policy_actions": tuple(sorted(set(policy_actions))),
+        }
         return wrapped
     return decorate
 
