@@ -13,7 +13,7 @@ The referenced official portals are live and can change; this snapshot records t
 | Checkpoint | Applicability / implementation location | Evidence available | Status | Owner / remaining action |
 |---|---|---|---|---|
 | Quality: consistent navigation and information architecture | `src/frontend/src/App.tsx`, `components/layout/Navigation.tsx` | Existing Playwright direct-route/navigation tests; screenshot baseline | `PARTIAL` | Product owner: check every route, breadcrumbs, mobile nav and broken links. |
-| Quality: page title, metadata, search indexing | `src/frontend/index.html`, Vite output | Build passes; no route-specific metadata audit | `NOT VERIFIED` | Content owner: titles/descriptions/canonical URLs, sitemap and robots policy. |
+| Quality: page title, metadata, search indexing | `src/frontend/index.html`, `ServicesPage.tsx`, Vite output | Default title/description plus route-specific service-directory title/description; browser test checks title. No route-wide metadata audit, sitemap or robots policy. | `PARTIAL` | Content owner: audit titles/descriptions/canonical URLs across every route; add sitemap and robots policy. |
 | Quality: content owner, last-reviewed metadata, archive lifecycle | Public copy/pages and enterprise docs | No complete page ownership/review registry verified | `NOT IMPLEMENTED` | Assign owner/date to legal/service claims; implement review and archival process. |
 | Quality: contact, help, feedback, grievance | Footer and report UI | Newsletter is a frontend control; no confirmed delivery; no audited grievance owner | `NOT VERIFIED` | Publish staffed contact/help/feedback and grievance process. |
 | Quality: privacy, terms, accessibility/security policy | App routes and docs | No complete public policy route set verified | `NOT VERIFIED` | Legal/content owner approves and publishes policies and effective dates. |
@@ -31,4 +31,4 @@ The referenced official portals are live and can change; this snapshot records t
 
 ## Evidence commands
 
-Baseline commands and counts are in [`../merge/TEST_EVIDENCE_MATRIX.md`](../merge/TEST_EVIDENCE_MATRIX.md). The 2026-10-02 UI increment groups legacy demos under `/labs` and adds an initial `/staff` screen; 13 selected Playwright flows pass. These browser tests do not replace automated accessibility coverage, exhaustive link checks, external audit, production topology, restore or DR evidence, all of which remain outstanding.
+Baseline commands and counts are in [`../merge/TEST_EVIDENCE_MATRIX.md`](../merge/TEST_EVIDENCE_MATRIX.md). The current suite has 15 selected Playwright flows, including service-directory provenance, destination-host validation, search, API failure and retry states. The `/services` route sets its own title and description. These browser tests do not replace automated accessibility coverage, exhaustive link checks, external audit, production topology, restore or DR evidence, all of which remain outstanding.

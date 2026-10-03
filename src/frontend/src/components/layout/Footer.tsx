@@ -12,6 +12,7 @@ export function Footer() {
           <div className="col-lg-2">
             <h3 className="h6 fw-bold mb-3">Platform</h3>
             <ul className="list-unstyled text-muted small">
+              <li className="mb-2"><Link to="/services" className="text-decoration-none text-muted">Public Service Directory</Link></li>
               <li className="mb-2"><Link to="/#features" className="text-decoration-none text-muted">Problem Solver</Link></li>
               <li className="mb-2"><Link to="/labs" className="text-decoration-none text-muted">Labs · Demo Workspaces</Link></li>
               <li className="mb-2"><Link to="/labs/offices" className="text-decoration-none text-muted">Office Directory · Demo</Link></li>

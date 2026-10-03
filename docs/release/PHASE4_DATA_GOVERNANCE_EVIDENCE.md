@@ -4,10 +4,12 @@
 **Release verdict:** `NOT PRODUCTION READY`.
 
 > This is the historical 2026-10-02 snapshot (34 tables, 452 columns, 254
-> candidate fields). The current 2026-10-03 schema has 35 tables and 471
+> candidate fields). At the time of the prior 2026-10-03 continuation, the schema had 35 tables and 471
 > columns, 294 potentially personal/linkable candidates (273 pending approval
 > plus 21 explicit exemptions), 35 table-governance decisions, and one profile
-> approval. See the [current DPDP readiness matrix](../compliance/DPDP_READINESS_MATRIX.md)
+> approval. The 2026-10-03 source-review precision revision adds three date
+> fields; current parity is 35 tables and 474 columns with candidate/approval
+> counts unchanged. See the [current DPDP readiness matrix](../compliance/DPDP_READINESS_MATRIX.md)
 > and [typed blocker ledger](production-blockers.yaml) for present status.
 
 ## Implementation

@@ -147,6 +147,7 @@ tables:
     - issue_types
     - jurisdiction
     - last_verified
+    - last_verified_on
     - official_sla
     - official_url
     - optional_evidence
@@ -273,6 +274,7 @@ tables:
     - jurisdiction
     - parser_version
     - retrieved_at
+    - reviewed_on
     - reviewer
     - source_key
     - source_type
@@ -281,6 +283,7 @@ tables:
     - title
     - verification_status
     - verified_at
+    - verified_on
     - version
     data_boundary_classification: GLOBAL_REFERENCE
     owner: SCMIRN_PLATFORM_SCHEMA; accountable_data_owner_unassigned
@@ -2431,6 +2434,10 @@ nonpersonal_fields:
     reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
       name/context; reassess if semantic use changes.
     status: REVIEWED
+  government_services.last_verified_on:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Date recorded for internal review of linked public service source metadata; not a citizen date.
+    status: REVIEWED
   government_services.official_sla:
     classification: PUBLIC_REFERENCE_DATA
     reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
@@ -2760,6 +2767,10 @@ nonpersonal_fields:
     reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
       name/context; reassess if semantic use changes.
     status: REVIEWED
+  official_sources.reviewed_on:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Date recorded for internal catalog review; not a retrieval timestamp or an agency approval.
+    status: REVIEWED
   official_sources.reviewer:
     classification: PUBLIC_REFERENCE_DATA
     reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
@@ -2799,6 +2810,10 @@ nonpersonal_fields:
     classification: PUBLIC_REFERENCE_DATA
     reason: Current field belongs to the GLOBAL_REFERENCE table boundary and has no direct person-field
       name/context; reassess if semantic use changes.
+    status: REVIEWED
+  official_sources.verified_on:
+    classification: PUBLIC_REFERENCE_DATA
+    reason: Date recorded for internal source verification; it is not live page verification or an agency approval.
     status: REVIEWED
   official_sources.version:
     classification: PUBLIC_REFERENCE_DATA

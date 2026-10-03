@@ -9,7 +9,7 @@
 - Group the older office, heatmap, tracker, analytics, documents and platform demos under `/labs`, with prototype disclosures and legacy-route redirects.
 - Store and display SCMIRN issue/document/chat records and run local analytics/simulations.
 - Run selected deterministic/enterprise/IoT/twin code paths against development data; their operational inputs are not verified government feeds.
-- SCMIRN source code implements consented source-gated routing; four public official handoffs are verified at source/hash/host level. Cybercrime remains hidden because its portal did not pass TLS validation. No filing or official receipt is produced.
+- SCMIRN source code implements consented source-gated routing; four handoff records have internal source-review dates, content hashes, and host checks. These are static 2026-10-02 catalog records, not live verification or agency approval. The cybercrime candidate remains hidden because its portal did not pass TLS validation. No filing or official receipt is produced.
 
 ## Readiness boundaries
 

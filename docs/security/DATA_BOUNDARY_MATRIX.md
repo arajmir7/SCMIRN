@@ -4,7 +4,8 @@ Current implementation/test status: see
 [`PHASE3_IMPLEMENTATION_STATUS.md`](PHASE3_IMPLEMENTATION_STATUS.md).
 
 Inventory date: 2026-10-03. The inventory is generated from the 35 mapped
-SQLAlchemy tables at Alembic head `20261003_01`. Every mapped table appears
+SQLAlchemy tables at Alembic head `20261003_02`. The source-review precision
+revision adds three date fields; every mapped table appears
 below. `LEGACY_UNCLASSIFIED` is an explicit quarantine classification: the
 table is known, its data sensitivity is recorded, and production app/worker
 grants are withheld until a usable subject, tenant, or jurisdiction boundary

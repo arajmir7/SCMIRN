@@ -43,8 +43,12 @@ class OfficialSource(db.Model):
     document_hash = db.Column(db.String(64))
     effective_from = db.Column(db.DateTime)
     effective_until = db.Column(db.DateTime)
-    retrieved_at = db.Column(db.DateTime, nullable=False, default=utcnow_naive)
+    # Exact timestamps are nullable because the reviewed catalog records only
+    # dates. Import time is not source-retrieval or verification time.
+    retrieved_at = db.Column(db.DateTime)
     verified_at = db.Column(db.DateTime)
+    reviewed_on = db.Column(db.Date)
+    verified_on = db.Column(db.Date)
     verification_status = db.Column(db.String(32), nullable=False, default="DRAFT")
     supersedes_id = db.Column(db.String(36), db.ForeignKey("official_sources.id"))
     superseded_by_id = db.Column(db.String(36), db.ForeignKey("official_sources.id"))
@@ -110,6 +114,7 @@ class GovernmentService(db.Model):
     effective_from = db.Column(db.DateTime)
     effective_until = db.Column(db.DateTime)
     last_verified = db.Column(db.DateTime)
+    last_verified_on = db.Column(db.Date)
     status = db.Column(db.String(40), nullable=False, default="UNVERIFIED")
     created_at = db.Column(db.DateTime, nullable=False, default=utcnow_naive)
 

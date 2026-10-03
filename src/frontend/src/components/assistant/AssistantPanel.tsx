@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { apiGet } from '@/api/http';
 import { resolutionApi, type ResolutionResult, type ServiceSummary, canRenderOfficialHandoff } from '@/api/resolution';
 
@@ -23,6 +24,7 @@ export function AssistantPanel({ open, initialPrompt, onClose }: AssistantPanelP
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [servicesLoading, setServicesLoading] = useState(false);
+  const [servicesError, setServicesError] = useState('');
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -36,7 +38,14 @@ export function AssistantPanel({ open, initialPrompt, onClose }: AssistantPanelP
     const controller = new AbortController();
     setServicesLoading(true);
     void apiGet<{ items?: ServiceSummary[] }>('/api/v1/services', controller.signal).then((response) => {
-      if (!controller.signal.aborted) setServices(response.ok ? response.data.items ?? [] : []);
+      if (controller.signal.aborted) return;
+      if (!response.ok) {
+        setServices([]);
+        setServicesError('The service directory is unavailable right now.');
+        return;
+      }
+      setServicesError('');
+      setServices(response.data.items ?? []);
     }).finally(() => {
       if (!controller.signal.aborted) setServicesLoading(false);
     });
@@ -92,7 +101,7 @@ export function AssistantPanel({ open, initialPrompt, onClose }: AssistantPanelP
       </div>
 
       <div className="chat-body p-3" aria-live="polite" aria-relevant="additions text">
-        <p className="small text-muted">Describe what happened. SCMIRN uses deterministic rules and shows a government service only when its current official source is verified.</p>
+        <p className="small text-muted">Describe what happened. SCMIRN uses deterministic rules and shows a service only when a dated internal source review supports a handoff. Check the official page for current instructions.</p>
         <form onSubmit={submit} noValidate>
           <label className="form-label fw-semibold" htmlFor="triage-description">Problem description</label>
           <textarea
@@ -155,17 +164,20 @@ export function AssistantPanel({ open, initialPrompt, onClose }: AssistantPanelP
             {result.sources.map((source) => (
               <div key={`${source.source_id}-${source.version}`} className="small border-top pt-2 mt-2">
                 <a href={source.canonical_url} target="_blank" rel="noopener noreferrer">{source.title}</a>
-                <div className="text-muted">Version {source.version} · {source.verification_status} · {source.document_hash ? `SHA-256 ${source.document_hash}` : 'content hash unavailable'}</div>
+                <div className="text-muted">Version {source.version} · catalog status {source.verification_status} · internal review date {source.verified_on ?? source.reviewed_on ?? (source.verified_at ? new Date(source.verified_at).toLocaleDateString() : 'not recorded')} · {source.document_hash ? `SHA-256 ${source.document_hash}` : 'content hash unavailable'}</div>
               </div>
             ))}
           </div>
         ) : null}
 
         <div className="border-top mt-3 pt-3">
-          <h3 className="h6 fw-bold">Source-verified services</h3>
+          <h3 className="h6 fw-bold">Services with source records</h3>
+          <p className="small text-muted">The directory shows SCMIRN review dates and source hashes; it is not a live check of agency pages.</p>
+          <Link className="small" to="/services">Browse the service directory</Link>
           {servicesLoading ? <p className="small text-muted" role="status">Checking the service registry…</p> : null}
-          {!servicesLoading && services.length === 0 ? <p className="small text-muted mb-0">No services currently meet the source verification requirements.</p> : null}
-          {services.map((service) => <div key={`${service.service_id}-${service.version}`} className="small border rounded p-2 mb-2"><strong>{service.canonical_name}</strong><div className="text-muted">{service.authority ?? 'Authority not listed'} · {service.integration_mode}</div></div>)}
+          {servicesError ? <p role="alert" className="small text-danger">{servicesError} Open the directory later to retry.</p> : null}
+          {!servicesLoading && !servicesError && services.length === 0 ? <p className="small text-muted mb-0">No service record with a complete source review is available.</p> : null}
+          {services.map((service) => <div key={`${service.service_id}-${service.version}`} className="small border rounded p-2 mb-2"><strong>{service.canonical_name}</strong><div className="text-muted">{service.authority ?? 'Authority not listed'} · {service.integration_mode}</div><div className="text-muted">Internal source review date: {service.last_verified_on ?? 'not recorded'}</div></div>)}
         </div>
         <p className="small text-muted border-top mt-3 pt-3 mb-0">SCMIRN route guidance is not legal representation, an emergency response or a government filing.</p>
       </div>

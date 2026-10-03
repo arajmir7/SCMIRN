@@ -42,7 +42,7 @@ paths:
   /api/v1/triage:
     post:
       tags: [Routing]
-      summary: Check for a source-verified civic service route
+      summary: Check for a route backed by a dated internal source review
       description: Requires explicit consent. Returns route guidance only; it never submits a request to an agency.
       x-scmirn-production-status: Disabled with deterministic 503 until route-decision storage has an enforced subject/tenant boundary
       parameters:
@@ -103,30 +103,32 @@ paths:
   /api/v1/services:
     get:
       tags: [Routing]
-      summary: List active services with verified current sources
-      x-scmirn-production-status: Allowlisted prototype endpoint; currently returns an empty list
+      summary: List source-reviewed service handoffs
+      description: Review dates are catalog metadata, not live checks of official pages. The endpoint lists only active OFFICIAL_HANDOFF_ONLY records whose source hashes, dates, status, and official-host channels pass local validation. No connector capability is exposed here.
+      x-scmirn-production-status: Allowlisted read-only prototype endpoint; the operator must seed the catalog
       responses:
         "200":
-          description: Source-verified service catalog
+          description: Service catalog with source review dates and content hashes; no submission occurs
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                count: { type: integer }
-                items: { type: array, items: { type: object } }
+                $ref: "#/components/schemas/ServiceDirectoryResponse"
   /api/v1/services/{service_id}:
     get:
       tags: [Routing]
-      summary: Get a registered service's source-verification state
-      x-scmirn-production-status: Allowlisted prototype endpoint; no service catalog is seeded
+      summary: Get a listed service handoff record
+      x-scmirn-production-status: Allowlisted read-only prototype endpoint; the operator must seed the catalog
       parameters:
         - in: path
           name: service_id
           required: true
           schema: { type: string }
       responses:
-        "200": { description: Service routing policy and evidence requirements }
+        "200":
+          description: Dated source-review metadata, scope text, and safe handoff destination
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ServiceSummary" }
         "404": { description: Service is not registered }
   /api/v1/evidence/check:
     post:
@@ -158,7 +160,11 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        "200": { description: Source metadata, including hash and review state }
+        "200":
+          description: Source metadata, including exact timestamps when known and date-only review evidence
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SourceRecord" }
         "404": { description: Source not found }
   /api/v1/staff/auth/login:
     post:
@@ -576,7 +582,76 @@ components:
         official_reference: { type: [string, "null"] }
         sources:
           type: array
-          items: { type: object }
+          items: { $ref: "#/components/schemas/ServiceSourceSnapshot" }
+    ServiceDirectoryResponse:
+      type: object
+      required: [items, count]
+      properties:
+        count: { type: integer, minimum: 0 }
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/ServiceSummary" }
+    ServiceSummary:
+      type: object
+      required: [service_id, version, canonical_name, authority_level, jurisdiction, exclusions, issue_types, required_evidence, recommended_evidence, optional_evidence, official_url, integration_mode, source_ids, sources, status]
+      properties:
+        service_id: { type: string }
+        version: { type: integer, minimum: 1 }
+        canonical_name: { type: string }
+        description: { type: [string, "null"] }
+        authority: { type: [string, "null"] }
+        authority_level: { type: string }
+        jurisdiction: { type: object }
+        eligibility: { type: [string, "null"] }
+        exclusions: { type: array, items: { type: string } }
+        issue_types: { type: array, items: { type: string } }
+        required_evidence: { type: array, items: { type: object } }
+        recommended_evidence: { type: array, items: { type: object } }
+        optional_evidence: { type: array, items: { type: object } }
+        application_channel: { type: [string, "null"], format: uri }
+        grievance_channel: { type: [string, "null"] }
+        appeal_channel: { type: [string, "null"], format: uri }
+        escalation_channel: { type: [string, "null"], format: uri }
+        official_url: { type: string, format: uri }
+        integration_mode: { type: string, enum: [OFFICIAL_HANDOFF_ONLY, CONNECTED, SANDBOX_CONNECTED, CONNECTOR_IMPLEMENTED_NOT_AUTHORISED, PLANNED, UNAVAILABLE] }
+        connector_id: { type: [string, "null"] }
+        identity_assurance_required: { type: string }
+        official_sla: { type: [object, "null"] }
+        source_ids: { type: array, items: { type: string } }
+        sources: { type: array, items: { $ref: "#/components/schemas/ServiceSourceSnapshot" } }
+        effective_from: { type: [string, "null"], format: date-time }
+        effective_until: { type: [string, "null"], format: date-time }
+        last_verified: { type: [string, "null"], format: date-time, deprecated: true, description: Exact verification time, when recorded; date-only catalog records leave this null. }
+        last_verified_on: { type: [string, "null"], format: date, description: Date recorded by the internal catalog review. }
+        status: { type: string }
+    ServiceSourceSnapshot:
+      type: object
+      required: [source_id, version, source_type, title, authority, canonical_url, verification_status]
+      properties:
+        source_id: { type: string }
+        version: { type: integer, minimum: 1 }
+        source_type: { type: string }
+        title: { type: string }
+        authority: { type: string }
+        canonical_url: { type: string, format: uri }
+        document_hash: { type: [string, "null"], pattern: "^[0-9a-f]{64}$" }
+        verification_status: { type: string, enum: [DRAFT, VERIFIED, SUPERSEDED, REVOKED] }
+        verified_at: { type: [string, "null"], format: date-time, deprecated: true, description: Exact verification timestamp only; never populated from import time. }
+        reviewed_on: { type: [string, "null"], format: date }
+        verified_on: { type: [string, "null"], format: date }
+    SourceRecord:
+      allOf:
+        - $ref: "#/components/schemas/ServiceSourceSnapshot"
+        - type: object
+          properties:
+            review_state: { type: string }
+            effective_from: { type: [string, "null"], format: date-time }
+            effective_until: { type: [string, "null"], format: date-time }
+            retrieved_at: { type: [string, "null"], format: date-time }
+            supersedes: { type: [string, "null"] }
+            superseded_by: { type: [string, "null"] }
+            reviewer: { type: [string, "null"] }
+            parser_version: { type: [string, "null"] }
     CrisisEvent:
       type: object
       required: [event_type]

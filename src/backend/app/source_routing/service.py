@@ -136,6 +136,8 @@ def _source_snapshot(source):
         "document_hash": source.document_hash,
         "verification_status": source.verification_status,
         "verified_at": source.verified_at.isoformat() if source.verified_at else None,
+        "reviewed_on": source.reviewed_on.isoformat() if source.reviewed_on else None,
+        "verified_on": source.verified_on.isoformat() if source.verified_on else None,
     }
 
 
@@ -167,7 +169,12 @@ def classify_issue(description):
     }
 
 
-def _live_verified_sources(source_ids, now):
+def _eligible_reviewed_sources(source_ids, now):
+    """Return catalog-approved source snapshots after local metadata checks.
+
+    This function does not fetch the government page or verify that it remains
+    unchanged. A date-only review record is not live source verification.
+    """
     if not source_ids:
         return []
     sources = OfficialSource.query.filter(OfficialSource.id.in_(source_ids)).all()
@@ -175,7 +182,7 @@ def _live_verified_sources(source_ids, now):
         return []
     if any(
         source.verification_status != "VERIFIED"
-        or not source.verified_at
+        or not (source.verified_at or source.verified_on)
         or not re.fullmatch(r"[0-9a-f]{64}", source.document_hash or "")
         or not _effective(source, now)
         or not _safe_url(source.canonical_url)
@@ -279,7 +286,7 @@ def resolve(description, *, state=None, district=None, consent=False, idempotenc
 
     matches = [] if classification["urgent_human_help_required"] else _candidate_rules(normalized, now)
     selected = None
-    verified_sources = []
+    eligible_sources = []
     if matches:
         top_priority = matches[0][0].priority
         top_matches = [match for match in matches if match[0].priority == top_priority]
@@ -288,7 +295,7 @@ def resolve(description, *, state=None, district=None, consent=False, idempotenc
             service = rule.service
             authority = rule.authority
             source_ids = list(rule.source_ids or [])
-            verified_sources = _live_verified_sources(source_ids, now)
+            eligible_sources = _eligible_reviewed_sources(source_ids, now)
             if (
                 service
                 and authority
@@ -297,10 +304,13 @@ def resolve(description, *, state=None, district=None, consent=False, idempotenc
                 and service.authority_id == authority.id
                 and _effective(service, now)
                 and _effective(authority, now)
-                and service.integration_mode in {"OFFICIAL_HANDOFF_ONLY", "CONNECTED", "SANDBOX_CONNECTED", "CONNECTOR_IMPLEMENTED_NOT_AUTHORISED"}
-                and verified_sources
+                # This resolver implements user-controlled official handoffs
+                # only. Other registry modes need a separately implemented
+                # and authorized connector workflow before they can route.
+                and service.integration_mode == "OFFICIAL_HANDOFF_ONLY"
+                and eligible_sources
                 and set(source_ids).issubset({source.id for source in service.sources})
-                and _service_channels_match_sources(service, verified_sources)
+                and _service_channels_match_sources(service, eligible_sources)
                 and _geography_matches(service, state, district)
             ):
                 # Issue classification may identify a service category, but
@@ -316,10 +326,10 @@ def resolve(description, *, state=None, district=None, consent=False, idempotenc
             f"The service and source versions shown below support an official handoff only. "
             "Urgency has not been assessed because no reviewed severity policy is configured."
         )
-        result = _build_result(classification, "OFFICIAL_HANDOFF_ONLY", explanation, authority=authority, service=service, rule=rule, sources=verified_sources)
+        result = _build_result(classification, "OFFICIAL_HANDOFF_ONLY", explanation, authority=authority, service=service, rule=rule, sources=eligible_sources)
         rule_id = rule.id
         authority_id = authority.id
-        source_versions = [_source_snapshot(source) for source in verified_sources]
+        source_versions = [_source_snapshot(source) for source in eligible_sources]
     else:
         if classification["urgent_human_help_required"]:
             explanation = "The description contains a possible immediate-danger signal. SCMIRN cannot provide emergency response; contact local emergency services or a trusted person now. No agency route was inferred."
@@ -328,7 +338,7 @@ def resolve(description, *, state=None, district=None, consent=False, idempotenc
             explanation = "More than one active rule matched with equal priority. SCMIRN abstained because the responsible authority is ambiguous."
             outcome = "JURISDICTION_AMBIGUOUS"
         else:
-            explanation = "No current, source-verified service rule matched this description. SCMIRN has not inferred an authority."
+            explanation = "No active service rule with complete source-review metadata matched this description. SCMIRN has not inferred an authority."
             outcome = "ROUTE_UNCERTAIN"
         result = _build_result(classification, outcome, explanation)
         rule_id = None
@@ -409,15 +419,17 @@ def resolve(description, *, state=None, district=None, consent=False, idempotenc
 
 def list_services():
     now = utcnow_naive()
-    services = GovernmentService.query.filter_by(status="ACTIVE").order_by(GovernmentService.service_key, GovernmentService.version.desc()).all()
+    services = GovernmentService.query.filter_by(
+        status="ACTIVE", integration_mode="OFFICIAL_HANDOFF_ONLY"
+    ).order_by(GovernmentService.service_key, GovernmentService.version.desc()).all()
     items = []
     seen = set()
     for service in services:
         if service.service_key in seen or not _effective(service, now):
             continue
         sources = list(service.sources or [])
-        verified_sources = _live_verified_sources([source.id for source in sources], now) if sources else []
-        if not sources or len(verified_sources) != len(sources) or not _service_channels_match_sources(service, verified_sources):
+        eligible_sources = _eligible_reviewed_sources([source.id for source in sources], now) if sources else []
+        if not sources or len(eligible_sources) != len(sources) or not _service_channels_match_sources(service, eligible_sources):
             continue
         seen.add(service.service_key)
         items.append({
@@ -428,6 +440,8 @@ def list_services():
             "authority": service.authority.canonical_name if service.authority else None,
             "authority_level": service.authority_level,
             "jurisdiction": service.jurisdiction,
+            "eligibility": service.eligibility,
+            "exclusions": service.exclusions,
             "issue_types": service.issue_types,
             "required_evidence": service.required_evidence,
             "recommended_evidence": service.recommended_evidence,
@@ -442,9 +456,11 @@ def list_services():
             "identity_assurance_required": service.identity_assurance_required,
             "official_sla": service.official_sla,
             "source_ids": [source.source_key for source in sources],
+            "sources": [_source_snapshot(source) for source in eligible_sources],
             "effective_from": service.effective_from.isoformat() if service.effective_from else None,
             "effective_until": service.effective_until.isoformat() if service.effective_until else None,
             "last_verified": service.last_verified.isoformat() if service.last_verified else None,
+            "last_verified_on": service.last_verified_on.isoformat() if service.last_verified_on else None,
             "status": service.status,
         })
     return items
@@ -457,7 +473,7 @@ def check_evidence(service_key, provided_ids):
     if not service:
         return {"service_id": service_key, "status": "SERVICE_UNAVAILABLE", "requirements": [], "missing_required": []}
     sources = list(service.sources or [])
-    if not sources or len(_live_verified_sources([source.id for source in sources], utcnow_naive())) != len(sources):
+    if not sources or len(_eligible_reviewed_sources([source.id for source in sources], utcnow_naive())) != len(sources):
         return {"service_id": service_key, "status": "SOURCE_UNVERIFIED", "requirements": [], "missing_required": []}
     requirements = []
     for level, entries in (("REQUIRED", service.required_evidence), ("RECOMMENDED", service.recommended_evidence), ("OPTIONAL", service.optional_evidence)):

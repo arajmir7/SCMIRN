@@ -18,6 +18,7 @@ const PlatformPage = lazy(() => import('@/pages/PlatformPage'));
 const LabsPage = lazy(() => import('@/pages/LabsPage'));
 const LabsLayout = lazy(() => import('@/pages/LabsPage').then((module) => ({ default: module.LabsLayout })));
 const StaffWorkspacePage = lazy(() => import('@/pages/StaffWorkspacePage'));
+const ServicesPage = lazy(() => import('@/pages/ServicesPage'));
 
 function RouteScrollManager() {
   const location = useLocation();
@@ -92,6 +93,7 @@ function AppFrame() {
             <Route path="/documents" element={<Navigate to="/labs/documents" replace />} />
             <Route path="/platform" element={<Navigate to="/labs/platform" replace />} />
             <Route path="/staff" element={<StaffWorkspacePage />} />
+            <Route path="/services" element={<ServicesPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

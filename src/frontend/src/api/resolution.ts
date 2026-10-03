@@ -16,6 +16,8 @@ export interface ResolutionSource {
   document_hash: string | null;
   verification_status: string;
   verified_at: string | null;
+  reviewed_on?: string | null;
+  verified_on?: string | null;
 }
 
 export interface ResolutionResult {
@@ -59,6 +61,8 @@ export interface ServiceSummary {
   authority: string | null;
   authority_level: string;
   jurisdiction: Record<string, unknown>;
+  eligibility: string | null;
+  exclusions: string[];
   issue_types: string[];
   required_evidence: unknown[];
   recommended_evidence: unknown[];
@@ -70,9 +74,11 @@ export interface ServiceSummary {
   identity_assurance_required: string;
   official_sla: Record<string, unknown> | null;
   source_ids: string[];
+  sources: ResolutionSource[];
   effective_from: string | null;
   effective_until: string | null;
   last_verified: string | null;
+  last_verified_on: string | null;
   status: string;
 }
 
@@ -104,7 +110,7 @@ export function canRenderOfficialHandoff(result: ResolutionResult): boolean {
   const targetHost = new URL(result.official_handoff.url).hostname.toLowerCase();
   const sourcesAreVerified = result.sources.length > 0 && result.sources.every((source) => (
     source.verification_status === 'VERIFIED'
-    && Boolean(source.verified_at)
+    && Boolean(source.verified_at || source.verified_on)
     && typeof source.document_hash === 'string'
     && sha256Pattern.test(source.document_hash)
     && isHttpsUrl(source.canonical_url)

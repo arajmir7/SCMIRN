@@ -38,7 +38,7 @@ These checks were run on **2026-10-01** in the local workspace after the fronten
 | Enterprise OpenAPI | YAML parse and required source-route presence check | Passed | Contract syntax/presence only; no generated-client or live-server conformance test. |
 | PostgreSQL, row-level security, DAST/SAST/SCA, accessibility/axe, backup/restore, DR, performance, production smoke | No production environment available | Not tested / not verified | Required before any production or government deployment claim. |
 
-The source routing registry currently has no verified official service source configured, so safe behavior is abstention. No government filing, payment, or official case tracking is enabled. The migration creates the routing schema; it does not establish a complete baseline for legacy tables or implement PostgreSQL row-level security.
+At this 2026-10-01 snapshot, the source routing registry had no configured official source, so behavior was abstention. A later 2026-10-02 catalog added four internally reviewed handoff records; they remain static dated metadata rather than live page verification. No government filing, payment, or official case tracking is enabled. The migration does not establish a complete tenant model for legacy tables.
 
 ## Production-hardening overlay evidence
 

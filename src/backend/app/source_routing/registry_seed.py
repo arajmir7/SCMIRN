@@ -7,6 +7,7 @@ idempotent; a content change requires a new catalog version.
 """
 import json
 import uuid
+from datetime import date
 from pathlib import Path
 
 from app.extensions import db
@@ -51,6 +52,10 @@ def _load_catalog():
         catalog = json.load(catalog_file)
     if catalog.get("catalog_version") != 1:
         raise RuntimeError("Unsupported official source catalog version.")
+    try:
+        catalog["reviewed_on_date"] = date.fromisoformat(catalog["reviewed_on"])
+    except (KeyError, TypeError, ValueError) as exc:
+        raise RuntimeError("Official source catalog must contain an ISO review date.") from exc
     return catalog
 
 
@@ -58,6 +63,7 @@ def seed_routing_registry():
     """Import reviewed sources, authorities, services, and deterministic rules."""
     catalog = _load_catalog()
     now = utcnow_naive()
+    reviewed_on = catalog["reviewed_on_date"]
     source_records = {}
 
     for spec in catalog["sources"]:
@@ -72,6 +78,8 @@ def seed_routing_registry():
             "canonical_url": spec["canonical_url"],
             "document_hash": spec["document_hash"],
             "verification_status": spec["verification_status"],
+            "reviewed_on": reviewed_on,
+            "verified_on": reviewed_on if spec["verification_status"] == "VERIFIED" else None,
             "parser_version": "official-catalog-v1",
         }
         if source is None:
@@ -82,8 +90,8 @@ def seed_routing_registry():
             source = OfficialSource(
                 id=_stable_id("source", spec["source_key"], spec["version"]),
                 **expected,
-                retrieved_at=now,
-                verified_at=now if spec["verification_status"] == "VERIFIED" else None,
+                retrieved_at=None,
+                verified_at=None,
                 effective_from=None,
                 effective_until=None,
                 supersedes_id=supersedes_id,
@@ -135,7 +143,20 @@ def seed_routing_registry():
         verified_sources = [source for source in source_records_for_service if source.verification_status == "VERIFIED"]
         last_verified = (
             min(source.verified_at for source in verified_sources)
-            if len(verified_sources) == len(source_records_for_service) and verified_sources
+            if len(verified_sources) == len(source_records_for_service)
+            and verified_sources
+            and all(source.verified_at for source in verified_sources)
+            else None
+        )
+        last_verified_on = (
+            min(
+                source.verified_on or source.verified_at.date()
+                for source in verified_sources
+                if source.verified_on or source.verified_at
+            )
+            if len(verified_sources) == len(source_records_for_service)
+            and verified_sources
+            and all(source.verified_on or source.verified_at for source in verified_sources)
             else None
         )
         expected = {
@@ -164,6 +185,7 @@ def seed_routing_registry():
             "identity_assurance_required": "A0",
             "official_sla": None,
             "last_verified": last_verified,
+            "last_verified_on": last_verified_on,
             "status": "ACTIVE",
         }
         service = _by_version(GovernmentService, "service_key", spec["service_key"], spec["version"])

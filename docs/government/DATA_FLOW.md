@@ -3,7 +3,7 @@
 **Scope:** code and configuration inventory; production traffic and processor locations were not inspected.
 
 The machine-readable [data-governance registry](data-governance-registry.yaml)
-tracks the 35 mapped SQLAlchemy tables and all 471 fields. The CI checker
+tracks the 35 mapped SQLAlchemy tables and all 474 fields. The CI checker
 compares that inventory to live ORM metadata and requires each field to be
 recorded as potentially personal/linkable or explicitly classified otherwise.
 It contains 294 potentially personal/linkable candidate entries: 273 still

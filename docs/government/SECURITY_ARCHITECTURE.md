@@ -18,7 +18,7 @@ partial security status.
 
 The field-level inventory is checked against ORM metadata in CI and recorded
 in [`data-governance-registry.yaml`](data-governance-registry.yaml). It covers
-471 columns and 294 potentially personal/linkable candidates: 273 await
+474 columns and 294 potentially personal/linkable candidates: 273 await
 accountable field approval and 21 have explicit candidate exemptions. None of
 the pending entries may be changed to `APPROVED` by engineering. Privacy/legal sign-off and deployed processor, region, retention
 and rights workflows are still release blockers. See
@@ -29,3 +29,5 @@ composite references. The application-set tenant GUC provides query-scoping
 defense for a trusted application; it is not a separate database tenant
 credential. Evidence upload and retrieval remain disabled in production until
 the authority's store, scanner and retention policy are approved and deployed.
+Revision `20261003_02` records source review dates at day precision and does
+not treat seed/import time as retrieval or verification time.

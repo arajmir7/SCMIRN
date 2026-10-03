@@ -10,6 +10,7 @@ Purpose: generated inventory of ORM-managed tables, columns, foreign keys, index
 - 20261002_03 adds tenant/staff identity, MFA/session, role, metadata-only case workflow and audit tables; it defines PostgreSQL RLS policies and append-only staff-history triggers.
 - 20261002_04 adds the narrowly scoped PostgreSQL audit-chain-head function used by app writes and verifies runtime database-role boundaries at startup.
 - 20261003_01 adds restricted evidence metadata, tenant/case/creator composite references, forced tenant RLS, and retention lifecycle constraints. Its downgrade removes only the evidence table and was exercised against disposable PostgreSQL 16.
+- 20261003_02 preserves source review dates at date precision, makes `retrieved_at` nullable, and clears catalog-import timestamps that had represented seed time rather than source retrieval. Imported service verification time is cleared; a catalog review date is retained only when every linked imported source is marked `VERIFIED`. The downgrade refuses to invent timestamp precision for date-only or unknown evidence.
 - All 35 mapped tables are inventoried in the [data-boundary matrix](../security/DATA_BOUNDARY_MATRIX.md); nine legacy tables are explicitly quarantined without app/worker grants.
 - An empty database upgrades to head. Existing exact ORM schemas are preserved and upgraded; legacy-only schemas are preflighted; unknown tables or structural drift fail before DDL.
 - Production keeps AUTO_CREATE_DB=False; migration is an explicit operator action. Development and test profiles still allow ORM auto-creation.
@@ -166,6 +167,7 @@ Staff MFA secrets are AES-GCM encrypted with the configured 32-byte STAFF_MFA_EN
 | effective_from | DATETIME | yes | — |
 | effective_until | DATETIME | yes | — |
 | last_verified | DATETIME | yes | — |
+| last_verified_on | DATE | yes | — |
 | status | VARCHAR(40) | no | UNVERIFIED |
 | created_at | DATETIME | no | <callable default> |
 
@@ -296,8 +298,10 @@ Staff MFA secrets are AES-GCM encrypted with the configured 32-byte STAFF_MFA_EN
 | document_hash | VARCHAR(64) | yes | — |
 | effective_from | DATETIME | yes | — |
 | effective_until | DATETIME | yes | — |
-| retrieved_at | DATETIME | no | <callable default> |
+| retrieved_at | DATETIME | yes | — |
 | verified_at | DATETIME | yes | — |
+| reviewed_on | DATE | yes | — |
+| verified_on | DATE | yes | — |
 | verification_status | VARCHAR(32) | no | DRAFT |
 | supersedes_id | VARCHAR(36) | yes | — |
 | superseded_by_id | VARCHAR(36) | yes | — |

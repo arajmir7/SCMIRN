@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import timedelta
+from datetime import date, timedelta
 
 import pytest
 from sqlalchemy import text
@@ -148,6 +148,55 @@ def test_cyber_portal_draft_is_gated_and_four_verified_services_are_listed(routi
     assert source.get_json()["document_hash"] is None
     assert evidence.status_code == 200
     assert evidence.get_json()["status"] == "SOURCE_UNVERIFIED"
+
+
+def test_catalog_preserves_date_only_review_without_claiming_seed_time(routing_app, routing_client):
+    with routing_app.app_context():
+        source = OfficialSource.query.filter_by(source_key="nch-portal-about").one()
+        service = GovernmentService.query.filter_by(service_key="national-consumer-helpline").one()
+        assert source.retrieved_at is None
+        assert source.verified_at is None
+        assert source.reviewed_on == date(2026, 10, 2)
+        assert source.verified_on == date(2026, 10, 2)
+        assert service.last_verified is None
+        assert service.last_verified_on == date(2026, 10, 2)
+
+    source_response = routing_client.get("/api/v1/sources/nch-portal-about")
+    assert source_response.status_code == 200
+    source_payload = source_response.get_json()
+    assert source_payload["retrieved_at"] is None
+    assert source_payload["verified_at"] is None
+    assert source_payload["reviewed_on"] == "2026-10-02"
+    assert source_payload["verified_on"] == "2026-10-02"
+
+    services = routing_client.get("/api/v1/services").get_json()["items"]
+    consumer = next(item for item in services if item["service_id"] == "national-consumer-helpline")
+    assert consumer["last_verified"] is None
+    assert consumer["last_verified_on"] == "2026-10-02"
+    assert {source["source_id"] for source in consumer["sources"]} == {
+        "nch-portal-about",
+        "nch-portal-contact",
+    }
+    assert all(source["verified_on"] == "2026-10-02" for source in consumer["sources"])
+
+
+def test_unimplemented_connector_modes_are_not_exposed_as_routes_or_handoffs(routing_app, routing_client):
+    with routing_app.app_context():
+        service_id = GovernmentService.query.filter_by(service_key="national-consumer-helpline").one().id
+        # Registry versions are immutable through the ORM; use SQL here to
+        # represent an invalid/unsupported persisted capability fixture.
+        db.session.execute(
+            text("UPDATE government_services SET integration_mode = 'CONNECTED' WHERE id = :id"),
+            {"id": service_id},
+        )
+        db.session.commit()
+
+    result = _triage(routing_client, "I need help with a consumer grievance").get_json()
+    assert result["outcome"] == "ROUTE_UNCERTAIN"
+    assert result["service"] is None
+    assert result["official_handoff"] is None
+    listed = routing_client.get("/api/v1/services").get_json()["items"]
+    assert all(item["service_id"] != "national-consumer-helpline" for item in listed)
 
 
 @pytest.mark.parametrize(

@@ -69,7 +69,7 @@ def _assert_at_head():
     with db.engine.connect() as connection:
         assert connection.exec_driver_sql(
             "SELECT version_num FROM alembic_version"
-        ).scalar_one() == "20261003_01"
+        ).scalar_one() == "20261003_02"
         staff_tables = {"tenants", "staff_users", "staff_mfa_factors", "staff_mfa_challenges", "staff_role_grants", "staff_sessions", "staff_cases", "staff_case_events", "staff_audit_events"}
 
         def include_object(obj, name, object_type, reflected, compare_to):
@@ -171,5 +171,75 @@ def test_source_lifecycle_migration_translates_legacy_statuses(migration_app, le
                     'Invalid lifecycle fixture', 'TEST', 'TEST',
                     'https://example.test/source', '2026-10-02 00:00:00', 'UNAVAILABLE'
                 )
-                """
+            """
+        )
+
+
+@pytest.mark.integration
+def test_catalog_migration_replaces_import_timestamps_with_recorded_review_date(migration_app):
+    _upgrade_to("20261003_01")
+    with db.engine.begin() as connection:
+        connection.exec_driver_sql(
+            """
+            INSERT INTO official_sources (
+                id, source_key, version, authority, title, source_type,
+                jurisdiction, canonical_url, document_hash, retrieved_at,
+                verified_at, verification_status, reviewer, parser_version
+            ) VALUES (
+                'catalog-source', 'catalog-source', 1, 'Test authority',
+                'Catalog source fixture', 'TEST', 'TEST',
+                'https://example.test/source', ?, '2026-10-03 12:45:00',
+                '2026-10-03 12:50:00', 'VERIFIED', 'catalog review',
+                'official-catalog-v1'
             )
+            """,
+            ("a" * 64,),
+        )
+        connection.exec_driver_sql(
+            """
+            INSERT INTO authorities (
+                id, authority_key, version, canonical_name, authority_level,
+                jurisdiction, official_source_id, status, created_at
+            ) VALUES (
+                'catalog-authority', 'catalog-authority', 1,
+                'Test authority', 'OTHER', '{}', 'catalog-source', 'ACTIVE',
+                '2026-10-03 12:00:00'
+            )
+            """
+        )
+        connection.exec_driver_sql(
+            """
+            INSERT INTO government_services (
+                id, service_key, version, canonical_name, authority_id,
+                authority_level, jurisdiction, geography, exclusions, issue_types,
+                required_evidence, recommended_evidence, optional_evidence,
+                official_url, integration_mode, identity_assurance_required,
+                last_verified, status, created_at
+            ) VALUES (
+                'catalog-service', 'catalog-service', 1, 'Test service',
+                'catalog-authority', 'OTHER', '{}', '{}', '[]', '[]', '[]',
+                '[]', '[]', 'https://example.test/source',
+                'OFFICIAL_HANDOFF_ONLY', 'A0', '2026-10-03 12:50:00',
+                'ACTIVE', '2026-10-03 12:00:00'
+            )
+            """
+        )
+        connection.exec_driver_sql(
+            "INSERT INTO government_service_sources (service_version_id, source_id) VALUES ('catalog-service', 'catalog-source')"
+        )
+
+    _upgrade_to_head()
+
+    with db.engine.connect() as connection:
+        source = connection.exec_driver_sql(
+            "SELECT retrieved_at, verified_at, reviewed_on, verified_on FROM official_sources WHERE id = 'catalog-source'"
+        ).one()
+        service = connection.exec_driver_sql(
+            "SELECT last_verified, last_verified_on FROM government_services WHERE id = 'catalog-service'"
+        ).one()
+    assert source.retrieved_at is None
+    assert source.verified_at is None
+    assert source.reviewed_on == "2026-10-02"
+    assert source.verified_on == "2026-10-02"
+    assert service.last_verified is None
+    assert service.last_verified_on == "2026-10-02"

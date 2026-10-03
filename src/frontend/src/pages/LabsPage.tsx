@@ -29,7 +29,7 @@ export function LabsPage() {
         <div>
           <p className="text-uppercase small fw-semibold text-primary mb-2">Prototype workspaces</p>
           <h1 id="labs-title" className="display-6 fw-bold mb-2">SCMIRN Labs</h1>
-          <p className="text-muted mb-0">Explore interface concepts and sample workflows. They are separate from the source-verified public route guidance and the authenticated staff API.</p>
+          <p className="text-muted mb-0">Explore interface concepts and sample workflows. They are separate from the source-reviewed public service directory and the authenticated staff API.</p>
         </div>
         <button type="button" className="btn btn-outline-primary" onClick={openReport}>Create a sample record</button>
       </header>

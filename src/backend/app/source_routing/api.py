@@ -66,7 +66,7 @@ def get_services():
 def get_service(service_id):
     service = next((item for item in list_services() if item["service_id"] == service_id), None)
     if service is None:
-        return _error("Service not found in the active, source-verified registry.", 404)
+        return _error("Service not found in the active, source-reviewed handoff directory.", 404)
     return jsonify(service)
 
 
@@ -109,6 +109,8 @@ def get_source(source_key):
         "effective_until": source.effective_until.isoformat() if source.effective_until else None,
         "retrieved_at": source.retrieved_at.isoformat() if source.retrieved_at else None,
         "verified_at": source.verified_at.isoformat() if source.verified_at else None,
+        "reviewed_on": source.reviewed_on.isoformat() if source.reviewed_on else None,
+        "verified_on": source.verified_on.isoformat() if source.verified_on else None,
         "verification_status": source.verification_status,
         "supersedes": source.supersedes_id,
         "superseded_by": source.superseded_by_id,

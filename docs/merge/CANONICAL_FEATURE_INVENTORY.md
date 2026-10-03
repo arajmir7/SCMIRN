@@ -34,7 +34,7 @@ The descriptions above record the pre-change baseline. The following changes pre
 
 | Area | Implemented update | Evidence / remaining boundary |
 |---|---|---|
-| Assistant and rights entry | Replaced legacy AI chat and `/api/rights/analyze` UI with explicit-consent source-gated triage, deterministic result, provenance and `NOT_SUBMITTED` status. | `AssistantPanel.tsx`, `resolution.ts`, `test_source_routing.py`, `migration.spec.ts`; no verified official service currently exists. |
+| Assistant and rights entry | Replaced legacy AI chat and `/api/rights/analyze` UI with explicit-consent source-gated triage, deterministic result, provenance and `NOT_SUBMITTED` status. | `AssistantPanel.tsx`, `resolution.ts`, `test_source_routing.py`, `migration.spec.ts`; historical inventory statement from the 2026-10-01 baseline. The current repository includes four date-reviewed handoff records, not live source verification. |
 | Public claims | Removed user counts, resolution metrics, AI/legal promises, live/government coverage claims and landlord legal-answer mockup. | `HomePage.tsx`, `CLAIMS_REGISTER.md`; layout composition remains canonical. |
 | Demo record reporting | Added SCMIRN-only disclosure, sensitive-data warning, explicit consent, optional exact-location choice, and no AI/agency filing claim. Production APIs are gated. | `ReportIssueModal.tsx`, `issues.py`; development demo still stores text/media, so use synthetic data only. |
 | Map and funding | Removed fundraising controls and external image loads; disclosed tile providers; location requires explicit request; unmatched external search requires opt-in. | `CivicIssueMap.tsx`, `migration.spec.ts`; OpenStreetMap/Esri map tiles remain third-party requests. |

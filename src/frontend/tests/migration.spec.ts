@@ -226,6 +226,98 @@ test('source route and document API errors are shown to users', async ({ page })
   await expect(dialog.getByRole('alert')).toContainText('Document service unavailable.');
 });
 
+test('service directory shows dated source provenance and only safe handoff links', async ({ page }) => {
+  const source = {
+    source_id: 'nch-portal-about',
+    version: 1,
+    source_type: 'OFFICIAL_FAQ',
+    title: 'National Consumer Helpline scope and grievance process',
+    authority: 'Department of Consumer Affairs',
+    canonical_url: 'https://consumerhelpline.gov.in/public/index.php/about',
+    document_hash: 'a'.repeat(64),
+    verification_status: 'VERIFIED',
+    verified_at: null,
+    reviewed_on: '2026-10-02',
+    verified_on: '2026-10-02',
+  };
+  const service = {
+    service_id: 'national-consumer-helpline',
+    version: 1,
+    canonical_name: 'National Consumer Helpline consumer grievance handoff',
+    description: 'Pre-litigation consumer grievance channel; no remedy is guaranteed.',
+    authority: 'Department of Consumer Affairs',
+    authority_level: 'CENTRAL',
+    jurisdiction: { country: 'IN' },
+    eligibility: 'Consumer issues can be lodged through the official NCH channels.',
+    exclusions: ['Not a court filing.'],
+    issue_types: ['CONSUMER_GRIEVANCE'],
+    required_evidence: [],
+    recommended_evidence: [],
+    optional_evidence: [],
+    application_channel: 'https://consumerhelpline.gov.in/',
+    grievance_channel: 'tel:1915',
+    official_url: 'https://consumerhelpline.gov.in/public/index.php/about',
+    integration_mode: 'OFFICIAL_HANDOFF_ONLY',
+    identity_assurance_required: 'A0',
+    official_sla: null,
+    source_ids: ['nch-portal-about'],
+    sources: [source],
+    effective_from: null,
+    effective_until: null,
+    last_verified: null,
+    last_verified_on: '2026-10-02',
+    status: 'ACTIVE',
+  };
+  const unsafe = {
+    ...service,
+    service_id: 'unsafe-test-service',
+    canonical_name: 'Unsafe test service',
+    description: 'A synthetic record with a destination host that does not match its source.',
+    eligibility: null,
+    issue_types: [],
+    application_channel: 'https://spoof.example.test/submit',
+  };
+  let directoryRequests = 0;
+  await page.route('**/api/v1/services', async (route) => {
+    directoryRequests += 1;
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ items: [service, unsafe], count: 2 }) });
+  });
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+
+  await page.goto('/services');
+  await expect(page).toHaveTitle('Service Directory | SCMIRN');
+  await expect(page.getByRole('heading', { name: 'Browse service handoffs' })).toBeVisible();
+  await expect(page.getByText('internal review date 2026-10-02')).toHaveCount(2);
+  await expect(page.getByRole('link', { name: 'Open official service channel' })).toHaveAttribute('href', 'https://consumerhelpline.gov.in/');
+  await expect(page.getByText('No destination passes this record’s source, hash, status, date, and host checks.')).toBeVisible();
+  await page.getByText('View source URL and content hash').first().click();
+  await expect(page.getByText('a'.repeat(64)).first()).toBeVisible();
+
+  await page.getByLabel('Search services').fill('consumer grievance');
+  await expect(page.getByText('Showing 1 of 2 catalogue entries.')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Unsafe test service' })).toHaveCount(0);
+  expect(directoryRequests).toBe(1);
+  expect(errors).toEqual([]);
+});
+
+test('service directory reports unavailable catalogue and supports retry', async ({ page }) => {
+  let requests = 0;
+  await page.route('**/api/v1/services', async (route) => {
+    requests += 1;
+    if (requests === 1) {
+      await route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ error: { message: 'Service unavailable.' } }) });
+      return;
+    }
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ items: [], count: 0 }) });
+  });
+  await page.goto('/services');
+  await expect(page.getByRole('alert')).toContainText('The service catalogue could not be loaded.');
+  await page.getByRole('button', { name: 'Refresh directory' }).click();
+  await expect(page.getByRole('heading', { name: 'No handoffs are currently listed' })).toBeVisible();
+  expect(requests).toBe(2);
+});
+
 test('heatmap markers filter and search, and all migrated routes survive direct navigation', async ({ page }) => {
   let donationPosted = false;
   await page.route('**/api/donate', async (route) => {

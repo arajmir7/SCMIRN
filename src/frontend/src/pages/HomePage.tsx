@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCivicUi } from '@/app/UiContext';
 import { CivicIssueMap } from '@/components/map/CivicIssueMap';
 import { useIssues } from '@/hooks/useIssues';
@@ -7,7 +7,7 @@ import { useIssues } from '@/hooks/useIssues';
 const pillars = [
   {
     id: 'problem_solver', icon: 'fa-route', title: '🧭 Civic Guide',
-    copy: 'Describe a civic problem and check for a route supported by a current, verified source. Unverified cases return no official handoff.',
+    copy: 'Describe a civic problem and check for a route backed by a dated internal review of an official source. Unverified cases return no handoff.',
     points: ['Source-linked route checks', 'Consent before processing', 'No government filing'],
   },
   {
@@ -16,8 +16,8 @@ const pillars = [
     points: ['Sample directory records', 'No live agency feed', 'Verify details independently'],
   },
   {
-    id: 'rights_engine', icon: 'fa-gavel', title: '⚖️ Source-Verified Route Guidance',
-    copy: 'Review source-gated route guidance. SCMIRN does not provide legal advice or determine your rights.',
+    id: 'rights_engine', icon: 'fa-gavel', title: '⚖️ Date-Reviewed Route Guidance',
+    copy: 'Review source-linked route guidance and the recorded review date. SCMIRN does not provide legal advice or determine your rights.',
     points: ['Official sources required', 'No legal conclusions', 'Human advice may be needed'],
   },
   {
@@ -52,7 +52,7 @@ const documentCards = [
 ] as const;
 
 const impactItems = [
-  { title: 'For Citizens', tone: 'primary', copy: 'Check whether a described civic issue has a route backed by a verified official source. Guidance is not legal advice.' },
+  { title: 'For Citizens', tone: 'primary', copy: 'Check whether a described civic issue has a route backed by a dated internal review of an official source. Guidance is not legal advice.' },
   { title: 'For Government', tone: 'success', copy: 'Explore a technical prototype. It has no government deployment, agency feed, or operational service connection.' },
   { title: 'For Media', tone: 'info', copy: 'Review local demo records and their limitations. No report is independently verified or live.' },
   { title: 'For Investors', tone: 'warning', copy: 'Assess a pre-deployment prototype. No adoption, impact, revenue, or return metrics are verified.' },
@@ -103,7 +103,7 @@ export function HomePage() {
                 What happened?<br /><span className="hero-accent">Find the next step.</span>
               </h1>
               <p className="lead mb-4 opacity-90 hero-lead">
-                Describe the problem in your own words. SCMIRN checks for a currently verified official service and explains when it cannot confirm a route. It does not file a request.
+                Describe the problem in your own words. SCMIRN checks whether a dated, internally reviewed official source supports a handoff and explains when it cannot confirm one. It does not file a request.
               </p>
               <form onSubmit={continueToSourceCheck} noValidate className="bg-white text-dark rounded-4 p-3 p-md-4 shadow-sm mb-4" aria-label="Start with your problem">
                 <label className="form-label fw-semibold" htmlFor="home-problem-query">What happened?</label>
@@ -120,10 +120,11 @@ export function HomePage() {
                   <i className="fas fa-route me-2 text-primary" aria-hidden="true" />Open Civic Guide
                 </button>
                 <button type="button" className="btn btn-outline-light btn-lg px-4" onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}>Explore Features</button>
+                <Link to="/services" className="btn btn-outline-light btn-lg px-4">Browse Service Directory</Link>
               </div>
               <div className="row g-4 mt-2">
                 <div className="col-md-4"><div className="floating-card"><div className="h3 fw-bold text-info mb-1">Consent</div><small className="opacity-75">Required before route check</small></div></div>
-                <div className="col-md-4"><div className="floating-card" style={{ animationDelay: '1s' }}><div className="h3 fw-bold text-warning mb-1">Source</div><small className="opacity-75">Verified before handoff</small></div></div>
+                <div className="col-md-4"><div className="floating-card" style={{ animationDelay: '1s' }}><div className="h3 fw-bold text-warning mb-1">Source</div><small className="opacity-75">Review date and hash shown</small></div></div>
                 <div className="col-md-4"><div className="floating-card" style={{ animationDelay: '2s' }}><div className="h3 fw-bold text-success mb-1">No filing</div><small className="opacity-75">You remain in control</small></div></div>
               </div>
             </div>
@@ -132,7 +133,7 @@ export function HomePage() {
                 <img src="/images/hero-civic.jpg" alt="Citizens working together on civic technology" className="img-fluid rounded-4 shadow-lg hero-photo" />
                 <div className="position-absolute bottom-0 start-0 m-3 p-3 bg-white rounded-3 shadow-lg text-dark hero-status-card">
                   <div className="d-flex align-items-center gap-2 mb-2"><div className="bg-warning rounded-circle hero-status-dot" /><small className="fw-bold text-warning">Prototype · Source Check Required</small></div>
-                  <small className="text-muted">Some routes have verified public sources. Each handoff is checked at request time.</small>
+                  <small className="text-muted">Each listed handoff includes an internal source-review date. Check the official page for current instructions.</small>
                 </div>
               </div>
             </div>
@@ -160,16 +161,16 @@ export function HomePage() {
             <h2 className="display-5 fw-bold mb-3">Source-Gated Route Check</h2>
             <p className="lead text-muted mb-4">Check for a source-supported public-service route. The prototype does not decide legal rights or escalation deadlines.</p>
             <div className="d-flex flex-column gap-3">
-              <div className="p-3 rounded-3 bg-white border"><div className="fw-semibold mb-1">Source Verification</div><small className="text-muted">Only a currently verified official source can support a handoff.</small></div>
-              <div className="p-3 rounded-3 bg-white border"><div className="fw-semibold mb-1">Conservative Routing</div><small className="text-muted">The service abstains when no verified source supports a route.</small></div>
+              <div className="p-3 rounded-3 bg-white border"><div className="fw-semibold mb-1">Source Record</div><small className="text-muted">A handoff shows its reviewed source version, date, and content hash; it is not live page verification.</small></div>
+              <div className="p-3 rounded-3 bg-white border"><div className="fw-semibold mb-1">Conservative Routing</div><small className="text-muted">The service abstains when no dated internal source review supports a route.</small></div>
               <div className="p-3 rounded-3 bg-white border"><div className="fw-semibold mb-1">User-Controlled Next Step</div><small className="text-muted">SCMIRN does not submit requests or provide legal advice.</small></div>
             </div>
           </div>
           <div className="col-lg-6"><div className="bg-white border rounded-4 p-4 shadow-sm">
-            <h3 className="h5 fw-bold mb-3">Check for a Verified Route</h3>
-            <p className="small text-muted mb-3">Your description is sent for a consented, source-gated route check. SCMIRN does not analyze legal rights.</p>
+            <h3 className="h5 fw-bold mb-3">Check for a Source-Reviewed Route</h3>
+            <p className="small text-muted mb-3">If route checking is available, your description is sent after consent for deterministic matching. SCMIRN does not analyze legal rights. You can also browse the <Link to="/services">source-reviewed service directory</Link>.</p>
             <form onSubmit={continueToSourceCheck} noValidate>
-              <label className="visually-hidden" htmlFor="rights-query">Describe an issue to check for a verified route</label>
+              <label className="visually-hidden" htmlFor="rights-query">Describe an issue to check for a source-reviewed route</label>
               <textarea id="rights-query" className="form-control mb-3 resize-none" rows={4} placeholder="Describe the civic issue. Do not include account numbers, Aadhaar, passwords, or OTPs." value={rightsQuery} onChange={(event) => setRightsQuery(event.target.value)} />
               <button type="submit" className="btn btn-dark w-100 mb-3" disabled={!rightsQuery.trim()}><i className="fas fa-route me-2" aria-hidden="true" />Continue to Route Check</button>
             </form>
@@ -201,7 +202,7 @@ export function HomePage() {
             <h2 className="display-5 fw-bold mb-4">Civic Guide</h2>
             <p className="lead text-muted mb-4">A consent-based, source-gated route checker. It does not provide legal advice or contact government agencies.</p>
             <div className="d-flex flex-column gap-3">
-              <div className="d-flex align-items-start gap-3"><div className="bg-primary bg-opacity-10 p-2 rounded"><i className="fas fa-route text-primary" aria-hidden="true" /></div><div><h3 className="h6 fw-bold mb-1">Source-Gated Route Check</h3><small className="text-muted">An unverified source results in abstention</small></div></div>
+              <div className="d-flex align-items-start gap-3"><div className="bg-primary bg-opacity-10 p-2 rounded"><i className="fas fa-route text-primary" aria-hidden="true" /></div><div><h3 className="h6 fw-bold mb-1">Dated Source Review</h3><small className="text-muted">The catalogue shows its review date and does not claim live page verification</small></div></div>
               <div className="d-flex align-items-start gap-3"><div className="bg-success bg-opacity-10 p-2 rounded"><i className="fas fa-shield-alt text-success" aria-hidden="true" /></div><div><h3 className="h6 fw-bold mb-1">Privacy Notice</h3><small className="text-muted">Avoid sensitive identifiers; consent is required</small></div></div>
               <div className="d-flex align-items-start gap-3"><div className="bg-warning bg-opacity-10 p-2 rounded"><i className="fas fa-hand-paper text-warning" aria-hidden="true" /></div><div><h3 className="h6 fw-bold mb-1">No Agency Submission</h3><small className="text-muted">You choose any next step outside this prototype</small></div></div>
             </div>
@@ -211,7 +212,7 @@ export function HomePage() {
             <div className="d-flex align-items-center gap-2 mb-3 border-bottom border-secondary pb-2"><div className="bg-warning rounded-circle hero-status-dot" /><small className="text-light">Example · No live agency connection</small></div>
             <div className="bg-secondary bg-opacity-25 rounded-3 p-3 mb-3"><div className="text-info small mb-1"><i className="fas fa-user me-1" aria-hidden="true" />Example input</div><div className="text-light">"I need help with an online payment I did not authorize."</div></div>
             <div className="bg-primary bg-opacity-25 rounded-3 p-3 mb-3 ms-4"><div className="text-primary small mb-1 text-end">Consent</div><div className="text-light text-end">Required before route matching</div></div>
-            <div className="bg-secondary bg-opacity-25 rounded-3 p-3"><div className="text-info small mb-1"><i className="fas fa-route me-1" aria-hidden="true" />Safe default</div><div className="text-light small"><strong>No verified source available</strong><br />The service abstains from recommending an official destination.<br /><br /><strong>No submission is made.</strong></div></div>
+            <div className="bg-secondary bg-opacity-25 rounded-3 p-3"><div className="text-info small mb-1"><i className="fas fa-route me-1" aria-hidden="true" />Safe default</div><div className="text-light small"><strong>No source record passes the handoff checks</strong><br />The service abstains from recommending an official destination.<br /><br /><strong>No submission is made.</strong></div></div>
           </div></div>
         </div></div>
       </section>
@@ -246,7 +247,7 @@ export function HomePage() {
             <div className="col-md-3"><div className="stat-number">1</div><p className="opacity-75">Explicit consent before route matching</p></div>
             <div className="col-md-3"><div className="stat-number">0</div><p className="opacity-75">Government submissions by SCMIRN</p></div>
             <div className="col-md-3"><div className="stat-number">30d</div><p className="opacity-75">Route decision metadata retention limit</p></div>
-            <div className="col-md-3"><div className="stat-number">Source</div><p className="opacity-75">Verified before an official handoff</p></div>
+            <div className="col-md-3"><div className="stat-number">Source</div><p className="opacity-75">Internal review date and content hash shown</p></div>
           </div>
         </div>
       </section>

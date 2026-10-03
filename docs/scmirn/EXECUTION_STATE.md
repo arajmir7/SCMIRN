@@ -104,7 +104,7 @@ Build a modular monolith that accepts a citizen's problem in plain language, use
 4. Implement a private scanned evidence vault and tenant-bound retention/deletion before accepting files.
 5. Add multilingual/adversarial routing evaluation, accessibility verification, observability, performance, backup/restore, and DR evidence.
 
-## CURRENT STATUS (2026-10-03)
+## PRIOR CANDIDATE STATUS (2026-10-03, before source-review date precision)
 
 The release verdict remains **`NOT PRODUCTION READY`**. The current schema has
 35 mapped tables and 471 columns. The data-governance registry contains 294
@@ -146,3 +146,30 @@ across 73 unique advisories, no frontend image vulnerabilities, and six open
 infrastructure findings. The two CycloneDX SBOMs are package inventories only,
 not vulnerability analysis or signed provenance. The result is partial and
 does not close ENG-005.
+
+## CURRENT UPDATE (2026-10-03)
+
+The source-review precision migration is `20261003_02`: 35 mapped tables and
+474 columns. Governance parity remains 294 candidate fields (273 accountable
+approvals pending, 21 explicit exemptions). Catalog import time is no longer
+reported as retrieval or verification time. Catalog service dates are shown
+only when every linked imported source is marked `VERIFIED`; they remain
+internal review metadata, not live freshness.
+
+The public `/services` page now provides a searchable directory of the four
+date-reviewed `OFFICIAL_HANDOFF_ONLY` catalog records, including scope,
+exclusions, source links/hashes, explicit limitations, and unavailable/retry
+states. Backend routing and listing reject every integration mode except
+`OFFICIAL_HANDOFF_ONLY` until an authorized connector capability is actually
+implemented. It remains a handoff directory: no request is submitted and no
+official receipt/status is produced.
+
+Latest local verification after this update: backend **117 passed** with the
+full migration chain and tenant/RLS integration enabled against disposable
+PostgreSQL 16 (118 existing deprecation warnings); frontend typecheck and
+production build passed; **15 Playwright flows passed**; governance parity
+passed at 35/474/294; OpenAPI 3.1 route parity passed with 15 allowed route
+patterns and 99 other operations returning 503. This is local evidence only.
+The production candidate gate remains blocked by open engineering and external
+dependencies; no deployed service, live source refresh, or external approval
+was used.

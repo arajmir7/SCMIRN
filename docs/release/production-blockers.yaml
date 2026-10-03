@@ -175,7 +175,7 @@ blockers:
     production_blocking: true
     owner_role: PRIVACY_ENGINEER
     source_requirement: Workstreams 21 and 22; engineering inventory is not a lawful-purpose approval.
-    affected_component: 471 mapped fields, retention/deletion implementation, access/export/correction/grievance request paths.
+    affected_component: 474 mapped fields, retention/deletion implementation, access/export/correction/grievance request paths.
     verification_command: PYTHONPATH=src/backend python scripts/check_data_governance.py
     required_evidence: docs/assurance/evidence/data-minimization-and-rights.json
     last_verified_commit: null

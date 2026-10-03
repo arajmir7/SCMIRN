@@ -1,1 +1,1 @@
-"""Consent-gated, source-verified civic routing capability."""
+"""Consent-gated, source-reviewed civic handoff capability."""

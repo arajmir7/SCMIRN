@@ -6,7 +6,7 @@ SCMIRN is being developed as a citizen-resolution and government-service interop
 
 ## Current product state
 
-The React home page begins with “What happened?” and offers consent-gated deterministic route guidance. The Flask source-routing API records a bounded decision and emits a handoff only when service, authority, source hash/status, date, geography, and host checks pass. Four currently verified public handoffs cover NCH consumer grievances, CPGRAMS service-delivery grievances, Central-authority RTI, and NALSA/Tele-Law access. These links do not submit information or create an official acknowledgement. The cybercrime candidate remains hidden until its public endpoint passes TLS/source review.
+The React home page begins with “What happened?” and offers consent-gated deterministic route guidance. A new `/services` directory lists active `OFFICIAL_HANDOFF_ONLY` records and displays their source URLs, hashes, scope, exclusions, and 2026-10-02 internal review dates. These dates describe the catalog review; they are not live checks, government endorsements, or proof that a portal has not changed. The four listed public handoffs cover NCH consumer grievances, CPGRAMS service-delivery grievances, Central-authority RTI, and NALSA/Tele-Law access. They do not submit information or create an official acknowledgement. The cybercrime candidate remains hidden because one linked portal source is still `DRAFT` after TLS validation failed.
 
 Other legacy workspaces remain demo or draft capabilities. They do not constitute live government records, case tracking, legal advice, or connected agency services. See [integration status](INTEGRATION_MATRIX.md) and [pilot readiness](PILOT_PROPOSAL.md).
 

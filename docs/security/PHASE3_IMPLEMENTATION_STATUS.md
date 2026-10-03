@@ -121,3 +121,23 @@ high KMS-policy finding for the S3 access-log destination, and one low finding
 for that destination's server-access-log setting. The full release scan remains
 open: the candidate images are local ARM64 builds, other required images are not
 covered, DAST had no authorized target, and no signed release provenance exists.
+
+## 2026-10-03 source-review and service-directory continuation
+
+Alembic head is now `20261003_02`. Revision `20261003_02` records date-only
+source review and verification fields, clears the false seed-time retrieval /
+verification timestamps on `official-catalog-v1` rows, and clears exact
+service verification timestamps for those rows. The internal review date is
+retained only for services whose linked catalog sources are all marked
+`VERIFIED`. No exact retrieval time or live currentness is inferred. Schema
+governance parity now covers 35 tables and 474 columns; the 294 candidate
+fields and outstanding external approvals are unchanged.
+
+The public frontend now has a searchable `/services` directory backed by the
+read-only service API. It displays scope, exclusions, source URLs and hashes,
+and internal review dates, with explicit limits and failure states. Backend
+route selection and the directory now accept only `OFFICIAL_HANDOFF_ONLY`;
+other integration modes remain unroutable until an authorized connector
+workflow exists. The directory does not submit information or create an
+official acknowledgement. This closes neither source drift/reviewer lifecycle
+nor privacy/legal, accessibility, or government approval gates.

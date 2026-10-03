@@ -4,7 +4,7 @@
 
 ## Verified in the current frontend suite
 
-- Thirteen Playwright browser tests pass, covering selected primary flows, labels/disclosures, error/demo behavior, staff/Labs states, selected focus behavior and role-limited controls.
+- Fifteen Playwright browser tests pass, covering selected primary flows, service-directory provenance and failure/retry states, labels/disclosures, demo behavior, staff/Labs states, selected focus behavior and role-limited controls.
 - The home page responsive overflow check includes widths 320, 360, 375, 390, 430, 768, 1024, 1280, 1366, 1440, 1536, 1920, and 2560 pixels. Platform overflow is checked at seven representative widths; a separate narrow staff state was visually reviewed.
 - Selected controls include accessible labels and the page has a skip-link implementation. The strict frontend-design-premium static audit reports zero findings; this is not an accessibility conformance scan.
 

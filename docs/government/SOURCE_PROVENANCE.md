@@ -19,6 +19,11 @@ On 2026-10-02 the catalog pages were fetched over HTTPS with standard TLS certif
 | [NALSA legal services FAQ](https://nalsa.gov.in/faqs/) | `VERIFIED` | Official application paths, listed eligibility categories, and helpline 15100; competent institutions decide the application. | `456b6cd17ca1facda26359cae7bd0d8e1174e0f719c0841ad698f24daa8bc4d4` |
 | [Tele-Law scheme overview](https://www.tele-law.in/overview-of-tele-law.html) | `VERIFIED` | Tele-Law describes access to legal information and advice through panel lawyers using CSC facilities. | `72fba644b3dd5f3c991d68c0860cd232224f4c12eaab6b8ab8dc3c8db75d19d0` |
 | [Tele-Law terms](https://www.tele-law.in/terms-conditions.html) | `VERIFIED` | Terms caution that portal content can change and official law/instruments prevail. | `552f44849b47135dfce553273e0a2f768981dec18a67aa18bc406b961d8caa5b` |
+
+The catalog records an internal review date of 2026-10-02. These hashes and
+statuses are static catalog evidence; the request path does not fetch the pages,
+and there is no scheduled drift monitor or maker-checker publication workflow.
+They do not establish currentness, legal approval, or agency endorsement.
 | [Tele-Law privacy policy](https://www.tele-law.in/privacy-policy.html) | `VERIFIED` | The destination describes applicant data collected by its own service; SCMIRN does not collect or forward those fields. | `cfb5f5d4ca881c05345012ea8f7f7439762b9c5359090a83b8561fc57c63a3b3` |
 
 ## Active handoff candidates
@@ -33,7 +38,7 @@ The importer seeds exactly five service records. Four pass the verified-source a
 | NALSA / Tele-Law | Links to legal services and legal-advice channels | SCMIRN does not determine eligibility, provide advice, send an application, or collect applicant documents. |
 | National cybercrime portal | Online financial cyber fraud candidate | Hidden until the portal's TLS and source content can be reviewed successfully. |
 
-The public service API suppresses services unless every linked source is currently `VERIFIED`, has a valid 64-character digest and verification time, is in its effective window, and all web channels share an official source host. This yields four visible candidates today. Route rules are deterministic phrase matches and remain subject to abstention; a match is not an official filing.
+The public service API suppresses services unless every linked source has catalog status `VERIFIED`, a valid 64-character digest, a recorded review or verification date, is within its effective window, and all web channels share an official source host. The request path does not fetch official pages or establish live freshness. This yields four visible handoff candidates from the checked-in catalog. Route rules are deterministic phrase matches and remain subject to abstention; a match is not an official filing.
 
 ## Still required
 
