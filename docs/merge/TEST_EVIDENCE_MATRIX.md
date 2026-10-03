@@ -143,7 +143,7 @@ Checks run locally after adding the prototype-disclosed Labs routes and initial 
 
 Release status remains `NOT PRODUCTION READY`: data governance approvals, deployed identity/database validation, independent accessibility/security evidence and operations remain open.
 
-## Typed candidate gate — 2026-10-03
+## Prior typed candidate gate — 2026-10-03
 
 The full candidate gate ran with a disposable PostgreSQL 16 integration URL
 against the current worktree.
@@ -164,3 +164,24 @@ candidate security scan and local image SBOMs are available in the
 They do not close published-release all-image scans, signed provenance,
 accessibility, restore/DR, operational, privacy/legal, or government
 authorization requirements.
+
+## Exact-commit candidate gate — 2026-10-03
+
+The latest local candidate gate ran against clean commit
+`8c9863f87ba4f045002b66b9b6c42f9b3b26bea6`, using a disposable PostgreSQL 16
+instance. A machine-readable record is available at
+[`candidate-gate-20261003-8c9863f.json`](../assurance/evidence/candidate-gate-20261003-8c9863f.json).
+
+| System / gate | Result | Limits |
+|---|---|---|
+| Backend and PostgreSQL migration/RLS | **117 passed, 118 deprecation warnings.** Migration reached `20261003_02`; integration exercised forced staff/evidence RLS, non-owner runtime role, cross-tenant/cross-case denial, pooled-connection transaction reset and migration downgrade/re-upgrade. | Disposable local PostgreSQL 16 only. The app-set tenant GUC is not an independent tenant credential; worker, signed-URL and quarantined legacy-record boundaries remain open. |
+| Governance inventory | **35 tables, 474 columns, 294 candidate fields.** | 273 field approvals, 35 table-governance decisions and one profile approval remain pending. |
+| Frontend | Typecheck and production build passed; **15 Playwright flows passed**. | Browser APIs and service directory responses are mocked; no route-wide axe or manual assistive-technology review. |
+| Feature parity / OpenAPI | **9/9 integrated, 0 unexplained.** OpenAPI 3.1 parity: 15 allowlisted route patterns; 99 other registered operations return 503. | Synthetic production mode only; triage/jurisdiction remain disabled. |
+| Candidate release gate | **Exit 1 as intended.** All executable local checks passed; the typed blocker gate reports 12 open blocking engineering controls and eight external dependencies. | No authorized production environment file, deployment secrets, or CA configuration; no deployment. |
+| Exact-commit security scans | **Not run.** | The existing partial scan covers older commit `51260c1`; it is not current evidence. Do not infer clearance. |
+
+The release verdict remains `NOT PRODUCTION READY`. The candidate gate is
+nonzero because engineering blockers remain open; privacy/legal, government,
+hosting, independent-assessment, and security-operations dependencies remain
+separately classified. No external requirement was marked complete.

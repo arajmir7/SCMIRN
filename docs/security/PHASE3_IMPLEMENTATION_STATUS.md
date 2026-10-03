@@ -141,3 +141,10 @@ other integration modes remain unroutable until an authorized connector
 workflow exists. The directory does not submit information or create an
 official acknowledgement. This closes neither source drift/reviewer lifecycle
 nor privacy/legal, accessibility, or government approval gates.
+
+Exact-commit verification is recorded for `8c9863f87ba4f045002b66b9b6c42f9b3b26bea6`:
+117 backend tests passed with disposable PostgreSQL 16 and 118 existing
+deprecation warnings; frontend typecheck/build passed; all 15 browser tests
+passed; governance and OpenAPI route parity passed. The candidate gate returned
+1 because 12 engineering controls remain open and no authorized deployment
+configuration was supplied. See the [machine-readable gate record](../assurance/evidence/candidate-gate-20261003-8c9863f.json).

@@ -172,4 +172,5 @@ passed at 35/474/294; OpenAPI 3.1 route parity passed with 15 allowed route
 patterns and 99 other operations returning 503. This is local evidence only.
 The production candidate gate remains blocked by open engineering and external
 dependencies; no deployed service, live source refresh, or external approval
-was used.
+was used. The exact tested commit and detailed results are recorded in the
+[machine-readable candidate gate evidence](../assurance/evidence/candidate-gate-20261003-8c9863f.json).
