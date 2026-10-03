@@ -1,0 +1,901 @@
+{
+  "assessment": {
+    "assessment_date": "2026-10-03",
+    "generated_utc": "2026-10-03T06:38:33+00:00",
+    "production_deployment_performed": false,
+    "release_verdict": "NOT PRODUCTION READY",
+    "report_is_release_closure_evidence": false,
+    "scope": "local candidate source and two locally built ARM64 container images",
+    "source_branch": "main",
+    "source_commit": "51260c1c58bc7beb7a562d1ea87ac75ed0ae9c03"
+  },
+  "candidate_gate": {
+    "backend_tests": {
+      "database": "disposable PostgreSQL 16",
+      "passed": 114,
+      "warnings": 118
+    },
+    "blockers": {
+      "blocked_external_dependency": 8,
+      "open_engineering": 12
+    },
+    "command": "SCMIRN_PYTHON=.venv-evidence/bin/python PYTHONPATH=src/backend SCMIRN_POSTGRES_RLS_TEST_URL=postgresql+psycopg://postgres@127.0.0.1:62400/postgres bash scripts/release_gate.sh --mode candidate",
+    "exit_code": 1,
+    "expected_blocking_result": "The ledger remains open and no authorized production configuration was supplied.",
+    "feature_parity": {
+      "integrated": 9,
+      "unexplained": 0
+    },
+    "frontend_production_build": "PASS",
+    "frontend_typecheck": "PASS",
+    "playwright_flows": {
+      "passed": 13
+    },
+    "production_route_gate": {
+      "allowlisted_route_patterns": 15,
+      "other_api_operations_returning_503": 99
+    }
+  },
+  "candidate_images": [
+    {
+      "architecture": "arm64",
+      "base_image": "python:3.11-slim-trixie@sha256:bab1b7ef4b450c81002278d035eff85ebe394ae94df904f7a3ba14f7e16e487b",
+      "configured_user": "10001:10001",
+      "cyclonedx_sbom": {
+        "component_count": 127,
+        "contains_vulnerability_analysis": false,
+        "path": "docs/assurance/evidence/images/backend-51260c1.cdx.json",
+        "sha256": "dda1ff1413af30f3d418ca733e8bc2c1eb97140ee0e0f768f5a970518653a6fc",
+        "size_bytes": 240961
+      },
+      "image_id": "sha256:51d5395683cf668244c2bc8d48c5c0781c92e2b04faf5015d767c2d87b0b22e5",
+      "image_ref": "scmirn-backend:candidate-51260c1",
+      "operating_system": "linux",
+      "release_image_published": false,
+      "signed_provenance_available": false,
+      "trivy_vulnerability_records_by_severity": {
+        "HIGH": 44,
+        "LOW": 60,
+        "MEDIUM": 60,
+        "UNKNOWN": 2
+      },
+      "unique_advisories": {
+        "CVE-2005-2541": {
+          "affected_packages": [
+            "tar"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2007-5686": {
+          "affected_packages": [
+            "login.defs",
+            "passwd"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2010-4756": {
+          "affected_packages": [
+            "libc-bin",
+            "libc6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2011-3374": {
+          "affected_packages": [
+            "apt",
+            "libapt-pkg7.0"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2011-4116": {
+          "affected_packages": [
+            "perl-base"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2013-4392": {
+          "affected_packages": [
+            "libsystemd0",
+            "libudev1"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2017-18018": {
+          "affected_packages": [
+            "coreutils"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2018-20796": {
+          "affected_packages": [
+            "libc-bin",
+            "libc6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2019-1010022": {
+          "affected_packages": [
+            "libc-bin",
+            "libc6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2019-1010023": {
+          "affected_packages": [
+            "libc-bin",
+            "libc6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2019-1010024": {
+          "affected_packages": [
+            "libc-bin",
+            "libc6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2019-1010025": {
+          "affected_packages": [
+            "libc-bin",
+            "libc6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2019-9192": {
+          "affected_packages": [
+            "libc-bin",
+            "libc6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2021-45346": {
+          "affected_packages": [
+            "libsqlite3-0"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2022-0563": {
+          "affected_packages": [
+            "bsdutils",
+            "libblkid1",
+            "liblastlog2-2",
+            "libmount1",
+            "libsmartcols1",
+            "libuuid1",
+            "login",
+            "mount",
+            "util-linux"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2023-31437": {
+          "affected_packages": [
+            "libsystemd0",
+            "libudev1"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2023-31438": {
+          "affected_packages": [
+            "libsystemd0",
+            "libudev1"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2023-31439": {
+          "affected_packages": [
+            "libsystemd0",
+            "libudev1"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2024-56433": {
+          "affected_packages": [
+            "login.defs",
+            "passwd"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2025-5278": {
+          "affected_packages": [
+            "coreutils"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2025-6141": {
+          "affected_packages": [
+            "libncursesw6",
+            "libtinfo6",
+            "ncurses-base",
+            "ncurses-bin"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2025-69720": {
+          "affected_packages": [
+            "libncursesw6",
+            "libtinfo6",
+            "ncurses-base",
+            "ncurses-bin"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "HIGH"
+        },
+        "CVE-2025-70873": {
+          "affected_packages": [
+            "libsqlite3-0"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2026-102010": {
+          "affected_packages": [
+            "gcc-14-base",
+            "libgcc-s1",
+            "libstdc++6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-102473": {
+          "affected_packages": [
+            "dash"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-102474": {
+          "affected_packages": [
+            "dash"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2026-15059": {
+          "affected_packages": [
+            "libsystemd0",
+            "libudev1"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-15534": {
+          "affected_packages": [
+            "perl-base"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-16742": {
+          "affected_packages": [
+            "libsystemd0",
+            "libudev1"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "HIGH"
+        },
+        "CVE-2026-18374": {
+          "affected_packages": [
+            "libc-bin",
+            "libc6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-18477": {
+          "affected_packages": [
+            "tar"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-18508": {
+          "affected_packages": [
+            "tar"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-19487": {
+          "affected_packages": [
+            "perl-base"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-19499": {
+          "affected_packages": [
+            "libc-bin",
+            "libc6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-19542": {
+          "affected_packages": [
+            "libc-bin",
+            "libc6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-27171": {
+          "affected_packages": [
+            "zlib1g"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-3184": {
+          "affected_packages": [
+            "bsdutils",
+            "libblkid1",
+            "liblastlog2-2",
+            "libmount1",
+            "libsmartcols1",
+            "libuuid1",
+            "login",
+            "mount",
+            "util-linux"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-40228": {
+          "affected_packages": [
+            "libsystemd0",
+            "libudev1"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2026-42250": {
+          "affected_packages": [
+            "libbz2-1.0"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-50812": {
+          "affected_packages": [
+            "libsqlite3-0"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-50813": {
+          "affected_packages": [
+            "libsqlite3-0"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-53910": {
+          "affected_packages": [
+            "diffutils"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2026-5435": {
+          "affected_packages": [
+            "libc-bin",
+            "libc6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-54369": {
+          "affected_packages": [
+            "libacl1"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "HIGH"
+        },
+        "CVE-2026-54370": {
+          "affected_packages": [
+            "libacl1"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-54371": {
+          "affected_packages": [
+            "libattr1"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-54411": {
+          "affected_packages": [
+            "libpam-modules",
+            "libpam-modules-bin",
+            "libpam-runtime",
+            "libpam0g"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-56391": {
+          "affected_packages": [
+            "coreutils"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2026-56392": {
+          "affected_packages": [
+            "coreutils"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "CVE-2026-5704": {
+          "affected_packages": [
+            "tar"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-6238": {
+          "affected_packages": [
+            "libc-bin",
+            "libc6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-6368": {
+          "affected_packages": [
+            "libc-bin",
+            "libc6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-6791": {
+          "affected_packages": [
+            "libc-bin",
+            "libc6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-76642": {
+          "affected_packages": [
+            "bsdutils",
+            "libblkid1",
+            "liblastlog2-2",
+            "libmount1",
+            "libsmartcols1",
+            "libuuid1",
+            "login",
+            "mount",
+            "util-linux"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "HIGH"
+        },
+        "CVE-2026-77117": {
+          "affected_packages": [
+            "libc-bin",
+            "libc6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-78408": {
+          "affected_packages": [
+            "bsdutils",
+            "libblkid1",
+            "liblastlog2-2",
+            "libmount1",
+            "libsmartcols1",
+            "libuuid1",
+            "login",
+            "mount",
+            "util-linux"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "HIGH"
+        },
+        "CVE-2026-78409": {
+          "affected_packages": [
+            "bsdutils",
+            "libblkid1",
+            "liblastlog2-2",
+            "libmount1",
+            "libsmartcols1",
+            "libuuid1",
+            "login",
+            "mount",
+            "util-linux"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "HIGH"
+        },
+        "CVE-2026-78410": {
+          "affected_packages": [
+            "bsdutils",
+            "libblkid1",
+            "liblastlog2-2",
+            "libmount1",
+            "libsmartcols1",
+            "libuuid1",
+            "login",
+            "mount",
+            "util-linux"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "HIGH"
+        },
+        "CVE-2026-80489": {
+          "affected_packages": [
+            "libc-bin",
+            "libc6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-82560": {
+          "affected_packages": [
+            "perl-base"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "UNKNOWN"
+        },
+        "CVE-2026-85091": {
+          "affected_packages": [
+            "zlib1g"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-8674": {
+          "affected_packages": [
+            "libc-bin",
+            "libc6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-86805": {
+          "affected_packages": [
+            "libc-bin",
+            "libc6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-89092": {
+          "affected_packages": [
+            "libc-bin",
+            "libc6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-9538": {
+          "affected_packages": [
+            "perl-base"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "HIGH"
+        },
+        "CVE-2026-95619": {
+          "affected_packages": [
+            "gcc-14-base",
+            "libgcc-s1",
+            "libstdc++6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-95818": {
+          "affected_packages": [
+            "libc-bin",
+            "libc6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "MEDIUM"
+        },
+        "CVE-2026-97399": {
+          "affected_packages": [
+            "libc-bin",
+            "libc6"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "TEMP-0290435-0B57B5": {
+          "affected_packages": [
+            "tar"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "TEMP-0517018-A83CE6": {
+          "affected_packages": [
+            "sysvinit-utils"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "TEMP-0628843-DBAD28": {
+          "affected_packages": [
+            "login.defs",
+            "passwd"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "TEMP-0841856-B18BAF": {
+          "affected_packages": [
+            "bash"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "LOW"
+        },
+        "TEMP-1147318-639065": {
+          "affected_packages": [
+            "liblzma5"
+          ],
+          "fixed_versions_reported": [],
+          "severity": "UNKNOWN"
+        }
+      },
+      "unique_advisory_count": 73
+    },
+    {
+      "architecture": "arm64",
+      "base_image": "nginx:stable-alpine3.24@sha256:0985e772fb9f729e6fa0980da05fca5d9c468e870eed43071545afa9d2e27d94; build stage node:24-alpine3.24@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1",
+      "configured_user": "10001",
+      "cyclonedx_sbom": {
+        "component_count": 72,
+        "contains_vulnerability_analysis": false,
+        "path": "docs/assurance/evidence/images/frontend-51260c1.cdx.json",
+        "sha256": "15655d454571b83d56bc59ae511de78603b317c80ff7ba96e5b4fefcc88223a8",
+        "size_bytes": 125779
+      },
+      "image_id": "sha256:53d5276d197a7c3e29c54a8eb5f8ece30ab87c71b2282fcaeb19eff450c5e09c",
+      "image_ref": "scmirn-frontend:candidate-51260c1",
+      "operating_system": "linux",
+      "release_image_published": false,
+      "signed_provenance_available": false,
+      "trivy_vulnerability_records_by_severity": {},
+      "unique_advisories": {},
+      "unique_advisory_count": 0
+    }
+  ],
+  "review_notes": [
+    "The backend candidate image retains high and medium Debian OS-package findings. They remain open; no critical findings were reported by this image scan.",
+    "The frontend candidate image had no vulnerabilities reported by Trivy 0.74.0 for this ARM64 build.",
+    "KSV-0125 findings remain open because the manifests use release-placeholder image references and no registry allowlist approval exists.",
+    "AWS-0132 remains unsuppressed: S3 access-log destination encryption uses SSE-S3 per AWS server-access logging guidance, while Trivy requests a customer-managed KMS key. This tooling conflict requires review and is not treated as an approved exception.",
+    "AWS-0089 remains open for the access-log destination bucket; no scanner ignore was added.",
+    "The backend and frontend Dockerfiles run apt/apk package upgrades from signed live distribution repositories. This hardens the built images but means future rebuilds can change image digests; every build must be rescanned and recorded.",
+    "Candidate images are ARM64 only, local, and unsigned. SBOMs are inventory reports, not release provenance."
+  ],
+  "schema_version": 1,
+  "semgrep_suppressions": [
+    {
+      "file": "src/backend/app/infrastructure/external/email_delivery.py",
+      "rationale": "The connection is restricted to the fixed api.sendgrid.com host and /v3/mail/send path, uses ssl.create_default_context(), and does not follow redirects; targeted tests assert the fixed TLS host/path and no-redirect behavior.",
+      "rule_id": "python.lang.security.audit.httpsconnection-detected.httpsconnection-detected"
+    }
+  ],
+  "tools": {
+    "bandit": {
+      "exit_code": 1,
+      "findings": [
+        {
+          "file": "src/backend/app/api/v1/ai_v1.py",
+          "line": 48,
+          "severity": "LOW",
+          "test_id": "B112"
+        },
+        {
+          "file": "src/backend/app/api/v1/ai_v1.py",
+          "line": 67,
+          "severity": "LOW",
+          "test_id": "B110"
+        },
+        {
+          "file": "src/backend/app/api/v1/twin.py",
+          "line": 103,
+          "severity": "LOW",
+          "test_id": "B311"
+        },
+        {
+          "file": "src/backend/app/api/v1/twin.py",
+          "line": 104,
+          "severity": "LOW",
+          "test_id": "B311"
+        },
+        {
+          "file": "src/backend/app/api/v1/twin.py",
+          "line": 105,
+          "severity": "LOW",
+          "test_id": "B311"
+        },
+        {
+          "file": "src/backend/app/core/services/ai_engine.py",
+          "line": 894,
+          "severity": "LOW",
+          "test_id": "B311"
+        }
+      ],
+      "findings_by_severity": {
+        "CONFIDENCE.HIGH": 6,
+        "CONFIDENCE.LOW": 0,
+        "CONFIDENCE.MEDIUM": 0,
+        "CONFIDENCE.UNDEFINED": 0,
+        "SEVERITY.HIGH": 0,
+        "SEVERITY.LOW": 6,
+        "SEVERITY.MEDIUM": 0,
+        "SEVERITY.UNDEFINED": 0,
+        "loc": 13169,
+        "nosec": 0,
+        "skipped_tests": 0
+      },
+      "version": "1.8.6"
+    },
+    "gitleaks": {
+      "commits_scanned": 1,
+      "exit_code": 0,
+      "scope": "single commit delta HEAD^..HEAD",
+      "secrets_found": 0,
+      "version": "8.30.1"
+    },
+    "npm_audit": {
+      "counts": {
+        "critical": 0,
+        "high": 0,
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "total": 0
+      },
+      "exit_code": 0,
+      "lockfile": "src/frontend/package-lock.json",
+      "lockfile_sha256": "0556ff7e169f9c332fb8c7a30c1251a72d50d20ce3ad505cad2c5f993bc48d8e",
+      "version": "11.13.0"
+    },
+    "pip_audit": {
+      "exit_code": 0,
+      "lockfiles": [
+        {
+          "known_vulnerabilities": 0,
+          "path": "src/backend/requirements.lock",
+          "sha256": "0df7ea755e0b7c9ce517a5475d5508972f3b940d30db7f19c69aacd40e994e57"
+        },
+        {
+          "known_vulnerabilities": 0,
+          "path": "src/backend/requirements-dev.lock",
+          "sha256": "90a79c09c4d5b6e069a5bd1e849c43bdb133bef47cd4b2dc35954e79f00883f9"
+        }
+      ],
+      "python": "3.11",
+      "version": "2.10.1"
+    },
+    "semgrep": {
+      "config": "p/security-audit",
+      "exit_code": 0,
+      "findings": 0,
+      "metrics": "off",
+      "rules_run": 108,
+      "tracked_files": 231,
+      "version": "1.179.0"
+    },
+    "terraform": {
+      "fmt_check": "PASS",
+      "plan_or_apply": "NOT RUN",
+      "validate": "PASS",
+      "version": "1.10.5"
+    },
+    "trivy": {
+      "configuration_findings": [
+        {
+          "id": "KSV-0125",
+          "message": "Container backend in deployment scmirn-backend (namespace: scmirn-prod) uses an image from an untrusted registry.",
+          "severity": "MEDIUM",
+          "status": "OPEN",
+          "target": "kubernetes/backend-deployment.yaml",
+          "title": "Restrict container images to trusted registries"
+        },
+        {
+          "id": "KSV-0125",
+          "message": "Container api in deployment scmirn-enterprise-api (namespace: scmirn-prod) uses an image from an untrusted registry.",
+          "severity": "MEDIUM",
+          "status": "OPEN",
+          "target": "kubernetes/enterprise-api-deployment.yaml",
+          "title": "Restrict container images to trusted registries"
+        },
+        {
+          "id": "KSV-0125",
+          "message": "Container briefing-worker in cronjob scmirn-executive-briefing (namespace: scmirn-prod) uses an image from an untrusted registry.",
+          "severity": "MEDIUM",
+          "status": "OPEN",
+          "target": "kubernetes/enterprise-briefing-cronjob.yaml",
+          "title": "Restrict container images to trusted registries"
+        },
+        {
+          "id": "KSV-0125",
+          "message": "Container frontend in deployment scmirn-frontend (namespace: scmirn-prod) uses an image from an untrusted registry.",
+          "severity": "MEDIUM",
+          "status": "OPEN",
+          "target": "kubernetes/frontend-deployment.yaml",
+          "title": "Restrict container images to trusted registries"
+        },
+        {
+          "id": "AWS-0089",
+          "message": "Bucket has logging disabled",
+          "severity": "LOW",
+          "status": "OPEN",
+          "target": "aws_s3_bucket.briefings_access_logs",
+          "title": "S3 Bucket Logging"
+        },
+        {
+          "id": "AWS-0132",
+          "message": "Bucket does not encrypt data with a customer managed key.",
+          "severity": "HIGH",
+          "status": "OPEN",
+          "target": "aws_s3_bucket_server_side_encryption_configuration.briefings_access_logs",
+          "title": "S3 encryption should use Customer Managed Keys"
+        }
+      ],
+      "configuration_scan_findings": 6,
+      "exit_code": 0,
+      "image_digest": "sha256:62b1e65e8869bc4b4c6aa4fa2b21595256c7c2f6018a9d9ad61caf87187c1969",
+      "version": "0.74.0"
+    }
+  },
+  "unavailable_or_incomplete_checks": [
+    {
+      "check": "DAST",
+      "reason": "No authorized staging deployment or test target was supplied.",
+      "status": "BLOCKED_EXTERNAL_DEPENDENCY"
+    },
+    {
+      "check": "registry_scan_for_published_release_images",
+      "reason": "The two images are local candidates; no production/release image was published.",
+      "status": "NOT_AVAILABLE"
+    },
+    {
+      "check": "scanner_worker_postgres_redis_and_ai_service_images",
+      "reason": "These exact release images and approved runtime configuration were not supplied.",
+      "status": "NOT_SCANNED"
+    },
+    {
+      "check": "image_signature_and_signed_provenance",
+      "reason": "No authorized signing identity or release attestation pipeline was configured.",
+      "status": "NOT_GENERATED"
+    },
+    {
+      "check": "independent_security_assessment",
+      "reason": "Requires an authorized independent assessor and agreed scope.",
+      "status": "BLOCKED_EXTERNAL_DEPENDENCY"
+    }
+  ]
+}

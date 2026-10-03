@@ -336,5 +336,17 @@
       "Approved hosting/operator, identity, legal/privacy review, authorized agency integration, and independent assessment"
     ],
     "supporting_evidence": "Phase 3 source commit is recorded; the separate auditor URL and read-only verification procedure are documented in the evidence commit."
+  },
+  "latest_candidate_security_scan": {
+    "assessment_date": "2026-10-03",
+    "source_commit": "51260c1c58bc7beb7a562d1ea87ac75ed0ae9c03",
+    "report": "docs/assurance/evidence/security-release.json",
+    "status": "PARTIAL; DOES NOT CLOSE ENG-005",
+    "scope": "Source scans and two local ARM64 candidate images; no production deployment",
+    "image_sboms": [
+      "docs/assurance/evidence/images/backend-51260c1.cdx.json",
+      "docs/assurance/evidence/images/frontend-51260c1.cdx.json"
+    ],
+    "release_verdict": "NOT PRODUCTION READY"
   }
 }

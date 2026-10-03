@@ -20,7 +20,7 @@
 - **Documents and evidence:** Draft templates are frontend-side examples. There is no verified private evidence vault, malware scanning, encrypted object store, signed download, redaction or deletion workflow. Legacy upload routes are disabled in production.
 - **Integrations:** No live or sandbox government connector is verified. Existing catalog documentation marks these unavailable/not implemented. There is no verified CPGRAMS, API Setu, ServicePlus, UMANG, DigiLocker, MeriPehchaan, BHASHINI, eSign, RTI, consumer, cybercrime, eCourts, legal-aid or municipal API connection.
 - **Queues, storage and observability:** Redis supports production cache/rate-limit/readiness configuration. No durable queue/workflow engine or production object store is configured. Request IDs and privacy-preserving exception logging exist; production metrics, tracing, SIEM delivery, actionable alert routing and measured SLOs do not.
-- **Security and operations:** Production config validation enforces TLS, CA paths, secrets and HTTPS CORS origins. Docker base images and Python dependencies are pinned; local release-tag reuse is rejected. Fresh dependency-lock SCA found no known Python/frontend findings and generated two CycloneDX dependency SBOMs. SAST, secret, DAST, container/OS image scans, image SBOM, signed provenance, backup/restore, DR, and rollback rehearsal remain absent.
+- **Security and operations:** Production config validation enforces TLS, CA paths, secrets and HTTPS CORS origins. Docker base images and Python dependencies are pinned; local release-tag reuse is rejected. The 2026-10-03 partial candidate scan now covers source checks, dependency locks, IaC, and two local ARM64 images; the backend and IaC retain open findings. DAST, other service-image scans, published release images, signed provenance, backup/restore, DR, and rollback rehearsal remain absent.
 - **Build and tests:** Current backend suite: 81 passed with the opt-in PostgreSQL RLS integration enabled, in a temporary Python 3.11 environment installed from the hash-locked development lockfile, with two existing SQLAlchemy `Query.get()` deprecation warnings. PostgreSQL tests cover all four provisioned roles, denied app DDL and audit reads, auditor read-only access, and RLS. Current frontend verification: typecheck passed, Vite production build passed, and all 13 Playwright flows passed (7.9 seconds). The strict frontend-design-premium audit reported zero findings. These are local checks; browser API responses are mocked. Feature parity: 9/9. OpenAPI route gate: 15 allowlisted paths documented; 93 other registered API operations returned 503. The release gate exits 1 by design while production controls remain open.
 - **Repository metadata and sensitive artifacts:** This workspace now has a Git baseline and source-tree traceability record. Existing development database, upload and log files were not opened during this assessment. Real `.env` files were not read.
 
@@ -84,7 +84,7 @@ Build a modular monolith that accepts a citizen's problem in plain language, use
 - Live government integration, legal correctness, source refresh/currentness, jurisdiction accuracy, emergency-service coverage, and localization accuracy.
 - Production PostgreSQL migration/RLS execution and production runtime-role ownership/bypass properties. The local disposable PostgreSQL 16 test verified staff-table policies and cross-tenant denial; legacy-table tenant design is still open.
 - Legacy-record tenant design, production staff UI/API integration and deployment auth, concurrency, assignment/appeal queues, official receipt lifecycle, secure evidence storage and deletion.
-- Source-code/image security scans, signed provenance, accessibility audit, performance/capacity, backup/restore, DR, rollback and alert response. Dependency-lock SCA and dependency SBOMs have local evidence only.
+- Complete release-scope security evidence (including DAST, every release image, vulnerability disposition, and signed provenance), accessibility audit, performance/capacity, backup/restore, DR, rollback and alert response. Partial source/dependency/IaC scans and two local image scans are recorded in the 2026-10-03 candidate report; they do not close the release control.
 - Production data residency, external HTTPS/WAF boundary, approved hosting and operating procedures.
 
 ## RISKS
@@ -127,6 +127,22 @@ The release gate exited 1 as intended: 12 blocking engineering workstreams are
 assessment and operations records are `BLOCKED_EXTERNAL_DEPENDENCY`. No
 authorized production environment file, secrets, or CA configuration was
 supplied. No production deployment, independent accessibility assessment,
-published-release all-layer security scan or signed provenance,
-backup/restore/DR rehearsal, or live SIEM operation is evidenced. See the
-[assurance data room](../assurance/README.md) and [typed blocker ledger](../release/production-blockers.yaml).
+published-release all-layer scan or signed provenance, backup/restore/DR
+rehearsal, or live SIEM operation is evidenced. A partial local candidate
+security scan and two image SBOMs are recorded in the
+[assurance data room](../assurance/README.md); backend and IaC findings remain
+open, and DAST/provenance and other service-image scans remain unavailable.
+See the [typed blocker ledger](../release/production-blockers.yaml).
+
+### Candidate security evidence — 2026-10-03
+
+The [machine-readable scan report](../assurance/evidence/security-release.json)
+records scans against source commit `51260c1` and two locally built ARM64 images.
+Semgrep reported zero findings across 231 tracked files; Bandit reported six
+LOW findings; dependency audits reported zero known vulnerabilities in the
+locked Python and frontend dependencies; Gitleaks found zero secrets in the
+single-commit delta. Trivy reported 44 HIGH and 60 MEDIUM backend image records
+across 73 unique advisories, no frontend image vulnerabilities, and six open
+infrastructure findings. The two CycloneDX SBOMs are package inventories only,
+not vulnerability analysis or signed provenance. The result is partial and
+does not close ENG-005.

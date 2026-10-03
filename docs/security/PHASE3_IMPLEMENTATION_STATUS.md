@@ -103,8 +103,9 @@ including production triage/jurisdiction resolution.
 
 The overall candidate gate correctly exited 1: the blocker ledger has 12 open
 blocking engineering controls, and no authorized production environment file,
-secrets, or CA configuration was supplied. This is local candidate evidence,
-not exact-release security-scan evidence or deployment approval.
+secrets, or CA configuration was supplied. This is local candidate gate
+evidence; the following separately recorded scan covers this exact source
+commit, but neither record is deployment approval.
 
 ## 2026-10-03 candidate security scan
 

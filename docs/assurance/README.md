@@ -62,9 +62,11 @@ open. A clean candidate gate would still not authorize government production.
 There is no published-release all-layer security scan or signed release
 provenance. The 2026-10-03 local candidate scan is partial: the frontend image
 scan passed; the backend image and infrastructure have open findings, and only
-two local ARM64 images were built/scanned. There is no route-wide accessibility report, backup/restore or DR
-rehearsal, production telemetry deployment, live SIEM, or independent
-assessment in this data room. Historic lockfile scan reports remain useful
+two local ARM64 images were built/scanned. The report and both image SBOMs are
+linked from the [evidence index](evidence/README.md). There is no route-wide
+accessibility report, backup/restore or DR rehearsal, production telemetry
+deployment, live SIEM, or independent assessment in this data room. Historic
+lockfile scan reports remain useful
 only for their dated dependency scope. Do not create a pass artifact for
 unavailable tools or external actions.
 

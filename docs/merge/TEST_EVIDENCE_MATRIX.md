@@ -156,7 +156,11 @@ against the current worktree.
 | Feature parity | **9/9 integrated, 0 unexplained.** | Accounting gate, not production correctness certification. |
 | OpenAPI/production route gate | **15 allowlisted route patterns; 99 other registered API operations return 503.** | Synthetic Flask production mode only; triage/jurisdiction remain denied. |
 | Release blocker gate | **Exit 1 as intended.** 12 blocking engineering controls are `OPEN`; eight external records are `BLOCKED_EXTERNAL_DEPENDENCY`. | No authorized production environment file, deployment secrets, or CA inputs were supplied. No deployment occurred. |
+| Candidate security scan | [Machine-readable scan report](../assurance/evidence/security-release.json); Trivy, Semgrep, Bandit, pip-audit, npm audit, Gitleaks and Terraform checks | Partial: frontend image has no reported vulnerabilities; backend image has 44 HIGH, 60 MEDIUM and 73 unique advisories; six IaC findings remain open. Two local ARM64 image SBOMs are linked from the report. | No DAST target, published release images, other service-image scans, or signed provenance. Scan does not close ENG-005. |
 
-The results above are local candidate checks. They do not close exact-release
-security scans, image SBOM/provenance, accessibility, restore/DR, operational,
-privacy/legal, or government authorization requirements.
+The results above are local candidate checks. A separately recorded partial
+candidate security scan and local image SBOMs are available in the
+[2026-10-03 security evidence report](../assurance/evidence/security-release.json).
+They do not close published-release all-image scans, signed provenance,
+accessibility, restore/DR, operational, privacy/legal, or government
+authorization requirements.
