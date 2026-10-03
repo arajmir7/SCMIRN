@@ -164,13 +164,15 @@ states. Backend routing and listing reject every integration mode except
 implemented. It remains a handoff directory: no request is submitted and no
 official receipt/status is produced.
 
-Latest local verification after this update: backend **117 passed** with the
+Latest local verification after this update: backend **119 passed** with the
 full migration chain and tenant/RLS integration enabled against disposable
 PostgreSQL 16 (118 existing deprecation warnings); frontend typecheck and
-production build passed; **15 Playwright flows passed**; governance parity
-passed at 35/474/294; OpenAPI 3.1 route parity passed with 15 allowed route
-patterns and 99 other operations returning 503. This is local evidence only.
+production build passed; **15 Playwright flows passed**; all 16 staff/evidence
+route-method pairs matched the machine-readable auth matrix and runtime policy
+declarations; governance parity passed at 35/474/294; OpenAPI 3.1 route parity
+passed with 15 allowed route patterns and 99 other operations returning 503.
+This is local evidence only.
 The production candidate gate remains blocked by open engineering and external
 dependencies; no deployed service, live source refresh, or external approval
 was used. The exact tested commit and detailed results are recorded in the
-[machine-readable candidate gate evidence](../assurance/evidence/candidate-gate-20261003-b363605.json).
+[machine-readable candidate gate evidence](../assurance/evidence/candidate-gate-20261003-38572d2.json).

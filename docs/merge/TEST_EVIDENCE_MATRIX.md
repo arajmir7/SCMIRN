@@ -168,13 +168,14 @@ authorization requirements.
 ## Exact-commit candidate gate — 2026-10-03
 
 The latest local candidate gate ran against clean commit
-`b363605f5c47db2d794d4c596d09f808745ad0ae`, using a disposable PostgreSQL 16
+`38572d2555079c68387e70fee261a1712a1b79c7`, using a disposable PostgreSQL 16
 instance. A machine-readable record is available at
-[`candidate-gate-20261003-b363605.json`](../assurance/evidence/candidate-gate-20261003-b363605.json).
+[`candidate-gate-20261003-38572d2.json`](../assurance/evidence/candidate-gate-20261003-38572d2.json).
 
 | System / gate | Result | Limits |
 |---|---|---|
-| Backend and PostgreSQL migration/RLS | **117 passed, 118 deprecation warnings.** Migration reached `20261003_02`; integration exercised forced staff/evidence RLS, non-owner runtime role, cross-tenant/cross-case denial, pooled-connection transaction reset and migration downgrade/re-upgrade. | Disposable local PostgreSQL 16 only. The app-set tenant GUC is not an independent tenant credential; worker, signed-URL and quarantined legacy-record boundaries remain open. |
+| Backend and PostgreSQL migration/RLS | **119 passed, 118 deprecation warnings.** Migration reached `20261003_02`; integration exercised forced staff/evidence RLS, non-owner runtime role, cross-tenant/cross-case denial, pooled-connection transaction reset and migration downgrade/re-upgrade. | Disposable local PostgreSQL 16 only. The app-set tenant GUC is not an independent tenant credential; worker, signed-URL and quarantined legacy-record boundaries remain open. |
+| Staff authorization route contract | **16 registered route-method pairs match the machine-readable matrix and runtime role/action declarations.** | Covers current staff/evidence APIs only; broader government RBAC, department/jurisdiction isolation and external identity remain open. |
 | Governance inventory | **35 tables, 474 columns, 294 candidate fields.** | 273 field approvals, 35 table-governance decisions and one profile approval remain pending. |
 | Frontend | Typecheck and production build passed; **15 Playwright flows passed**. | Browser APIs and service directory responses are mocked; no route-wide axe or manual assistive-technology review. |
 | Feature parity / OpenAPI | **9/9 integrated, 0 unexplained.** OpenAPI 3.1 parity: 15 allowlisted route patterns; 99 other registered operations return 503. | Synthetic production mode only; triage/jurisdiction remain disabled. |
