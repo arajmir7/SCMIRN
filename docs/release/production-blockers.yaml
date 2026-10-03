@@ -1,0 +1,321 @@
+schema_version: 1
+assessment:
+  date: '2026-10-03'
+  baseline_commit: b26e7703fae279031091d8b0fc5a173b7385e670
+  verdict: NOT PRODUCTION READY
+  candidate_gate: scripts/release_gate.sh --mode candidate
+  authorized_deployment_gate: scripts/release_gate.sh --mode authorized
+  semantics: >-
+    Candidate mode fails on open engineering controls and broken local evidence,
+    but reports externally blocked approvals without treating them as engineering
+    test failures. Authorized mode requires every blocking item to have current,
+    exact-commit evidence and the appropriate external state.
+governance_expectations:
+  personal_field_approvals: 273
+  table_governance_records: 35
+  governance_profiles: 1
+blockers:
+  - id: ENG-001
+    title: Add ownership-aware tenant and jurisdiction isolation to quarantined data
+    category: TENANT_ISOLATION
+    severity: CRITICAL
+    type: ENGINEERING
+    state: OPEN
+    production_blocking: true
+    owner_role: DATABASE_SECURITY_ENGINEER
+    source_requirement: Workstream 3; docs/security/DATA_BOUNDARY_MATRIX.md
+    affected_component: Nine legacy tables and unowned infrastructure/audit tables; the app-set GUC is not an independent tenant identity.
+    verification_command: SCMIRN_POSTGRES_RLS_TEST_URL=<disposable> PYTHONPATH=src/backend python -m pytest -q src/backend/tests/integration/test_postgres_staff_rls.py
+    required_evidence: docs/assurance/evidence/tenant-boundary-postgres.json
+    last_verified_commit: null
+    last_verified_date: null
+    closure_reason: null
+  - id: ENG-002
+    title: Complete endpoint authorization matrix and adversarial coverage
+    category: AUTHORIZATION
+    severity: CRITICAL
+    type: ENGINEERING
+    state: OPEN
+    production_blocking: true
+    owner_role: APPLICATION_SECURITY_ENGINEER
+    source_requirement: Workstream 4; default-deny authorization for role and resource attributes.
+    affected_component: Citizen, assisted operator, officer, supervisor, reviewer, tenant administrator, and auditor operations.
+    verification_command: PYTHONPATH=src/backend python -m pytest -q src/backend/tests/unit/test_staff_authorization.py src/backend/tests/unit/api/test_staff_auth.py
+    required_evidence: docs/assurance/evidence/authorization-matrix.json
+    last_verified_commit: null
+    last_verified_date: null
+    closure_reason: null
+  - id: ENG-003
+    title: Implement scheduled evidence retention, deletion retries, and orphan reconciliation
+    category: EVIDENCE_LIFECYCLE
+    severity: HIGH
+    type: ENGINEERING
+    state: OPEN
+    production_blocking: true
+    owner_role: PLATFORM_ENGINEER
+    source_requirement: Workstream 6; authority-approved policy is external, while safe worker mechanics are engineering work.
+    affected_component: Evidence worker, object store, metadata rows, legal holds, deletion lag, dead-letter handling, and backups.
+    verification_command: PYTHONPATH=src/backend python -m pytest -q src/backend/tests/unit/test_evidence_retention_worker.py
+    required_evidence: docs/assurance/evidence/retention-worker.json
+    last_verified_commit: null
+    last_verified_date: null
+    closure_reason: null
+  - id: ENG-004
+    title: Bound scanner runtime and expose health, stale-signature, and failure states
+    category: MALWARE_SCANNING
+    severity: HIGH
+    type: ENGINEERING
+    state: OPEN
+    production_blocking: true
+    owner_role: PLATFORM_SECURITY_ENGINEER
+    source_requirement: Workstream 6; fail closed and bound scan resource consumption.
+    affected_component: ClamAV adapter, scanner health checks, maximum scan duration, queue and alert metrics.
+    verification_command: PYTHONPATH=src/backend python -m pytest -q src/backend/tests/unit/test_evidence_vault.py
+    required_evidence: docs/assurance/evidence/scanner-runtime.json
+    last_verified_commit: null
+    last_verified_date: null
+    closure_reason: null
+  - id: ENG-005
+    title: Produce exact-release SAST, SCA, secret, image, IaC, DAST, SBOM, and provenance evidence
+    category: SECURITY_SCANS
+    severity: CRITICAL
+    type: ENGINEERING
+    state: OPEN
+    production_blocking: true
+    owner_role: DEVSECOPS_ENGINEER
+    source_requirement: Workstream 7; scans must run on this commit and each release image; unavailable tools must be marked BLOCKED_TOOLING.
+    affected_component: Backend, frontend, PostgreSQL, Redis, reverse proxy, scanner, worker images, IaC, and release artifacts.
+    verification_command: scripts/check_release_blockers.py --mode candidate
+    required_evidence: docs/assurance/evidence/security-release.json
+    evidence_max_age_days: 7
+    last_verified_commit: null
+    last_verified_date: null
+    closure_reason: null
+  - id: ENG-006
+    title: Add structured redacted telemetry, SLOs, alert rules, and security-event export
+    category: OBSERVABILITY
+    severity: HIGH
+    type: ENGINEERING
+    state: OPEN
+    production_blocking: true
+    owner_role: SITE_RELIABILITY_ENGINEER
+    source_requirement: Workstream 8; telemetry must exclude secrets, narratives, raw evidence, and full identifiers.
+    affected_component: Frontend, API, database, worker, object store, scanner, connector, and security event export.
+    verification_command: PYTHONPATH=src/backend python -m pytest -q src/backend/tests/unit/test_observability_redaction.py
+    required_evidence: docs/assurance/evidence/observability-controls.json
+    last_verified_commit: null
+    last_verified_date: null
+    closure_reason: null
+  - id: ENG-007
+    title: Rehearse database and object restore, application rollback, and disposable DR
+    category: RESILIENCE
+    severity: HIGH
+    type: ENGINEERING
+    state: OPEN
+    production_blocking: true
+    owner_role: SITE_RELIABILITY_ENGINEER
+    source_requirement: Workstream 9; report measured results without asserting unmeasured RPO/RTO.
+    affected_component: PostgreSQL backups, evidence object versions/checksums, application images, migration compatibility, and audit verification.
+    verification_command: scripts/ops/run_disposable_restore_drill.sh
+    required_evidence: docs/assurance/evidence/restore-dr-drill.json
+    last_verified_commit: null
+    last_verified_date: null
+    closure_reason: null
+  - id: ENG-008
+    title: Add route-wide automated accessibility coverage and accessible alternatives
+    category: ACCESSIBILITY
+    severity: HIGH
+    type: ENGINEERING
+    state: OPEN
+    production_blocking: true
+    owner_role: FRONTEND_ENGINEER
+    source_requirement: GIGW 3.0 and Workstream 10; automated checks do not replace human assistive-technology review.
+    affected_component: Every public and staff route, form state, map, chart, dialog, loading state, error state, and responsive layout.
+    verification_command: npm --prefix src/frontend run test:a11y
+    required_evidence: docs/assurance/evidence/accessibility-automated.json
+    last_verified_commit: null
+    last_verified_date: null
+    closure_reason: null
+  - id: ENG-009
+    title: Complete citizen case lifecycle and distinguish internal from official status
+    category: CASE_WORKFLOW
+    severity: HIGH
+    type: ENGINEERING
+    state: OPEN
+    production_blocking: true
+    owner_role: PRODUCT_ENGINEER
+    source_requirement: Workstreams 11, 12, and 15; never infer an official receipt or status.
+    affected_component: CitizenCase, append-only CaseEvent, assignment, external submission, receipt, status, escalation, and appeal.
+    verification_command: PYTHONPATH=src/backend python -m pytest -q src/backend/tests/unit/test_citizen_case_workflow.py
+    required_evidence: docs/assurance/evidence/citizen-case-workflow.json
+    last_verified_commit: null
+    last_verified_date: null
+    closure_reason: null
+  - id: ENG-010
+    title: Complete reviewed service, jurisdiction, rule, and source-change lifecycles
+    category: SERVICE_GOVERNANCE
+    severity: HIGH
+    type: ENGINEERING
+    state: OPEN
+    production_blocking: true
+    owner_role: PRODUCT_ENGINEER
+    source_requirement: Workstreams 11, 12, and 14; active rules require current official source versions and maker-checker review.
+    affected_component: Service catalogue, jurisdiction boundaries, source versions, routing rules, effective dates, reviewer tasks, and abstention.
+    verification_command: PYTHONPATH=src/backend python -m pytest -q src/backend/tests/unit/test_source_routing.py
+    required_evidence: docs/assurance/evidence/service-source-lifecycle.json
+    last_verified_commit: null
+    last_verified_date: null
+    closure_reason: null
+  - id: ENG-011
+    title: Complete data minimization and citizen rights workflows
+    category: PRIVACY_ENGINEERING
+    severity: HIGH
+    type: ENGINEERING
+    state: OPEN
+    production_blocking: true
+    owner_role: PRIVACY_ENGINEER
+    source_requirement: Workstreams 21 and 22; engineering inventory is not a lawful-purpose approval.
+    affected_component: 471 mapped fields, retention/deletion implementation, access/export/correction/grievance request paths.
+    verification_command: PYTHONPATH=src/backend python scripts/check_data_governance.py
+    required_evidence: docs/assurance/evidence/data-minimization-and-rights.json
+    last_verified_commit: null
+    last_verified_date: null
+    closure_reason: null
+  - id: ENG-012
+    title: Close public service discovery, metadata, help, policy, and failure-state gaps
+    category: PUBLIC_SERVICE_UX
+    severity: MEDIUM
+    type: ENGINEERING
+    state: OPEN
+    production_blocking: true
+    owner_role: FRONTEND_ENGINEER
+    source_requirement: Current GIGW 3.0 checkpoints; docs/compliance/GIGW_3_MATRIX.md.
+    affected_component: Citizen route discovery, page metadata, contact/help/grievance, stale-source and unavailable-service states, mobile and low-bandwidth flows.
+    verification_command: npm --prefix src/frontend run typecheck && npm --prefix src/frontend run test:e2e
+    required_evidence: docs/assurance/evidence/public-service-ux.json
+    last_verified_commit: null
+    last_verified_date: null
+    closure_reason: null
+  - id: PRIV-001
+    title: Obtain accountable approval for personal and linkable data fields
+    category: PERSONAL_DATA_APPROVAL
+    severity: CRITICAL
+    type: PRIVACY_LEGAL
+    state: BLOCKED_EXTERNAL_DEPENDENCY
+    production_blocking: true
+    owner_role: ACCOUNTABLE_PRIVACY_OFFICER_AND_DATA_FIDUCIARY
+    source_requirement: Digital Personal Data Protection Act and Rules as applicable; final profile needs purpose, necessity, processor, region, retention, rights, and approval evidence.
+    affected_component: 273 personal/linkable field records currently inventoried but not approved.
+    instance_count: 273
+    verification_command: PYTHONPATH=src/backend python scripts/check_data_governance.py --require-approved
+    required_evidence: docs/assurance/external/privacy-field-approval.json
+    last_verified_commit: null
+    last_verified_date: null
+    closure_reason: Approval requires an accountable human and the responsible data-fiduciary organization.
+  - id: PRIV-002
+    title: Assign data owners, purposes, scope, and retention for mapped tables
+    category: TABLE_GOVERNANCE_APPROVAL
+    severity: HIGH
+    type: PRIVACY_LEGAL
+    state: BLOCKED_EXTERNAL_DEPENDENCY
+    production_blocking: true
+    owner_role: ACCOUNTABLE_DATA_OWNER_AND_PRIVACY_OFFICER
+    source_requirement: Approved organization data inventory and retention schedule for each table.
+    affected_component: 35 mapped table governance records with unresolved ownership or retention controls.
+    instance_count: 35
+    verification_command: PYTHONPATH=src/backend python scripts/check_data_governance.py --require-approved
+    required_evidence: docs/assurance/external/table-governance-approval.json
+    last_verified_commit: null
+    last_verified_date: null
+    closure_reason: Ownership and retention cannot be assigned by the code author on behalf of a future authority.
+  - id: PRIV-003
+    title: Approve the data-governance profile and its processing controls
+    category: GOVERNANCE_PROFILE_APPROVAL
+    severity: HIGH
+    type: PRIVACY_LEGAL
+    state: BLOCKED_EXTERNAL_DEPENDENCY
+    production_blocking: true
+    owner_role: ACCOUNTABLE_PRIVACY_OFFICER_AND_LEGAL_COUNSEL
+    source_requirement: Current applicable DPDP Act/Rules, approved processing purpose, notice, processor, data location, and rights process.
+    affected_component: One unreviewed personal-data profile shared by inventoried field records.
+    instance_count: 1
+    verification_command: PYTHONPATH=src/backend python scripts/check_data_governance.py --require-approved
+    required_evidence: docs/assurance/external/governance-profile-approval.json
+    last_verified_commit: null
+    last_verified_date: null
+    closure_reason: Legal/privacy review must be signed by the accountable organization, not engineering.
+  - id: EXT-001
+    title: Select and authorize a bounded pilot authority, geography, and service catalogue
+    category: PILOT_AUTHORITY
+    severity: CRITICAL
+    type: GOVERNMENT_AUTHORIZATION
+    state: BLOCKED_EXTERNAL_DEPENDENCY
+    production_blocking: true
+    owner_role: PILOT_AUTHORITY_SPONSOR
+    source_requirement: Workstreams 13 and 23; all active service data must be official and reviewed for the participating jurisdiction.
+    affected_component: Service sources, jurisdictions, eligible users, approved workflow, responsibilities, measures, and exit plan.
+    verification_command: Review approved pilot agreement, source register, and bounded catalogue.
+    required_evidence: docs/assurance/external/pilot-authority-approval.json
+    last_verified_commit: null
+    last_verified_date: null
+    closure_reason: No participating authority or approved pilot boundary is present in the repository.
+  - id: EXT-002
+    title: Obtain approved hosting, identity, storage, keys, and operational ownership
+    category: PRODUCTION_INFRASTRUCTURE
+    severity: CRITICAL
+    type: INFRASTRUCTURE
+    state: BLOCKED_EXTERNAL_DEPENDENCY
+    production_blocking: true
+    owner_role: AUTHORIZED_HOSTING_OPERATOR
+    source_requirement: Approved deployment topology, data region, identity/federation, private object store/KMS, backup, monitoring, and incident ownership.
+    affected_component: Production runtime, PostgreSQL, Redis, workforce identity, evidence bucket, ClamAV service, secrets, and backups.
+    verification_command: scripts/validate_production_config.py --require-deployment-evidence
+    required_evidence: docs/assurance/external/hosting-operator-evidence.json
+    last_verified_commit: null
+    last_verified_date: null
+    closure_reason: No authorized hosting operator, credentials, production services, or trust anchors are available.
+  - id: EXT-003
+    title: Authorize official connectors and obtain current interface contracts and credentials
+    category: GOVERNMENT_INTEROPERABILITY
+    severity: HIGH
+    type: GOVERNMENT_AUTHORIZATION
+    state: BLOCKED_EXTERNAL_DEPENDENCY
+    production_blocking: true
+    owner_role: GOVERNMENT_SERVICE_OWNER
+    source_requirement: Workstreams 16 and 29; a handoff is not a submission or acknowledgement.
+    affected_component: API Setu, DigiLocker, BHASHINI, approved SSO, Open311, and department-specific connectors.
+    verification_command: Review authorized interface contract and sandbox/live evidence per connector.
+    required_evidence: docs/assurance/external/connector-authorizations.json
+    last_verified_commit: null
+    last_verified_date: null
+    closure_reason: No credentials, approved sandbox, or department contracts have been supplied.
+  - id: EXT-004
+    title: Complete independent security and applicable government quality assessments
+    category: EXTERNAL_ASSESSMENT
+    severity: HIGH
+    type: EXTERNAL_SECURITY_REVIEW
+    state: BLOCKED_EXTERNAL_DEPENDENCY
+    production_blocking: true
+    owner_role: AUTHORIZED_INDEPENDENT_ASSESSOR
+    source_requirement: Current STQC WQCS/DBIM evaluation path, GIGW 3.0, and scoped independent security assessment.
+    affected_component: Exact release deployment, public user experience, security boundary, accessibility, and operational controls.
+    verification_command: Obtain current assessor scope, execute assessment, and archive signed results.
+    required_evidence: docs/assurance/external/assessment-reports/index.yaml
+    last_verified_commit: null
+    last_verified_date: null
+    closure_reason: No independent assessor or authority-appointed review has been engaged.
+  - id: EXT-005
+    title: Assign live SIEM and incident response ownership where deployment requires it
+    category: SECURITY_OPERATIONS
+    severity: HIGH
+    type: OPERATIONAL
+    state: BLOCKED_EXTERNAL_DEPENDENCY
+    production_blocking: true
+    owner_role: AUTHORIZED_SECURITY_OPERATIONS_OWNER
+    source_requirement: Workstream 8 and the hosting authority's incident/security-operations policy.
+    affected_component: Security event transport, alert acknowledgement, on-call escalation, CERT-In reporting assessment, and incident runbooks.
+    verification_command: Verify deployed endpoint, synthetic event receipt, alert acknowledgement, and named on-call escalation.
+    required_evidence: docs/assurance/external/siem-incident-operations.json
+    last_verified_commit: null
+    last_verified_date: null
+    closure_reason: No live SIEM endpoint or accountable incident-response operator exists in this environment.

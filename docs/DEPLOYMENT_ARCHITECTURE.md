@@ -1,6 +1,6 @@
 # SCMIRN deployment architecture
 
-**Current release verdict: NOT PRODUCTION READY.** The Compose path has completed a disposable local production rehearsal, and the current source passed local unit/browser/route-gate checks and an image build. The current image was not deployed to the disposable services. Identity and tenant isolation, full database baseline, backup/restore, rollback, security scans, accessibility, production monitoring, and external approvals remain open. The rehearsal is deployment evidence, not a production deployment or government approval.
+**Current release verdict: NOT PRODUCTION READY.** The 2026-10-03 candidate gate passed backend, governance parity, frontend typecheck/build/browser, feature parity, and OpenAPI route checks. It still exits 1 because 12 engineering controls remain open and no authorized production configuration was supplied. Production triage/jurisdiction resolution remains disabled. Identity and legacy tenant isolation, backup/restore, rollback, exact-release security scans, accessibility, production monitoring, and external approvals remain open. The earlier Compose rehearsal is local deployment evidence, not a production deployment or government approval.
 
 ## Development stack
 
@@ -20,7 +20,7 @@ flowchart LR
 
 `infrastructure/docker-compose.production.yml` builds release-tagged frontend and backend images. Only Nginx is published, bound to `127.0.0.1`; the backend is private to the Compose network. PostgreSQL and Redis are external services and are not provisioned by this Compose file. HTTPS termination, DNS, WAF, secret management, backups and monitoring must be provided separately.
 
-The one-shot `migrate` service runs Alembic and must complete before the backend starts. Backend readiness checks PostgreSQL and Redis. Production permits eight documented health/readiness and source-gated paths. The local route-gate check exercised 91 other registered API operations and confirmed they return 503; legacy reporting, file, document, office, tracking, analytics and simulation APIs stay disabled. Source-gated routing returns `NOT_SUBMITTED`; the official source catalog currently has no verified source.
+The one-shot `migrate` service runs Alembic and must complete before the backend starts. Backend readiness checks PostgreSQL and Redis. The 2026-10-03 OpenAPI/production-gate check covered 15 allowlisted route patterns and verified that 99 other registered API operations return 503. Triage/jurisdiction resolution, legacy reporting, file, document, office, tracking, analytics and simulation APIs stay disabled. The catalog currently exposes four internally reviewed, `OFFICIAL_HANDOFF_ONLY` service candidates; a fifth remains withheld. Handoffs return `NOT_SUBMITTED`, and SCMIRN has no government filing or status connector.
 
 ## Production inputs and release identity
 

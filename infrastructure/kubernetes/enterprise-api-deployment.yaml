@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: scmirn-enterprise-api
+  namespace: scmirn-prod
   labels:
     app: scmirn-enterprise-api
 spec:
@@ -14,10 +15,18 @@ spec:
       labels:
         app: scmirn-enterprise-api
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: api
-          image: ghcr.io/example/scmirn-backend:enterprise-latest
-          imagePullPolicy: IfNotPresent
+          image: ghcr.io/arajmir7/scmirn-backend:release-placeholder
+          imagePullPolicy: Always
           ports:
             - containerPort: 5000
           env:
@@ -40,23 +49,36 @@ spec:
             limits:
               cpu: "2"
               memory: "2Gi"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           readinessProbe:
             httpGet:
-              path: /api/auth/health
+              path: /api/ready
               port: 5000
             initialDelaySeconds: 10
             periodSeconds: 10
           livenessProbe:
             httpGet:
-              path: /api/auth/health
+              path: /api/health
               port: 5000
             initialDelaySeconds: 30
             periodSeconds: 20
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 128Mi
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: scmirn-enterprise-api-hpa
+  namespace: scmirn-prod
 spec:
   scaleTargetRef:
     apiVersion: apps/v1

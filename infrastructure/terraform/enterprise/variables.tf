@@ -2,6 +2,11 @@ variable "environment" {
   description = "Deployment environment name."
   type        = string
   default     = "prod"
+
+  validation {
+    condition     = can(regex("^[a-z0-9-]+$", var.environment))
+    error_message = "environment must contain only lowercase letters, digits, and hyphens."
+  }
 }
 
 variable "aws_region" {

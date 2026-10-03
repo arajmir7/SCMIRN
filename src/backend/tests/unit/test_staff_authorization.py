@@ -1,4 +1,7 @@
 from dataclasses import replace
+from pathlib import Path
+
+import yaml
 
 from app.staff_auth.authorization import PolicyAttributes, StaffPrincipal, authorize
 
@@ -10,6 +13,9 @@ def _principal(**overrides):
         "roles": frozenset({"CASE_OFFICER"}),
         "active": True,
         "mfa_verified": True,
+        "department_ids": frozenset(),
+        "jurisdiction_ids": frozenset(),
+        "service_ids": frozenset(),
     }
     values.update(overrides)
     return StaffPrincipal(**values)
@@ -64,16 +70,46 @@ def test_auditor_is_read_only():
 
 
 def test_source_approval_requires_separate_reviewer_and_complete_scope():
-    principal = _principal(roles=frozenset({"SOURCE_REVIEWER"}))
+    principal = _principal(
+        roles=frozenset({"SOURCE_REVIEWER"}),
+        department_ids=frozenset({"department-a"}),
+        jurisdiction_ids=frozenset({"district-a"}),
+        service_ids=frozenset({"service-a"}),
+    )
     ready = _attributes(
         purpose="SOURCE_GOVERNANCE", department_id="department-a",
-        jurisdiction_id="district-a", source_state="PENDING_CHECK",
+        jurisdiction_id="district-a", service_id="service-a",
+        approval_stage="REVIEW", risk_tier="HIGH", source_state="PENDING_CHECK",
         created_by_id="staff-b",
     )
+    assert not authorize(_principal(roles=frozenset({"SOURCE_REVIEWER"})), "source:approve", ready)
     assert authorize(principal, "source:approve", ready)
     assert not authorize(principal, "source:approve", replace(ready, created_by_id="staff-a"))
     assert not authorize(principal, "source:approve", replace(ready, jurisdiction_id=None))
+    assert not authorize(principal, "source:approve", replace(ready, jurisdiction_id="district-b"))
+    assert not authorize(principal, "source:approve", replace(ready, service_id="service-b"))
+    assert not authorize(principal, "source:approve", replace(ready, approval_stage="DRAFT"))
     assert not authorize(principal, "source:approve", replace(ready, source_state="DRAFT"))
+
+
+def test_machine_readable_authorization_matrix_generates_policy_expectations():
+    repository = Path(__file__).resolve().parents[4]
+    matrix = yaml.safe_load((repository / "docs/security/authorization-matrix.yaml").read_text(encoding="utf-8"))
+    implemented_roles = {
+        role["staff_role"]
+        for role in matrix["roles"]
+        if role["staff_role"] is not None
+    }
+    assert implemented_roles == {"TENANT_ADMIN", "CASE_OFFICER", "SOURCE_REVIEWER", "AUDITOR"}
+    for case in matrix["policy_cases"]:
+        principal_data = dict(case["principal"])
+        for scope_name in ("department_ids", "jurisdiction_ids", "service_ids"):
+            if scope_name in principal_data:
+                principal_data[scope_name] = frozenset(principal_data[scope_name])
+        principal_data["roles"] = frozenset(principal_data["roles"])
+        attributes = PolicyAttributes(**case["attributes"])
+        expected = case["expected"] == "ALLOW"
+        assert authorize(StaffPrincipal(**principal_data), case["action"], attributes) is expected, case["id"]
 
 
 def test_restricted_evidence_requires_assigned_case_officer_and_case_scope():

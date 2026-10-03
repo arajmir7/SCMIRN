@@ -236,6 +236,49 @@ def test_case_officer_scope_is_limited_to_owned_or_assigned_cases():
     assert denied_mutation.status_code == 404
 
 
+def test_client_cannot_select_tenant_by_header_query_or_mass_assignment():
+    app = _new_app()
+    tenant_a, _user_a = _seed_user(app, tenant_slug="district-a")
+    tenant_b, user_b = _seed_user(
+        app, tenant_slug="district-b", email="second@example.gov",
+        secret="KRSXG5DSNFXGOIDB",
+    )
+    with app.app_context():
+        foreign_case = StaffCase(
+            tenant_id=tenant_b, case_ref="C-TENANT-B", case_type="WATER",
+            title="Tenant B case", status="OPEN", priority="NORMAL",
+            created_by=user_b,
+        )
+        db.session.add(foreign_case)
+        db.session.commit()
+        foreign_case_id = foreign_case.id
+
+    client = _authenticated_client(app)
+    own_case_id, csrf = _case_for_staff(client)
+    spoofed_scope = {"X-Tenant-ID": tenant_b}
+    assert client.get(
+        f"/api/v1/staff/cases/{foreign_case_id}", headers=spoofed_scope,
+    ).status_code == 404
+    listed = client.get(
+        "/api/v1/staff/cases",
+        query_string={"tenant_id": tenant_b},
+        headers=spoofed_scope,
+    )
+    assert listed.status_code == 200
+    assert {case["id"] for case in listed.json["cases"]} == {own_case_id}
+
+    forged_create = client.post(
+        "/api/v1/staff/cases",
+        json={"case_type": "WATER", "tenant_id": tenant_b},
+        headers={**spoofed_scope, "X-CSRF-Token": csrf},
+    )
+    assert forged_create.status_code == 201
+    created_id = forged_create.json["case"]["id"]
+    with app.app_context():
+        created = StaffCase.query.filter_by(id=created_id).one()
+        assert created.tenant_id == tenant_a
+
+
 def test_invalid_role_and_login_lockout():
     app = _new_app()
     _seed_user(app, role="AUDITOR")

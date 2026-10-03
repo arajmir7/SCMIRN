@@ -24,6 +24,8 @@ Documents in this directory describe the repository's verified implementation an
 
 ## Security, privacy, and assurance
 
+- [Assurance data room index](../assurance/README.md)
+
 - [Security architecture](SECURITY_ARCHITECTURE.md) (canonical detail: [`../security/SECURITY_ARCHITECTURE.md`](../security/SECURITY_ARCHITECTURE.md))
 - [Dependency scan and SBOM evidence](../security/DEPENDENCY_SCAN_2026-10-02.md)
 - [Threat model](THREAT_MODEL.md) (canonical detail: [`../security/THREAT_MODEL.md`](../security/THREAT_MODEL.md))

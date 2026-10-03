@@ -143,6 +143,7 @@ def test_forced_staff_rls_with_non_owner_runtime_role(monkeypatch):
         user_a, user_b = str(uuid.uuid4()), str(uuid.uuid4())
         session_hash_a, session_hash_b, session_hash_a2 = "a" * 64, "b" * 64, "e" * 64
         case_a, case_b = str(uuid.uuid4()), str(uuid.uuid4())
+        evidence_a_id, evidence_b_id = str(uuid.uuid4()), str(uuid.uuid4())
         with test_admin_engine.begin() as connection:
             connection.execute(text("INSERT INTO tenants (id, slug, display_name, active, created_at) VALUES (:id, :slug, :name, true, :now)"), [
                 {"id": tenant_a, "slug": "tenant-a", "name": "Tenant A", "now": now},
@@ -162,8 +163,8 @@ def test_forced_staff_rls_with_non_owner_runtime_role(monkeypatch):
                 {"id": case_b, "tenant": tenant_b, "ref": "CASE-B", "user": user_b, "now": now},
             ])
             connection.execute(text("INSERT INTO evidence_objects (id, tenant_id, case_id, created_by, object_key, content_type, size_bytes, checksum_sha256, scan_status, scanner_version, retention_policy_id, retention_until, legal_hold, lifecycle_status, deletion_attempts, created_at) VALUES (:id, :tenant, :case, :user, :key, 'application/pdf', 128, :checksum, 'CLEAN', 'ClamAV 1.4.0', 'test-policy-v1', :retention, false, 'ACTIVE', 0, :now)"), [
-                {"id": str(uuid.uuid4()), "tenant": tenant_a, "case": case_a, "user": user_a, "key": "1" * 64, "checksum": "a" * 64, "retention": now + timedelta(days=30), "now": now},
-                {"id": str(uuid.uuid4()), "tenant": tenant_b, "case": case_b, "user": user_b, "key": "2" * 64, "checksum": "b" * 64, "retention": now + timedelta(days=30), "now": now},
+                {"id": evidence_a_id, "tenant": tenant_a, "case": case_a, "user": user_a, "key": "1" * 64, "checksum": "a" * 64, "retention": now + timedelta(days=30), "now": now},
+                {"id": evidence_b_id, "tenant": tenant_b, "case": case_b, "user": user_b, "key": "2" * 64, "checksum": "b" * 64, "retention": now + timedelta(days=30), "now": now},
             ])
 
         runtime_engine = create_engine(runtime_url)
@@ -220,6 +221,17 @@ def test_forced_staff_rls_with_non_owner_runtime_role(monkeypatch):
             role_state = connection.execute(text("SELECT rolsuper, rolbypassrls FROM pg_roles WHERE rolname = current_user")).one()
             assert role_state.rolsuper is False
             assert role_state.rolbypassrls is False
+            privileged_helpers = connection.execute(text(
+                "SELECT p.proname, pg_get_userbyid(p.proowner) AS owner, p.proconfig, "
+                "has_function_privilege(current_user, p.oid, 'EXECUTE') AS can_execute "
+                "FROM pg_proc AS p JOIN pg_namespace AS n ON n.oid = p.pronamespace "
+                "WHERE n.nspname = 'public' AND p.prosecdef"
+            )).mappings().all()
+            assert len(privileged_helpers) == 1
+            assert privileged_helpers[0]["proname"] == "scmirn_audit_head"
+            assert privileged_helpers[0]["owner"] == role_names["SCMIRN_MIGRATOR_DB_ROLE"]
+            assert "search_path=pg_catalog, public" in privileged_helpers[0]["proconfig"]
+            assert privileged_helpers[0]["can_execute"] is True
             forced = connection.execute(text("SELECT relname, relrowsecurity, relforcerowsecurity, pg_get_userbyid(relowner) AS owner FROM pg_class WHERE relname = ANY(:tables)"), {"tables": list(tenant_scoped_tables)}).all()
             assert len(forced) == len(tenant_scoped_tables)
             assert all(row.relrowsecurity and row.relforcerowsecurity and row.owner != role_name for row in forced)
@@ -242,6 +254,40 @@ def test_forced_staff_rls_with_non_owner_runtime_role(monkeypatch):
             assert visible_cases == 1
             visible_evidence = connection.execute(text("SELECT case_id FROM evidence_objects")).scalars().all()
             assert visible_evidence == [case_a]
+            # A known cross-tenant object reference remains invisible under RLS.
+            assert connection.execute(
+                text("SELECT count(*) FROM evidence_objects WHERE id = :id"),
+                {"id": evidence_b_id},
+            ).scalar_one() == 0
+
+        # The shared app credential can choose another tenant GUC. This is the
+        # explicit trust limit of this RLS design, not proof of an independent
+        # database tenant identity; request code must only set it from session DB state.
+        with runtime_engine.begin() as connection:
+            connection.execute(text("SELECT set_config('scmirn.tenant_id', :tenant, true)"), {"tenant": tenant_b})
+            assert connection.execute(text("SELECT id FROM staff_users")).scalars().all() == [user_b]
+            assert connection.execute(text("SELECT case_id FROM evidence_objects")).scalars().all() == [case_b]
+
+        # The exact same pooled DB connection must lose transaction-local scope
+        # after both commit and rollback; a later unscoped query fails closed.
+        with runtime_engine.connect() as pooled_connection:
+            with pooled_connection.begin():
+                pooled_connection.execute(
+                    text("SELECT set_config('scmirn.tenant_id', :tenant, true)"),
+                    {"tenant": tenant_a},
+                )
+                assert pooled_connection.execute(text("SELECT count(*) FROM staff_cases")).scalar_one() == 1
+            with pooled_connection.begin():
+                assert pooled_connection.execute(text("SELECT count(*) FROM staff_cases")).scalar_one() == 0
+            transaction = pooled_connection.begin()
+            pooled_connection.execute(
+                text("SELECT set_config('scmirn.tenant_id', :tenant, true)"),
+                {"tenant": tenant_b},
+            )
+            assert pooled_connection.execute(text("SELECT count(*) FROM staff_cases")).scalar_one() == 1
+            transaction.rollback()
+            with pooled_connection.begin():
+                assert pooled_connection.execute(text("SELECT count(*) FROM staff_cases")).scalar_one() == 0
 
         with runtime_engine.begin() as connection:
             with pytest.raises(DBAPIError):

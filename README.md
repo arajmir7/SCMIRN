@@ -2,13 +2,13 @@
 
 SCMIRN is a civic technology prototype. The canonical application is a React/Vite frontend in `src/frontend` and a Flask API in `src/backend`.
 
-**Status (2026-10-02): not production ready.** SCMIRN has no government deployment, agency account, approved filing connector, certified legal content, or external compliance certification. Do not enter real citizen, case, contact, or identity data in the demo. Local verification includes 67 backend tests, a disposable PostgreSQL 16 four-role/RLS integration, and a 15-path production API allowlist; these checks do not establish deployment readiness.
+**Status (2026-10-03): `NOT PRODUCTION READY`.** SCMIRN has no government deployment, agency account, approved filing connector, certified legal content, or external compliance certification. Do not enter real citizen, case, contact, or identity data in the demo. The full local candidate gate passed 114 backend tests (including disposable PostgreSQL 16 RLS integration), governance parity, frontend typecheck/build, 13 browser flows, feature parity, and OpenAPI checks. The frontend candidate image scan passed; the backend candidate image and infrastructure still have findings. It exits 1 while 12 blocking engineering controls remain open; this does not establish deployment readiness. See the [dated candidate scan report](docs/assurance/evidence/security-release.json).
 
 ## Available workflow
 
-The Problem Solver submits a description only after explicit consent. The Flask route service uses deterministic, versioned rules, stores bounded derived facts rather than the raw description, applies an idempotency key, and sets a 30-day deletion deadline. It reports `NOT_SUBMITTED`; SCMIRN does not file a request with an agency. An official handoff is displayed only when the route has a current verified HTTPS source with a valid SHA-256 content hash.
+The deterministic route resolver is available in local development/tests and accepts a description only after explicit consent. It uses versioned rules, stores bounded derived facts rather than the raw description, applies an idempotency key, and sets a 30-day deletion deadline. The resolver is **disabled in production** until `route_decisions` has a complete subject/tenant boundary. A returned development/test result says `NOT_SUBMITTED`; SCMIRN does not file a request with an agency. A public handoff is displayed only when a service is backed by a currently configured verified HTTPS source with a valid SHA-256 content hash.
 
-The source registry contains five official handoff candidates; four currently pass source/hash/host checks, and the cybercrime candidate remains `DRAFT` after standard TLS validation failed. Each available destination remains a public handoff only; the route does not file with an agency or create an official receipt. Emergency signals return a human-help warning and no authority.
+The source registry contains five official handoff candidates; four pass the recorded internal source/hash/host checks, and the cybercrime candidate remains `DRAFT` after standard TLS validation failed. The source snapshots are dated 2026-10-02 and no scheduled drift/reviewer workflow exists. The four destinations remain handoffs only; there is no agency filing or official receipt. Emergency signals return a human-help warning and no authority.
 
 The issue map, office directory, tracker, analytics, IoT, legal, resilience, digital twin, city-organism, enterprise and blockchain workspaces are local demos or simulations. Their records are not independently verified or connected to government systems. Report submission saves only a local SCMIRN demo record. Document output is an unreviewed template. Payments are disabled; the API returns `503` without changing funding totals.
 
@@ -37,9 +37,12 @@ Development uses SQLite, creates tables for local development and seeds only the
 The routing API is under `/api/v1`:
 
 - `POST /api/v1/triage` — requires `consent_to_process: true`; send an `Idempotency-Key` header.
+- `POST /api/v1/jurisdiction/resolve` — compatibility alias to the deterministic resolver.
 - `GET /api/v1/services` — lists only source-verified active services.
 - `POST /api/v1/evidence/check` — checks evidence identifiers without accepting uploaded evidence.
 - `GET /api/v1/sources/<source_key>` — returns the source record and verification state.
+
+In production, `/triage` and `/jurisdiction/resolve` return `503` until route-decision subject/tenant isolation is implemented. Service/source discovery and metadata-only evidence checks remain on the allowlist; staff APIs require their separate opt-in and evidence-vault routes remain disabled.
 
 Operator commands:
 
@@ -69,7 +72,7 @@ The web container binds to `127.0.0.1` on `SCMIRN_HTTP_PORT` (default `8080`). P
 - `CORS_ORIGINS` — comma-separated HTTPS origins only.
 - `SCMIRN_HTTP_PORT` — optional loopback port for the HTTPS proxy upstream.
 
-The one-shot migration container uses `SCMIRN_MIGRATION_MODE=true` and the separate migrator URL; it blocks HTTP traffic while Alembic runs. The application starts only after the migration exits successfully and validates that its connection is the non-owner, non-BYPASSRLS `scmirn_app` role. Alembic head `20261002_04` covers all 34 ORM tables. The role provisioner also creates separate worker and auditor identities; the worker has no grants until a job contract exists, while audit verification uses the read-only auditor URL. Staff authentication and metadata-only case endpoints default off through `STAFF_API_ENABLED=false`. Forced RLS and role boundaries passed against disposable PostgreSQL 16 logins. The 34-table inventory classifies every table; nine legacy tables and infrastructure/audit records remain quarantined without app/worker grants pending ownership/RLS work. The production API allowlist documents 15 paths; 93 other registered API operations are rejected. Legacy reporting, uploads, documents, offices, tracking, analytics and simulation APIs remain unavailable.
+The one-shot migration container uses `SCMIRN_MIGRATION_MODE=true` and the separate migrator URL; it blocks HTTP traffic while Alembic runs. The application starts only after the migration exits successfully and validates that its connection is the non-owner, non-BYPASSRLS `scmirn_app` role. Alembic head `20261003_01` covers all 35 ORM tables. The role provisioner also creates separate worker and auditor identities; the worker has no grants until a job contract exists, while audit verification uses the read-only auditor URL. Staff authentication and metadata-only case endpoints default off through `STAFF_API_ENABLED=false`. Forced RLS and role boundaries passed against disposable PostgreSQL 16 logins. The 35-table inventory classifies every table; nine legacy tables and infrastructure/audit records remain quarantined without app/worker grants pending ownership/RLS work. The production API allowlist documents 15 route patterns; 99 other registered API operations are rejected. Legacy reporting, uploads, documents, offices, tracking, analytics and simulation APIs remain unavailable.
 
 The retention purge is not scheduled by this stack. Configure and monitor an operator-controlled scheduled job only after the retention policy and operational owner are approved. Database backup, restore, point-in-time recovery, TLS proxy configuration, external audit, and production smoke beyond the script's local checks are not configured or verified. Before a pilot, define the database provider's backup policy and demonstrate restoration into an isolated environment.
 
@@ -97,7 +100,7 @@ From `src/backend`:
 python -m pytest tests -q
 ```
 
-The evidence and limitations are tracked in [`docs/merge/TEST_EVIDENCE_MATRIX.md`](docs/merge/TEST_EVIDENCE_MATRIX.md), [`docs/merge/GOVERNMENT_READINESS_MATRIX.md`](docs/merge/GOVERNMENT_READINESS_MATRIX.md), and [`docs/release/evidence/README.md`](docs/release/evidence/README.md). The ZIP inventory and disposition are documented under [`docs/merge`](docs/merge/).
+The evidence and limitations are tracked in [`docs/merge/TEST_EVIDENCE_MATRIX.md`](docs/merge/TEST_EVIDENCE_MATRIX.md), [`docs/merge/GOVERNMENT_READINESS_MATRIX.md`](docs/merge/GOVERNMENT_READINESS_MATRIX.md), and [`docs/assurance/README.md`](docs/assurance/README.md). Run `scripts/release_gate.sh --mode candidate` for local candidate checks; it exits nonzero while blocking engineering controls remain open. The ZIP inventory and disposition are documented under [`docs/merge`](docs/merge/).
 
 ## Troubleshooting
 

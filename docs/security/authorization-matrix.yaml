@@ -1,0 +1,144 @@
+schema_version: 1
+policy: DEFAULT_DENY
+assessment_date: '2026-10-03'
+scope: Current staff and evidence endpoints only; not a complete government RBAC approval.
+tenant_context:
+  source: Authenticated StaffSession loaded by its hashed HttpOnly cookie; tenant_id is read from that database row.
+  transaction_scope: PostgreSQL transaction-local GUC set server-side after session validation.
+  client_selectable: false
+  caveat: Shared application DB credentials can set arbitrary GUC values; this is not an independent database tenant identity.
+authorization_attributes:
+  enforced_today: [tenant_id, active, mfa_verified, role, case_creator, case_owner, case_assignment, purpose, sensitivity, legal_hold, case_id, source_creator, source_status]
+  missing_and_denied_for_scoped_features: [department_id, jurisdiction_id, service_id, approval_stage, delegated_operator_scope]
+  note: Staff identities and cases do not yet contain department/jurisdiction attributes. Work requiring them must stay unavailable.
+roles:
+  - role: citizen
+    implementation: NOT_IMPLEMENTED
+    staff_role: null
+    actions: []
+  - role: assisted_service_operator
+    implementation: NOT_IMPLEMENTED
+    staff_role: null
+    actions: []
+  - role: officer
+    implementation: LOCAL_STAFF_ONLY
+    staff_role: CASE_OFFICER
+    actions: [case:list_owned_or_assigned, case:read_owned_or_assigned, case:create, case:update_status_owned_or_assigned, evidence:upload_assigned_case, evidence:read_assigned_case, evidence:delete_after_retention_without_hold]
+  - role: supervisor
+    implementation: NOT_IMPLEMENTED
+    staff_role: null
+    actions: []
+  - role: service_source_reviewer
+    implementation: LIMITED_POLICY_ONLY
+    staff_role: SOURCE_REVIEWER
+    actions: [source:approve_when_pending_and_not_self_created_with_complete_scope]
+  - role: government_tenant_administrator
+    implementation: LOCAL_STAFF_ONLY
+    staff_role: TENANT_ADMIN
+    actions: [case:list_tenant, case:read_tenant_internal]
+  - role: auditor
+    implementation: LOCAL_READ_ONLY
+    staff_role: AUDITOR
+    actions: [case:list_tenant, case:read_tenant_internal, audit:read_via_separate_auditor_connection]
+routes:
+  - path: /api/v1/staff/auth/login
+    methods: [POST]
+    rule: Password verification, account lockout, throttling; no session exists until MFA completes.
+  - path: /api/v1/staff/auth/mfa
+    methods: [POST]
+    rule: Signed short-lived challenge binds server-issued user and tenant; one-time TOTP step.
+  - path: /api/v1/staff/auth/mfa/enroll/confirm
+    methods: [POST]
+    rule: One-time enrollment token, expiry, TOTP verification and attempt lockout.
+  - path: /api/v1/staff/auth/me
+    methods: [GET]
+    rule: staff_required; authenticated active MFA session.
+  - path: /api/v1/staff/auth/logout
+    methods: [POST]
+    rule: staff_required; revoke current session; CSRF required.
+  - path: /api/v1/staff/auth/password/change
+    methods: [POST]
+    rule: staff_required; verify current secret, rotate password, revoke sessions; CSRF required.
+  - path: /api/v1/staff/cases
+    methods: [GET]
+    rule: staff_required TENANT_ADMIN|CASE_OFFICER|AUDITOR; tenant filter plus case:list; officers see creator/assignment records.
+  - path: /api/v1/staff/cases
+    methods: [POST]
+    rule: staff_required TENANT_ADMIN|CASE_OFFICER plus case:create; tenant_id is set from authenticated session, never body.
+  - path: /api/v1/staff/cases/<case_id>
+    methods: [GET]
+    rule: staff_required TENANT_ADMIN|CASE_OFFICER|AUDITOR plus tenant-scoped lookup and case:read.
+  - path: /api/v1/staff/cases/<case_id>/status
+    methods: [POST]
+    rule: staff_required TENANT_ADMIN|CASE_OFFICER plus case:update_status; ownership/assignment and transition checks.
+  - path: /api/v1/staff/cases/<case_id>/evidence
+    methods: [GET, POST]
+    rule: staff_required CASE_OFFICER plus evidence:read or evidence:upload; case assignment required.
+  - path: /api/v1/staff/evidence/<evidence_id>
+    methods: [GET]
+    rule: staff_required CASE_OFFICER; tenant/case lookup plus evidence:read.
+  - path: /api/v1/staff/evidence/<evidence_id>/retrieval
+    methods: [GET]
+    rule: Reauthorize session, MFA, case assignment, retention, tenant, evidence, and short-lived signed ticket.
+  - path: /api/v1/staff/evidence/<evidence_id>/content
+    methods: [GET]
+    rule: Reauthorize current session and case assignment; ticket bound to user/session/tenant/case/evidence; metadata-only audit.
+  - path: /api/v1/staff/evidence/<evidence_id>
+    methods: [DELETE]
+    rule: staff_required CASE_OFFICER plus evidence:delete; expiry and legal hold enforced.
+policy_cases:
+  - id: officer-reads-owned-case
+    action: case:read
+    principal: {user_id: officer-a, tenant_id: tenant-a, roles: [CASE_OFFICER], active: true, mfa_verified: true}
+    attributes: {tenant_id: tenant-a, purpose: CASE_OPERATIONS, sensitivity: INTERNAL, created_by_id: officer-a, owner_id: officer-a, assigned_user_id: null}
+    expected: ALLOW
+  - id: officer-cannot-read-unassigned-case
+    action: case:read
+    principal: {user_id: officer-a, tenant_id: tenant-a, roles: [CASE_OFFICER], active: true, mfa_verified: true}
+    attributes: {tenant_id: tenant-a, purpose: CASE_OPERATIONS, sensitivity: INTERNAL, created_by_id: officer-b, owner_id: officer-b, assigned_user_id: officer-b}
+    expected: DENY
+  - id: auditor-read-is-tenant-scoped
+    action: case:read
+    principal: {user_id: auditor-a, tenant_id: tenant-a, roles: [AUDITOR], active: true, mfa_verified: true}
+    attributes: {tenant_id: tenant-a, purpose: CASE_OPERATIONS, sensitivity: INTERNAL, created_by_id: officer-b, owner_id: officer-b}
+    expected: ALLOW
+  - id: auditor-write-denied
+    action: case:update_status
+    principal: {user_id: auditor-a, tenant_id: tenant-a, roles: [AUDITOR], active: true, mfa_verified: true}
+    attributes: {tenant_id: tenant-a, purpose: CASE_OPERATIONS, sensitivity: INTERNAL, created_by_id: auditor-a, owner_id: auditor-a}
+    expected: DENY
+  - id: administrator-cross-tenant-denied
+    action: case:read
+    principal: {user_id: admin-a, tenant_id: tenant-a, roles: [TENANT_ADMIN], active: true, mfa_verified: true}
+    attributes: {tenant_id: tenant-b, purpose: CASE_OPERATIONS, sensitivity: INTERNAL}
+    expected: DENY
+  - id: administrator-evidence-denied-without-officer-role
+    action: evidence:read
+    principal: {user_id: admin-a, tenant_id: tenant-a, roles: [TENANT_ADMIN], active: true, mfa_verified: true}
+    attributes: {tenant_id: tenant-a, purpose: CASE_EVIDENCE, sensitivity: RESTRICTED, case_id: case-a, created_by_id: officer-a}
+    expected: DENY
+  - id: evidence-legal-hold-delete-denied
+    action: evidence:delete
+    principal: {user_id: officer-a, tenant_id: tenant-a, roles: [CASE_OFFICER], active: true, mfa_verified: true}
+    attributes: {tenant_id: tenant-a, purpose: CASE_EVIDENCE, sensitivity: RESTRICTED, case_id: case-a, created_by_id: officer-a, legal_hold: true}
+    expected: DENY
+  - id: reviewer-cannot-approve-own-change
+    action: source:approve
+    principal: {user_id: reviewer-a, tenant_id: tenant-a, roles: [SOURCE_REVIEWER], active: true, mfa_verified: true, department_ids: [dept-a], jurisdiction_ids: [district-a], service_ids: [service-a]}
+    attributes: {tenant_id: tenant-a, purpose: SOURCE_GOVERNANCE, sensitivity: INTERNAL, department_id: dept-a, jurisdiction_id: district-a, service_id: service-a, approval_stage: REVIEW, risk_tier: HIGH, source_state: PENDING_CHECK, created_by_id: reviewer-a}
+    expected: DENY
+  - id: reviewer-needs-complete-scope-and-separation
+    action: source:approve
+    principal: {user_id: reviewer-b, tenant_id: tenant-a, roles: [SOURCE_REVIEWER], active: true, mfa_verified: true, department_ids: [dept-a], jurisdiction_ids: [district-a], service_ids: [service-a]}
+    attributes: {tenant_id: tenant-a, purpose: SOURCE_GOVERNANCE, sensitivity: INTERNAL, department_id: dept-a, jurisdiction_id: district-a, service_id: service-a, approval_stage: REVIEW, risk_tier: HIGH, source_state: PENDING_CHECK, created_by_id: reviewer-a}
+    expected: ALLOW
+  - id: reviewer-from-wrong-jurisdiction-denied
+    action: source:approve
+    principal: {user_id: reviewer-c, tenant_id: tenant-a, roles: [SOURCE_REVIEWER], active: true, mfa_verified: true, department_ids: [dept-a], jurisdiction_ids: [district-b], service_ids: [service-a]}
+    attributes: {tenant_id: tenant-a, purpose: SOURCE_GOVERNANCE, sensitivity: INTERNAL, department_id: dept-a, jurisdiction_id: district-a, service_id: service-a, approval_stage: REVIEW, risk_tier: HIGH, source_state: PENDING_CHECK, created_by_id: reviewer-a}
+    expected: DENY
+  - id: unimplemented-assisted-operator-denied
+    action: case:read
+    principal: {user_id: operator-a, tenant_id: tenant-a, roles: [ASSISTED_OPERATOR], active: true, mfa_verified: true}
+    attributes: {tenant_id: tenant-a, purpose: CASE_OPERATIONS, sensitivity: INTERNAL, created_by_id: operator-a}
+    expected: DENY

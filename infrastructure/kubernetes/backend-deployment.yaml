@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: scmirn-backend
+  namespace: scmirn-prod
   labels:
     app: scmirn-backend
 spec:
@@ -14,22 +15,60 @@ spec:
       labels:
         app: scmirn-backend
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: backend
-          image: your-registry/scmirn-backend:latest
-          imagePullPolicy: IfNotPresent
+          image: ghcr.io/arajmir7/scmirn-backend:release-placeholder
+          imagePullPolicy: Always
           ports:
             - containerPort: 5000
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
           envFrom:
             - secretRef:
                 name: scmirn-secrets
             - configMapRef:
                 name: scmirn-config
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          readinessProbe:
+            httpGet:
+              path: /api/ready
+              port: 5000
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 5000
+            periodSeconds: 20
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 128Mi
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: scmirn-backend
+  namespace: scmirn-prod
 spec:
   selector:
     app: scmirn-backend
@@ -37,4 +76,3 @@ spec:
     - name: http
       port: 5000
       targetPort: 5000
-

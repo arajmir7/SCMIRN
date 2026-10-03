@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: scmirn-frontend
+  namespace: scmirn-prod
   labels:
     app: scmirn-frontend
 spec:
@@ -14,22 +15,59 @@ spec:
       labels:
         app: scmirn-frontend
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: frontend
-          image: your-registry/scmirn-frontend:latest
-          imagePullPolicy: IfNotPresent
+          image: ghcr.io/arajmir7/scmirn-frontend:release-placeholder
+          imagePullPolicy: Always
           ports:
-            - containerPort: 80
+            - containerPort: 8080
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+            - name: nginx-run
+              mountPath: /var/run
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: nginx-cache
+          emptyDir:
+            sizeLimit: 64Mi
+        - name: nginx-run
+          emptyDir:
+            sizeLimit: 16Mi
+        - name: tmp
+          emptyDir:
+            sizeLimit: 16Mi
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: scmirn-frontend
+  namespace: scmirn-prod
 spec:
   selector:
     app: scmirn-frontend
   ports:
     - name: http
       port: 80
-      targetPort: 80
-
+      targetPort: 8080

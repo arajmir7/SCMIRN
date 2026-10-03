@@ -4,6 +4,12 @@
 This is repository and disposable-environment evidence only. No production
 database, identity provider, object store, host, or government service was used.
 
+> **Historical snapshot.** The Phase 3 baseline below describes the code and
+> counts at its assessment date. The current schema and evidence-vault update
+> are recorded in the 2026-10-03 continuation near the end of this document;
+> use the [production blocker ledger](../release/production-blockers.yaml)
+> and current release gate for present status.
+
 ## Implemented and exercised locally
 
 - PostgreSQL deployment identities are separated into `scmirn_app`,
@@ -74,8 +80,43 @@ production bucket, KMS policy, live scanner, authority-owned retention
 decision, scheduled retention worker, deletion-lag alert, or recovery drill.
 RLS uses an application-set tenant GUC; it limits accidental unscoped access
 under the trusted app but does not establish an independent database tenant
-identity. The 35-table registry passes schema parity, while strict approval
-continues to block on accountable data-owner/privacy review. The strict gate
-currently reports 309 issues, including 273 unapproved personal-data records,
-35 unresolved table owner/retention records, and one unresolved governance
-profile. The verdict remains `NOT PRODUCTION READY`.
+identity. The 35-table registry passes schema parity. The current governance
+evaluation is classified as 273 personal/linkable field approvals, 35 table
+ownership/retention records, and one governance-profile approval. These are
+privacy/data-owner decisions, not a count of code defects. The machine-readable
+[blocker ledger](../release/production-blockers.yaml) tracks each workstream and
+its accountable owner and required evidence. Twelve blocking engineering
+workstreams remain `OPEN`; external legal, government, infrastructure,
+security-assessment, and security-operations work is recorded separately as
+`BLOCKED_EXTERNAL_DEPENDENCY`. The verdict remains `NOT PRODUCTION READY`.
+
+## 2026-10-03 candidate gate and boundary verification
+
+The full candidate gate ran against this worktree with a disposable PostgreSQL
+16 RLS URL. Backend: **114 passed**, including the RLS integration, with 118
+existing SQLAlchemy deprecation warnings. Governance parity passed for 35
+tables/471 columns and 294 candidates (273 pending approvals plus 21 explicit
+exemptions). Frontend typecheck, Vite build and all 13 Playwright flows passed;
+feature parity passed 9/9. OpenAPI/production-route parity passed for 15
+allowlisted route patterns and confirmed 99 other operations return 503,
+including production triage/jurisdiction resolution.
+
+The overall candidate gate correctly exited 1: the blocker ledger has 12 open
+blocking engineering controls, and no authorized production environment file,
+secrets, or CA configuration was supplied. This is local candidate evidence,
+not exact-release security-scan evidence or deployment approval.
+
+## 2026-10-03 candidate security scan
+
+The separately recorded [candidate scan report](../assurance/evidence/security-release.json)
+covers the candidate source tree and local ARM64 backend/frontend images. Semgrep
+reported no findings across 231 tracked files; Gitleaks found no secrets in the
+staged delta; npm audit and pip-audit found no vulnerable locked dependencies.
+Bandit reported six low-severity findings. The frontend image reported no
+vulnerabilities; the backend image still has 44 high and 60 medium vulnerability
+records across 73 unique advisories, with no critical records. The infrastructure
+scan reports four medium registry-trust findings for placeholder images, one
+high KMS-policy finding for the S3 access-log destination, and one low finding
+for that destination's server-access-log setting. The full release scan remains
+open: the candidate images are local ARM64 builds, other required images are not
+covered, DAST had no authorized target, and no signed release provenance exists.

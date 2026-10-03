@@ -2,7 +2,7 @@
 
 The canonical technical assessment is [`../security/SECURITY_ARCHITECTURE.md`](../security/SECURITY_ARCHITECTURE.md); control gaps are listed in [`../merge/SECURITY_GAP_MATRIX.md`](../merge/SECURITY_GAP_MATRIX.md).
 
-Current implementation includes production TLS/CA configuration validation, safe exception responses, request IDs, rate-limit/cache configuration, a source-gated API allowlist, selected hash-chain audit controls, a 35-table migration baseline, five public handoff candidates, and dependency-lock SCA/SBOM evidence. Staff and evidence forced RLS have passed a disposable PostgreSQL 16 test, and a private evidence lifecycle exists in code. These are local code/configuration controls. There is no verified production identity or tenant boundary, approved production object store/scanner, SIEM, key-management policy, deployed WAF, external audit, fresh SAST/DAST/secret/image scan, image SBOM, or signed provenance.
+Current implementation includes production TLS/CA configuration validation, safe exception responses, request IDs, rate-limit/cache configuration, a source-gated API allowlist, selected hash-chain audit controls, a 35-table migration baseline, four internally reviewed official handoffs plus one withheld candidate, and dependency-lock SCA/SBOM evidence. Staff and evidence forced RLS have passed disposable PostgreSQL 16 tests, and a private evidence lifecycle exists in code. These are local code/configuration controls. There is no verified production identity or complete tenant boundary, approved production object store/scanner, SIEM, key-management policy, deployed WAF, external audit, exact-release SAST/DAST/secret/image scan, image SBOM, or signed provenance.
 
 **State: `PARTIAL`; overall production security is not verified.**
 
@@ -18,8 +18,9 @@ partial security status.
 
 The field-level inventory is checked against ORM metadata in CI and recorded
 in [`data-governance-registry.yaml`](data-governance-registry.yaml). It covers
-471 columns; all 294 personal/linkable entries remain `INVENTORIED`, not
-`APPROVED`. Privacy/legal sign-off and deployed processor, region, retention
+471 columns and 294 potentially personal/linkable candidates: 273 await
+accountable field approval and 21 have explicit candidate exemptions. None of
+the pending entries may be changed to `APPROVED` by engineering. Privacy/legal sign-off and deployed processor, region, retention
 and rights workflows are still release blockers. See
 [`../release/PHASE4_DATA_GOVERNANCE_EVIDENCE.md`](../release/PHASE4_DATA_GOVERNANCE_EVIDENCE.md).
 

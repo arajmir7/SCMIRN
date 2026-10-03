@@ -122,7 +122,7 @@ the current test snapshot; previous sections are historical records.
 | PostgreSQL roles and grants | Role provisioner plus integration test; provisioner was run twice to check repeatability | Four distinct logins; app cannot create DB/roles/schema objects, own relations, bypass RLS, or read audit/legacy content. Auditor is read-only; worker has no table grants. | Synthetic role passwords/database only. Deployment role provisioning remains unverified. |
 | Migration and mapped-table inventory | Alembic zero-to-head plus `test_database_security_contract.py` | Head `20261002_04`; 34 of 34 mapped tables classified. Nine legacy tables are quarantined without app/worker grants. | Does not complete ownership keys/RLS for legacy data. |
 | RLS and audit separation | `tests/integration/test_postgres_staff_rls.py` | Forced tenant RLS and cross-tenant denial; audit append-only web access; auditor read; app audit read, DDL, and an overprivileged role rejected. | Disposable PostgreSQL 16 only. |
-| Production API contract | OpenAPI validator and production gate | 15 allowlisted paths; 93 other registered API operations returned deterministic HTTP 503, including triage/jurisdiction. | Synthetic Flask production mode only; no external ingress/WAF. |
+| Production API contract | OpenAPI validator and production gate | 15 allowlisted route patterns; 99 other registered API operations returned deterministic HTTP 503, including triage/jurisdiction. | Synthetic Flask production mode only; no external ingress/WAF. |
 | Production readiness | `scripts/release_gate.sh` | Release verdict remains **`NOT PRODUCTION READY`**; PostgreSQL integration is required by the gate when run. | Production auth/recovery, legacy isolation, scheduled purge, observability, scans/provenance, accessibility, and DR controls remain open. |
 
 Detailed implementation status and remaining controls are in
@@ -142,3 +142,21 @@ Checks run locally after adding the prototype-disclosed Labs routes and initial 
 | Visual review | Local desktop Labs/heatmap and narrow mobile staff states | Labs disclosure and map state were legible; mobile staff unavailable state has no assistant/footer overlap or horizontal overflow. | Manual, limited viewport review; screenshots are in `/tmp`, not release artifacts. |
 
 Release status remains `NOT PRODUCTION READY`: data governance approvals, deployed identity/database validation, independent accessibility/security evidence and operations remain open.
+
+## Typed candidate gate — 2026-10-03
+
+The full candidate gate ran with a disposable PostgreSQL 16 integration URL
+against the current worktree.
+
+| System / gate | Result | Limits |
+|---|---|---|
+| Backend suite | **114 passed, 118 existing SQLAlchemy deprecation warnings.** | Local Python 3.13 environment and disposable PostgreSQL 16; no production database. |
+| Governance inventory | **35 tables, 471 columns, 294 personal/linkable candidates registered or explicitly exempted.** | 273 field approvals, 35 table decisions and one profile approval remain pending. |
+| Frontend | Typecheck passed; Vite production build passed; **13 Playwright flows passed**. | Browser service responses are mocked; no production backend or identity provider. |
+| Feature parity | **9/9 integrated, 0 unexplained.** | Accounting gate, not production correctness certification. |
+| OpenAPI/production route gate | **15 allowlisted route patterns; 99 other registered API operations return 503.** | Synthetic Flask production mode only; triage/jurisdiction remain denied. |
+| Release blocker gate | **Exit 1 as intended.** 12 blocking engineering controls are `OPEN`; eight external records are `BLOCKED_EXTERNAL_DEPENDENCY`. | No authorized production environment file, deployment secrets, or CA inputs were supplied. No deployment occurred. |
+
+The results above are local candidate checks. They do not close exact-release
+security scans, image SBOM/provenance, accessibility, restore/DR, operational,
+privacy/legal, or government authorization requirements.

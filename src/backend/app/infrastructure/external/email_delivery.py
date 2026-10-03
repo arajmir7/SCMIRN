@@ -9,11 +9,11 @@ Supported providers:
 from __future__ import annotations
 
 import base64
+import http.client
 import json
+import ssl
 from email.message import EmailMessage
 from typing import Any, Dict
-from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
 
 
 class EmailDeliveryError(Exception):
@@ -116,27 +116,29 @@ def _send_via_sendgrid(
         ]
 
     request_data = json.dumps(payload).encode("utf-8")
-    request = Request(
-        url="https://api.sendgrid.com/v3/mail/send",
-        method="POST",
-        data=request_data,
-        headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-        },
+    # Fixed host/path, no redirects, and an explicit default TLS context; the
+    # Semgrep HTTPSConnection warning is therefore not an unverified TLS use.
+    connection = http.client.HTTPSConnection(  # nosemgrep: python.lang.security.audit.httpsconnection-detected.httpsconnection-detected
+        "api.sendgrid.com", timeout=20, context=ssl.create_default_context()
     )
-
     try:
-        with urlopen(request, timeout=20) as response:
-            status = int(getattr(response, "status", 0))
-            if status not in {200, 202}:
-                raise EmailDeliveryError(f"SendGrid rejected email with status {status}.")
-            return str(response.headers.get("X-Message-Id") or "sendgrid-accepted")
-    except HTTPError as exc:
-        details = exc.read().decode("utf-8", errors="ignore")
-        raise EmailDeliveryError(f"SendGrid error {exc.code}: {details[:250]}") from exc
-    except URLError as exc:
-        raise EmailDeliveryError(f"SendGrid connectivity error: {exc}") from exc
+        connection.request(
+            "POST",
+            "/v3/mail/send",
+            body=request_data,
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            },
+        )
+        response = connection.getresponse()
+        if response.status not in {200, 202}:
+            raise EmailDeliveryError(f"SendGrid rejected email with status {response.status}.")
+        return str(response.getheader("X-Message-Id") or "sendgrid-accepted")
+    except (OSError, http.client.HTTPException) as exc:
+        raise EmailDeliveryError("SendGrid connectivity error.") from exc
+    finally:
+        connection.close()
 
 
 def _send_via_ses(

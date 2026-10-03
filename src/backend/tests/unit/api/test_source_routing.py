@@ -349,6 +349,13 @@ def test_production_gate_blocks_legacy_mutations_and_allows_source_routes(routin
     assert routing_client.get("/api/health").status_code == 200
     assert routing_client.get("/api/ready").status_code == 200
 
+    triage = routing_client.post(
+        "/api/v1/triage",
+        json={"description": "synthetic route fixture", "consent_to_process": True},
+    )
+    assert triage.status_code == 503
+    assert triage.get_json()["code"] == "PRODUCTION_ENDPOINT_DISABLED"
+
     routing_app.config["MIGRATION_MODE"] = True
     migration_block = routing_client.get("/api/v1/services")
     assert migration_block.status_code == 503

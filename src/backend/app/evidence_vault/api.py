@@ -1,6 +1,7 @@
 """MFA and assignment-scoped staff endpoints for restricted case evidence."""
 from __future__ import annotations
 
+import hashlib
 import time
 import uuid
 from datetime import timedelta
@@ -228,7 +229,11 @@ def upload_case_evidence(case_id):
         try:
             store.delete(result.object_key)
         except Exception:
-            pass
+            object_key_digest = hashlib.sha256(result.object_key.encode("utf-8")).hexdigest()
+            current_app.logger.error(
+                "evidence_orphan_cleanup_failed object_key_sha256=%s",
+                object_key_digest,
+            )
         return jsonify({"success": False, "error": "Evidence metadata could not be stored.", "code": "EVIDENCE_METADATA_UNAVAILABLE"}), 503
     response = make_response(jsonify({"success": True, "evidence": _metadata(evidence)}), 201)
     response.headers["Cache-Control"] = "no-store"

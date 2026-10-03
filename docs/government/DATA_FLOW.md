@@ -6,18 +6,25 @@ The machine-readable [data-governance registry](data-governance-registry.yaml)
 tracks the 35 mapped SQLAlchemy tables and all 471 fields. The CI checker
 compares that inventory to live ORM metadata and requires each field to be
 recorded as potentially personal/linkable or explicitly classified otherwise.
-The 294 personal/linkable entries are engineering-inventoried only; the
-release approval mode blocks them until an accountable privacy owner approves
-the processing metadata.
+It contains 294 potentially personal/linkable candidate entries: 273 still
+require accountable approval and 21 have explicit candidate exemptions. The
+release approval mode blocks on the pending field, table, and profile decisions.
 
-## Consent-gated source triage
+## Consent-gated source triage (development/test only)
 
 1. The browser collects a free-text description and submits only after the explicit triage consent control.
 2. Flask validates input length and optional state/district fields. Deterministic phrase classification and route rules run in process; no LLM is called by this route.
 3. The description is normalized in memory. The persisted decision contains a keyed input fingerprint, bounded classifier/geography-presence facts, result, rule/service/source versions, idempotency digest, and retention deadline. Unit tests assert the raw description is absent from stored decision facts and output.
-4. A route requires effective active records, verified source metadata including a SHA-256 content hash, service/source consistency, matching local geography, and safe same-host HTTPS channels. The catalog currently has no verified source, so ordinary inputs abstain.
-5. An emitted result states `NOT_SUBMITTED`; it does not create an official reference. Handoff rendering opens the official host for the citizen to continue themselves.
+4. A route requires effective active records, verified source metadata including a SHA-256 content hash, service/source consistency, matching local geography, and safe same-host HTTPS channels. The current catalog has four internally reviewed handoff-only service candidates; the fifth candidate remains withheld because its official portal could not be reviewed with valid TLS. These source snapshots date from 2026-10-02 and have no scheduled drift review.
+5. An emitted result states `NOT_SUBMITTED`; it does not create an official reference. A handoff opens the official host for the citizen to continue themselves. No SCMIRN connector submits a filing or receives official status.
 6. The purge function deletes expired route decisions and appends count-only audit metadata. Production scheduling and deletion-lag alerting are not configured.
+
+The resolver endpoint is registered for local development and tests but is
+intentionally excluded from the production API allowlist. `route_decisions`
+does not yet have a complete subject/tenant boundary and is quarantined from
+the production runtime database role. Production currently exposes service
+discovery and source metadata, not personalized triage or jurisdiction
+resolution. See the [route matrix](../merge/ROUTE_MATRIX.md).
 
 ## Legacy and demo flows
 

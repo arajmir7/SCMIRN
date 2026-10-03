@@ -1,6 +1,14 @@
-# GIGW 3.0 readiness evidence matrix
+# GIGW 3.0 / DBIM readiness evidence matrix
 
-**Status:** GIGW 3.0 readiness evidence prepared. This is an internal engineering self-assessment, not certification or an external conformity finding. Scope is the canonical React public experience and its Flask APIs at baseline 2026-10-01.
+**Assessment date:** 2026-10-03. **Status:** engineering self-assessment only, not a conformity finding or certification. Scope is the current React public experience and Flask APIs. SCMIRN is not currently a government-owned or authority-branded website; authority identity, emblem, content ownership, domain, and pilot scope require a participating government organization. No government emblem or partnership is implied.
+
+## Current official references reviewed
+
+- The [NIC/MeitY GIGW 3.0 portal](https://guidelines.india.gov.in/gigw3/) showed a last-updated date of **25 September 2026** when checked. Its [scope](https://guidelines.india.gov.in/scope-and-objective/) applies the guidance to Indian government websites and applications and describes WCAG 2.1 Level AA as the accessibility basis. The [official GIGW guidelines](https://guidelines.india.gov.in/guidelines/) include both developer and government-organization actions; ownership and approvals cannot be self-assigned by SCMIRN engineering.
+- MeitY's [20 March 2025 communication](https://guidelines.india.gov.in/govt-communications/) is listed as a communication on adoption of DBIM and GIGW. STQC's [DBIM compliance certification page](https://www.stqc.gov.in/en/dbim-compliance-certification) says DBIM is implemented with the latest GIGW and lists **DBIM Manual v3.0**; the page says STQC alone issues the compliance certificate after evaluation. This repository has not been evaluated or certified.
+- STQC's [GIGW website-quality certification page](https://www.stqc.gov.in/en/website-quality-certification-0) describes the external certification route. The current [accessibility review notice](https://www.stqc.gov.in/en/node/1350), last updated 23 September 2026 on the page, lists an IAAP-certified auditor review report as a pre-requisite for organizations applying for GIGW evaluation. The exact application scope and evidence must be confirmed with STQC/authority at application time.
+
+The referenced official portals are live and can change; this snapshot records their state as checked on 2026-10-03. It does not replace the current manual, assessor instructions, or authority-specific review.
 
 | Checkpoint | Applicability / implementation location | Evidence available | Status | Owner / remaining action |
 |---|---|---|---|---|
@@ -17,7 +25,7 @@
 | Cybersecurity: authentication, authorization, privacy, secure development | Flask APIs/models, `docs/security/` | Unit tests cover selected API behavior; no tenant/admin authorization assurance | `NOT VERIFIED` | Security owner: close access-control and privacy gates; independent penetration test. |
 | Cybersecurity: vulnerability and incident management | dependency and container files | Stale ZIP SARIF only; no current scan evidence | `NOT VERIFIED` | DevSecOps: fresh SAST/SCA/secret/container/DAST and incident process. |
 | Lifecycle: deployment, backups, disaster recovery, monitoring, rollback | Docker/Compose and backend DB setup | Local build/test evidence only; no production restore or DR run | `NOT VERIFIED` | SRE: approved runbooks, backup/restore test, RTO/RPO, dashboards, alerts and rollback drill. |
-| Lifecycle: content/legal data review and versioning | Current pages and source registry design | Source code has versioned registry models; current official candidate is unavailable | `PARTIAL` | Assign legal/source reviewers and expiry monitoring; no route until review evidence is valid. |
+| Lifecycle: content/legal data review and versioning | Current pages and source registry design | Versioned registry and four internally reviewed official handoff candidates; one candidate is withheld for source TLS review | `PARTIAL` | Assign accountable legal/source reviewers and expiry/drift monitoring; internal engineering review is not agency approval. |
 | Lifecycle: multilingual support | React components | No i18n catalogue or reviewed Hindi content verified | `NOT IMPLEMENTED` | Product/content owner establishes English/Hindi catalogs and reviewed legal translations. |
 | Lifecycle: service availability and public error behavior | Flask `/health`, frontend error handling | Baseline API/frontend tests; no monitored SLO or full failure injection | `PARTIAL` | SRE: publish status page/availability target and validate dependency outage behavior. |
 

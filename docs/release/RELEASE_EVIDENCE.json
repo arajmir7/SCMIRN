@@ -1,5 +1,9 @@
 {
   "schema_version": 1,
+  "historical_snapshot": true,
+  "current_status_as_of": "2026-10-03",
+  "current_verdict": "NOT PRODUCTION READY",
+  "current_blocker_ledger": "production-blockers.yaml",
   "git_sha": "9725a52dd59b1ebef90b5e31724e2800ea26a473",
   "working_tree": "CLEAN_AT_RECORDED_BASELINE_COMMIT",
   "timestamp": "2026-10-02T03:26:08+05:30",

@@ -1,7 +1,14 @@
-# Phase 4 field-governance inventory evidence
+# Phase 4 field-governance inventory evidence — historical baseline
 
 **Assessment date:** 2026-10-02. **Status:** engineering inventory; privacy/legal approval incomplete.  
 **Release verdict:** `NOT PRODUCTION READY`.
+
+> This is the historical 2026-10-02 snapshot (34 tables, 452 columns, 254
+> candidate fields). The current 2026-10-03 schema has 35 tables and 471
+> columns, 294 potentially personal/linkable candidates (273 pending approval
+> plus 21 explicit exemptions), 35 table-governance decisions, and one profile
+> approval. See the [current DPDP readiness matrix](../compliance/DPDP_READINESS_MATRIX.md)
+> and [typed blocker ledger](production-blockers.yaml) for present status.
 
 ## Implementation
 

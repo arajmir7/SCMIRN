@@ -2,9 +2,13 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: scmirn-executive-briefing
+  namespace: scmirn-prod
 spec:
-  # 06:00 UTC daily
+  # Intentionally paused: do not generate briefings until real, approved
+  # authority data, recipients, and an operational owner are configured.
+  suspend: true
   schedule: "0 6 * * *"
+  concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 5
   jobTemplate:
@@ -12,19 +16,35 @@ spec:
       template:
         spec:
           restartPolicy: OnFailure
+          automountServiceAccountToken: false
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            fsGroup: 10001
+            seccompProfile:
+              type: RuntimeDefault
           containers:
             - name: briefing-worker
-              image: ghcr.io/example/scmirn-backend:enterprise-latest
-              imagePullPolicy: IfNotPresent
-              command:
-                - python
-                - -c
-                - |
-                  import requests
-                  payload = {
-                      "city_id": "metro-demo",
-                      "recipients": ["ceo@scmirn.local", "ciso@scmirn.local"],
-                      "include_pdf": True,
-                      "include_recommendations": True
-                  }
-                  requests.post("http://scmirn-enterprise-api:5000/api/v1/enterprise/executive/briefings/generate", json=payload, timeout=30)
+              image: ghcr.io/arajmir7/scmirn-backend:release-placeholder
+              imagePullPolicy: Always
+              command: ["python", "-c", "raise SystemExit('Briefing worker is disabled pending approved sources and recipients')"]
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+              volumeMounts:
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: tmp
+              emptyDir:
+                sizeLimit: 32Mi

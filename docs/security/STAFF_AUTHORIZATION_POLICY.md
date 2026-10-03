@@ -28,7 +28,7 @@ The current staff-case schema has no department or jurisdiction columns and stor
 | Tenant/government administrator | `TENANT_ADMIN`, limited to its tenant. |
 | Auditor | `AUDITOR`, read-only within its tenant; audit data access remains governed separately by database roles. |
 
-This is a partial policy closure. Do not expand the production allowlist or set `STAFF_API_ENABLED=true` based on this document. Existing PostgreSQL forced RLS remains the independent database boundary; policy evaluation does not replace it.
+This is a partial policy closure. Do not expand the production allowlist or set `STAFF_API_ENABLED=true` based on this document. PostgreSQL forced RLS is a separate database enforcement layer, but its tenant scope trusts an application-set transaction-local GUC; it is not an independent tenant identity. Policy evaluation does not replace RLS.
 
 ## Negative tests
 

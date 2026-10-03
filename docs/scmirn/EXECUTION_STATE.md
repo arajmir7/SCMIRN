@@ -1,10 +1,14 @@
 # SCMIRN execution state
 
-**Assessment date:** 2026-10-02 (Asia/Kolkata)  
+**Baseline snapshot date:** 2026-10-02 (Asia/Kolkata)
 **Release verdict:** `NOT PRODUCTION READY`  
 **Scope:** Repository implementation, local checks, and read-only retrieval of public official source pages. No agency was contacted, no account or private API was used, and no government submission was made.
 
-## CURRENT REALITY
+> The sections below preserve the 2026-10-02 baseline. Current verification and
+> remaining release status are recorded in the 2026-10-03 continuation at the
+> end of this document.
+
+## BASELINE SNAPSHOT (2026-10-02)
 
 - **Frontend:** React 18, TypeScript, Vite, React Router, Bootstrap and Leaflet under `src/frontend`. The home page starts with a problem statement and consent handoff to the deterministic route checker. A `/staff` browser workspace now exposes the bounded metadata-only staff API flow; browser tests use synthetic responses and do not establish production authentication. Legacy office, heatmap, tracker, analytics, document and advanced workspaces are grouped under `/labs` with prototype disclosures; prior direct routes redirect there. The current Playwright suite has 13 browser flows. No route-wide automated accessibility suite is configured.
 - **Backend:** Flask application factory, SQLAlchemy, Flask-Migrate, JWT extension, Flask-Caching and Flask-Limiter under `src/backend`. The codebase mixes legacy issue/SRS endpoints with a newer `source_routing` module and partially layered domain/application packages.
@@ -99,3 +103,30 @@ Build a modular monolith that accepts a citizen's problem in plain language, use
 3. Review the initial staff workspace against the deployment identity/API contract, then build authenticated source lifecycle/publishing and refresh the cybercrime source only after TLS validation succeeds.
 4. Implement a private scanned evidence vault and tenant-bound retention/deletion before accepting files.
 5. Add multilingual/adversarial routing evaluation, accessibility verification, observability, performance, backup/restore, and DR evidence.
+
+## CURRENT STATUS (2026-10-03)
+
+The release verdict remains **`NOT PRODUCTION READY`**. The current schema has
+35 mapped tables and 471 columns. The data-governance registry contains 294
+potentially personal/linkable candidates: 273 await accountable field approval
+and 21 are explicitly exempted. The release checker reports 35 table-governance
+decisions and one profile approval as separate accountable decisions.
+
+The full candidate gate ran with the disposable PostgreSQL 16 RLS URL: **114
+backend tests passed**, including PostgreSQL RLS integration (118 existing
+deprecation warnings); governance parity passed; frontend typecheck and build
+passed; **13 Playwright flows passed**; feature parity passed 9/9; OpenAPI 3.1
+route parity passed. The production gate permits 15 route patterns and rejects
+99 other registered operations with 503. Triage and jurisdiction resolution
+remain disabled in production because `route_decisions` is not tenant/subject
+isolated. The four current public catalog records are handoff-only and the
+cybercrime candidate remains withheld.
+
+The release gate exited 1 as intended: 12 blocking engineering workstreams are
+`OPEN`; eight privacy, government authorization, infrastructure, independent
+assessment and operations records are `BLOCKED_EXTERNAL_DEPENDENCY`. No
+authorized production environment file, secrets, or CA configuration was
+supplied. No production deployment, independent accessibility assessment,
+published-release all-layer security scan or signed provenance,
+backup/restore/DR rehearsal, or live SIEM operation is evidenced. See the
+[assurance data room](../assurance/README.md) and [typed blocker ledger](../release/production-blockers.yaml).

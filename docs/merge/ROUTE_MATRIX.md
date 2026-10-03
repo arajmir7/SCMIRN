@@ -5,7 +5,7 @@
 | Product | Route | Entry | State |
 |---|---|---|---|
 | SCMIRN(3) source | `/` | `frontend/src/pages/LandingPage.tsx` + `CivicResolutionIntake` | Primary intake. |
-| SCMIRN(3) source | `/services`, `/rights` | `GovernmentServices` | Source-verified catalog; expected empty because seed source is unavailable. |
+| SCMIRN(3) source | `/services`, `/rights` | `GovernmentServices` | Source-gated catalog has four handoff-only records; no personalized production triage. |
 | SCMIRN(3) source | `/documents`, `/progress`, `/file-complaint` | pages with explicit unavailable messaging | Not live document/case workflows. |
 | SCMIRN(3) source | `/ai-help` | `AIAssistant` | UI calls disabled legacy AI endpoint. |
 | SCMIRN(3) source | `/map`, `/offices`, `/tracker`, old issue/document aliases | React redirects | Redirects do not prove a feature exists. |
@@ -14,12 +14,12 @@
 | Canonical SCMIRN | `/offices`, `/heatmap`, `/tracker`, `/analytics`, `/documents`, `/platform` | React lazy routes in `src/frontend/src/App.tsx` | Existing visual routes; several display DB/demo/simulation data. |
 | Canonical SCMIRN | unknown | React Router redirect to `/` | Current behavior. |
 
-## Active source API routes
+## Registered source API routes and production status
 
 | Verb | Route | State / target |
 |---|---|---|
-| POST | `/api/v1/triage` | Active deterministic consented routing. |
-| POST | `/api/v1/jurisdiction/resolve` | Alias to same resolver. |
+| POST | `/api/v1/triage` | Registered for development/test; production allowlist returns 503 until route-decision tenant/subject isolation is implemented. |
+| POST | `/api/v1/jurisdiction/resolve` | Same production-disabled resolver alias. |
 | GET | `/api/v1/services` | Active, filters unverified sources. |
 | GET | `/api/v1/services/{service_id}` | Active source-gated lookup. |
 | POST | `/api/v1/evidence/check` | Active ID checklist; no file contents. |
@@ -32,9 +32,9 @@ Canonical route decorators are under `src/backend/app/api/v1/**`, `src/backend/a
 
 ## Merged production API boundary
 
-In the canonical backend's `production` configuration, the request gate permits `GET /api/health`, `GET /api/v1/services` and service descendants, `GET /api/v1/sources/*`, and `POST /api/v1/triage`, `/api/v1/jurisdiction/resolve`, and `/api/v1/evidence/check`. Other `/api/*` and `/uploads/*` requests return `503 PRODUCTION_ENDPOINT_DISABLED`. `SCMIRN_MIGRATION_MODE=true` blocks all application HTTP requests while migrations run. These controls have unit coverage, but have not been exercised behind a deployed ingress or against PostgreSQL.
+In the canonical backend's `production` configuration, the request gate permits health/readiness, `GET /api/v1/services` and service descendants, `GET /api/v1/sources/*`, and `POST /api/v1/evidence/check`, plus the separately gated staff-auth and metadata-only staff-case routes. Triage and jurisdiction resolution return `503 PRODUCTION_ENDPOINT_DISABLED` until their decision storage has a complete subject/tenant boundary. Other unallowlisted `/api/*` and `/uploads/*` requests also return 503. `SCMIRN_MIGRATION_MODE=true` blocks all application HTTP requests while migrations run. These controls have unit coverage, but have not been exercised behind a deployed ingress or against PostgreSQL.
 
-The service catalog has no verified official source configured. It therefore returns no eligible official handoff. The permitted routes provide deterministic routing/evidence checks only; they do not file complaints, upload evidence, process payments, or retrieve official case status. Legacy APIs remain present for local prototype routes but are disabled by the production gate.
+The seeded service catalog contains four internally reviewed handoff candidates and withholds one candidate whose portal TLS/source review failed. Listing a candidate does not establish legal approval or source freshness beyond its recorded 2026-10-02 snapshot. Production does not expose personalized routing; permitted service/source routes provide discovery only, and evidence-check is a metadata checklist. They do not file complaints, upload evidence, process payments, or retrieve official case status. Legacy APIs remain present for local prototype routes but are disabled by the production gate.
 
 ## Not active in source runtime
 

@@ -18,6 +18,9 @@ class StaffPrincipal:
     roles: frozenset[str]
     active: bool
     mfa_verified: bool
+    department_ids: frozenset[str] = frozenset()
+    jurisdiction_ids: frozenset[str] = frozenset()
+    service_ids: frozenset[str] = frozenset()
 
 
 @dataclass(frozen=True)
@@ -31,6 +34,9 @@ class PolicyAttributes:
     department_id: str | None = None
     jurisdiction_id: str | None = None
     source_state: str | None = None
+    service_id: str | None = None
+    approval_stage: str | None = None
+    risk_tier: str | None = None
     case_id: str | None = None
     legal_hold: bool = False
 
@@ -120,10 +126,16 @@ def authorize(
             attributes.purpose != "SOURCE_GOVERNANCE"
             or not attributes.department_id
             or not attributes.jurisdiction_id
+            or not attributes.service_id
+            or attributes.approval_stage != "REVIEW"
+            or attributes.risk_tier not in {"LOW", "MEDIUM", "HIGH", "CRITICAL"}
             or attributes.source_state != "PENDING_CHECK"
             or not attributes.created_by_id
             or attributes.created_by_id == principal.user_id
             or attributes.sensitivity != "INTERNAL"
+            or attributes.department_id not in principal.department_ids
+            or attributes.jurisdiction_id not in principal.jurisdiction_ids
+            or attributes.service_id not in principal.service_ids
         ):
             return False
         return bool(principal.roles.intersection({"SOURCE_REVIEWER", "TENANT_ADMIN"}))
