@@ -59,6 +59,12 @@ def _upgrade_to(revision):
     command.upgrade(config, revision)
 
 
+def _downgrade_to(revision):
+    config = Config(str(MIGRATIONS / "alembic.ini"))
+    config.set_main_option("script_location", str(MIGRATIONS))
+    command.downgrade(config, revision)
+
+
 def _upgrade_to_head():
     _upgrade_to("head")
 
@@ -197,6 +203,20 @@ def test_catalog_migration_replaces_import_timestamps_with_recorded_review_date(
         )
         connection.exec_driver_sql(
             """
+            INSERT INTO official_sources (
+                id, source_key, version, authority, title, source_type,
+                jurisdiction, canonical_url, retrieved_at, verification_status,
+                reviewer, parser_version
+            ) VALUES (
+                'catalog-draft-source', 'catalog-draft-source', 1,
+                'Test authority', 'Draft catalog fixture', 'TEST', 'TEST',
+                'https://example.test/draft', '2026-10-03 12:45:00', 'DRAFT',
+                'catalog review', 'official-catalog-v1'
+            )
+            """
+        )
+        connection.exec_driver_sql(
+            """
             INSERT INTO authorities (
                 id, authority_key, version, canonical_name, authority_level,
                 jurisdiction, official_source_id, status, created_at
@@ -227,6 +247,29 @@ def test_catalog_migration_replaces_import_timestamps_with_recorded_review_date(
         connection.exec_driver_sql(
             "INSERT INTO government_service_sources (service_version_id, source_id) VALUES ('catalog-service', 'catalog-source')"
         )
+        connection.exec_driver_sql(
+            """
+            INSERT INTO government_services (
+                id, service_key, version, canonical_name, authority_id,
+                authority_level, jurisdiction, geography, exclusions, issue_types,
+                required_evidence, recommended_evidence, optional_evidence,
+                official_url, integration_mode, identity_assurance_required,
+                last_verified, status, created_at
+            ) VALUES (
+                'catalog-partial-service', 'catalog-partial-service', 1,
+                'Partially reviewed service', 'catalog-authority', 'OTHER', '{}',
+                '{}', '[]', '[]', '[]', '[]', '[]',
+                'https://example.test/source', 'OFFICIAL_HANDOFF_ONLY', 'A0',
+                '2026-10-03 12:50:00', 'ACTIVE', '2026-10-03 12:00:00'
+            )
+            """
+        )
+        connection.exec_driver_sql(
+            "INSERT INTO government_service_sources (service_version_id, source_id) VALUES ('catalog-partial-service', 'catalog-source')"
+        )
+        connection.exec_driver_sql(
+            "INSERT INTO government_service_sources (service_version_id, source_id) VALUES ('catalog-partial-service', 'catalog-draft-source')"
+        )
 
     _upgrade_to_head()
 
@@ -237,9 +280,22 @@ def test_catalog_migration_replaces_import_timestamps_with_recorded_review_date(
         service = connection.exec_driver_sql(
             "SELECT last_verified, last_verified_on FROM government_services WHERE id = 'catalog-service'"
         ).one()
+        partial_service = connection.exec_driver_sql(
+            "SELECT last_verified, last_verified_on FROM government_services WHERE id = 'catalog-partial-service'"
+        ).one()
+        draft_source = connection.exec_driver_sql(
+            "SELECT reviewed_on, verified_on FROM official_sources WHERE id = 'catalog-draft-source'"
+        ).one()
     assert source.retrieved_at is None
     assert source.verified_at is None
     assert source.reviewed_on == "2026-10-02"
     assert source.verified_on == "2026-10-02"
     assert service.last_verified is None
     assert service.last_verified_on == "2026-10-02"
+    assert draft_source.reviewed_on == "2026-10-02"
+    assert draft_source.verified_on is None
+    assert partial_service.last_verified is None
+    assert partial_service.last_verified_on is None
+
+    with pytest.raises(RuntimeError, match="cannot be represented as precise timestamps"):
+        _downgrade_to("20261003_01")
